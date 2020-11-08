@@ -1,6 +1,10 @@
-const QUANTITY = 'quantity';
-const PRICE = 'price';
-const PRICE_FOR_PAIR = 'priceForPair';
+const namesObjectData = {
+  TYPE: 'type',
+  COLOR: 'color',
+  QUANTITY: 'quantity',
+  PRICE: 'price',
+  PRICE_FOR_PAIR: 'priceForPair',
+};
 
 module.exports = arrayClothes => {
   let typesClothes = [];
@@ -9,21 +13,35 @@ module.exports = arrayClothes => {
     const keys = Object.keys(clothes);
 
     if (typesClothes.length === 0) typesClothes = keys;
-    else
+    else {
       keys.forEach(type => {
         if (!typesClothes.includes(type)) typesClothes.push(type);
       });
+    }
   });
 
   const result = arrayClothes.map(clothes => {
-    const obj = Object.assign(clothes);
+    const obj = { ...clothes };
+
+    const oneOfData = name => {
+      for (const value in namesObjectData) {
+        if (name === namesObjectData[value]) return true;
+      }
+      return false;
+    };
 
     typesClothes.forEach(type => {
-      if (!(type in obj))
-        if (type === PRICE) obj[PRICE] = clothes[PRICE_FOR_PAIR];
-        else if (type === PRICE_FOR_PAIR)
-          obj[PRICE_FOR_PAIR] = '$'.concat(clothes[PRICE].split('$')[1] * 2);
-        else if (type === QUANTITY) obj[QUANTITY] = 0;
+      if (!(type in obj) && oneOfData(type)) {
+        if (type === namesObjectData.PRICE) {
+          obj[namesObjectData.PRICE] = clothes[namesObjectData.PRICE_FOR_PAIR];
+        } else if (type === namesObjectData.PRICE_FOR_PAIR) {
+          obj[namesObjectData.PRICE_FOR_PAIR] = '$'.concat(
+            clothes[namesObjectData.PRICE].split('$')[1] * 2,
+          );
+        } else if (type === namesObjectData.QUANTITY) {
+          obj[namesObjectData.QUANTITY] = 0;
+        }
+      }
     });
 
     return obj;

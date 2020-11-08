@@ -8,10 +8,11 @@ module.exports = (arrayClothes, param, value) => {
   arrayClothes.forEach(clothes => {
     if (param in clothes && clothes[param] === value) result.push(clothes);
     else if (param === QUANTITY && value === 0) result.push(clothes);
-    else if (param === PRICE_FOR_PAIR && clothes.price === value)
+    else if (param === PRICE_FOR_PAIR && clothes.price === value) {
       result.push(clothes);
-    else if (param === PRICE && clothes.priceForPair === value)
+    } else if (param === PRICE && clothes.priceForPair === value) {
       result.push(clothes);
+    }
   });
 
   return result;

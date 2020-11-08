@@ -1,7 +1,7 @@
 const inputData = require('../inputData.json');
 
 function biggestPrice(arrayClothes) {
-  const result = {price: 0, clothes: {}};
+  const result = { price: 0, clothes: {} };
 
   arrayClothes.forEach(clothes => {
     const price =
@@ -14,7 +14,7 @@ function biggestPrice(arrayClothes) {
     }
   });
 
-  return result;
+  return result.clothes;
 }
 
 module.exports = biggestPrice(inputData);
