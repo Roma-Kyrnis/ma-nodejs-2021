@@ -55,7 +55,7 @@ module.exports.task1 = (request, response) => {
 
   const result = sort(arrayClothes, queryParams.name, value);
 
-  ok(response, result);
+  return ok(response, result);
 };
 
 module.exports.task2 = (request, response) => {
@@ -63,7 +63,7 @@ module.exports.task2 = (request, response) => {
 
   if (method !== 'GET') return methodNotAllowed(response);
 
-  ok(response, biggestPrice);
+  return ok(response, biggestPrice);
 };
 
 module.exports.task3 = (request, response) => {
@@ -74,7 +74,7 @@ module.exports.task3 = (request, response) => {
 
   const result = task3(arrayClothes);
 
-  ok(request, result);
+  return ok(request, result);
 };
 
 module.exports.setDataGlobal = (request, response) => {
@@ -87,14 +87,14 @@ module.exports.setDataGlobal = (request, response) => {
 
   store = data;
 
-  ok(response);
+  return ok(response);
 };
 
 module.exports.writeDataInFile = (request, response) => {
   const { method, body: data } = request;
 
   if (method === 'POST') return methodNotAllowed(response);
-  if (isCorrectData(data)) {
+  if (isIncorrectData(data)) {
     return badRequest(response, { message: 'Incorrect data!' });
   }
 
@@ -105,5 +105,5 @@ module.exports.writeDataInFile = (request, response) => {
 
   store = data;
 
-  ok(response);
+  return ok(response);
 };
