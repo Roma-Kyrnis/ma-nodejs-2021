@@ -34,7 +34,7 @@ module.exports = async (request, response) => {
           {
             ...request,
             body: body ? JSON.parse(body) : {},
-            url,
+            url: parsedUrl,
             queryParams,
           },
           response,

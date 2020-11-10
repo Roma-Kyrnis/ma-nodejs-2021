@@ -26,17 +26,19 @@ function methodNotAllowed(res) {
   res.end();
 }
 
-function isCorrectData(data) {
+function isIncorrectData(data) {
   if (
-    !data.isArray() ||
+    // (data.length || 0) === 0 ||
+    !Array.isArray(data) ||
     typeof data[0] !== 'object' ||
-    !('type' in data[0]) ||
-    !('color' in data[0]) ||
-    !('price' in data[0] || 'priceForPair' in data[0])
+    ('type' in data[0] &&
+      'color' in data[0] &&
+      ('price' in data[0] || 'priceForPair' in data[0]))
   ) {
-    return false;
+    return true;
   }
-  return true;
+
+  return false;
 }
 
 module.exports.task1 = (request, response) => {
@@ -48,7 +50,10 @@ module.exports.task1 = (request, response) => {
     badRequest(response, { Message: 'No param!' });
   }
 
-  const result = sort(arrayClothes, queryParams.name, queryParams.value);
+  let { value } = queryParams;
+  if (queryParams.name === 'quantity') value = Number(value);
+
+  const result = sort(arrayClothes, queryParams.name, value);
 
   ok(response, result);
 };
@@ -56,7 +61,7 @@ module.exports.task1 = (request, response) => {
 module.exports.task2 = (request, response) => {
   const { method } = request;
 
-  if (method !== 'GET') methodNotAllowed(response);
+  if (method !== 'GET') return methodNotAllowed(response);
 
   ok(response, biggestPrice);
 };
@@ -65,7 +70,7 @@ module.exports.task3 = (request, response) => {
   const { method } = request;
   const arrayClothes = store || [];
 
-  if (method === 'GET') methodNotAllowed(response);
+  if (method === 'GET') return methodNotAllowed(response);
 
   const result = task3(arrayClothes);
 
@@ -75,8 +80,10 @@ module.exports.task3 = (request, response) => {
 module.exports.setDataGlobal = (request, response) => {
   const { method, body: data } = request;
 
-  if (method === 'POST') methodNotAllowed(response);
-  if (isCorrectData(data)) badRequest(response, { message: 'Incorrect data!' });
+  if (method === 'POST') return methodNotAllowed(response);
+  if (isIncorrectData(data)) {
+    return badRequest(response, { message: 'Incorrect data!' });
+  }
 
   store = data;
 
@@ -86,8 +93,10 @@ module.exports.setDataGlobal = (request, response) => {
 module.exports.writeDataInFile = (request, response) => {
   const { method, body: data } = request;
 
-  if (method === 'POST') methodNotAllowed(response);
-  if (isCorrectData(data)) badRequest(response, { message: 'Incorrect data!' });
+  if (method === 'POST') return methodNotAllowed(response);
+  if (isCorrectData(data)) {
+    return badRequest(response, { message: 'Incorrect data!' });
+  }
 
   fs.writeFileSync(
     path.resolve(__dirname, 'inputData.json'),

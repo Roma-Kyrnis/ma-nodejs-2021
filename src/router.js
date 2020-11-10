@@ -1,4 +1,10 @@
-const { task1, task2, task3, setData } = require('./controller');
+const {
+  task1,
+  task2,
+  task3,
+  setDataGlobal,
+  writeDataInFile,
+} = require('./controller');
 
 function notFound(res) {
   res.setHeader('Content-Type', 'application/json');
@@ -10,10 +16,29 @@ function notFound(res) {
 module.exports = (request, response) => {
   const { url } = request;
 
-  if (url === '/task1') task1(request, response);
-  if (url === '/task2') task2(request, response);
-  if (url === '/task3') task3(request, response);
-  if (url === '/setData') setData();
+  switch (url.pathname) {
+    case '/task1':
+      task1(request, response);
+      break;
 
-  notFound(response);
+    case '/task2':
+      task2(request, response);
+      break;
+
+    case '/task3':
+      task3(request, response);
+      break;
+
+    case '/setDataGlobal':
+      setDataGlobal(request, response);
+      break;
+
+    case '/writeDataInFile':
+      writeDataInFile(request, response);
+      break;
+
+    default:
+      notFound(response);
+      break;
+  }
 };
