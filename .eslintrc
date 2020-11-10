@@ -14,8 +14,6 @@
       "prettier/prettier": "error",
       "no-console": "off",
       "no-plusplus": [2, { "allowForLoopAfterthoughts": true }],
-      "no-restricted-syntax": "off",
-      "array-callback-return": "off",
-      "consistent-return": "off"
+      "no-restricted-syntax": "off"
   }
 }
