@@ -1,0 +1,29 @@
+{
+  "name": "homework-01",
+  "version": "1.0.0",
+  "description": "Homework-01",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "^7.10.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-config-prettier": "^6.12.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-prettier": "^3.1.4",
+    "husky": "^4.3.0",
+    "prettier": "^2.1.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Roman-Kirnos/ma-nodejs-2021.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Roman-Kirnos/ma-nodejs-2021/issues"
+  },
+  "homepage": "https://github.com/Roman-Kirnos/ma-nodejs-2021#readme"
+}
