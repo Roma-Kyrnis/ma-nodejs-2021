@@ -1,4 +1,4 @@
-const { task1, task2, task3 } = require('./controller');
+const { task1, task2, task3, setData } = require('./controller');
 
 function notFound(res) {
   res.setHeader('Content-Type', 'application/json');
@@ -6,14 +6,14 @@ function notFound(res) {
   res.write('404');
   res.end();
 }
-module.exports = (request, response) => {
-  const { url, queryParams, body: data } = request;
 
-  if (url === '/task1') return task1(response);
-  if (url === '/task2') return task2(response);
-  if (url === '/task3') {
-    return task3(data, response, queryParams);
-  }
+module.exports = (request, response) => {
+  const { url } = request;
+
+  if (url === '/task1') task1(request, response);
+  if (url === '/task2') task2(request, response);
+  if (url === '/task3') task3(request, response);
+  if (url === '/setData') setData();
 
   notFound(response);
 };
