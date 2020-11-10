@@ -1,7 +1,5 @@
 module.exports = (arrayClothes, param, value) => {
-  const result = arrayClothes.filter(clothes => {
-    if (clothes[param] === value) return clothes;
-  });
+  const result = arrayClothes.filter(clothes => clothes[param] === value);
 
   return result;
 };
