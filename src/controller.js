@@ -27,16 +27,18 @@ function methodNotAllowed(res) {
 }
 
 function isIncorrectData(data) {
-  if (
-    // (data.length || 0) === 0 ||
-    !Array.isArray(data) ||
-    typeof data[0] !== 'object' ||
-    ('type' in data[0] &&
-      'color' in data[0] &&
-      ('price' in data[0] || 'priceForPair' in data[0]))
-  ) {
-    return true;
-  }
+  if (!Array.isArray(data) || data.length === 0) return true;
+
+  const incorrectArray = data.filter(
+    value =>
+      typeof value !== 'object' ||
+      !(
+        'type' in value &&
+        'color' in value &&
+        ('price' in value || 'priceForPair' in data[0])
+      ),
+  );
+  if (incorrectArray.length !== 0) return true;
 
   return false;
 }
@@ -51,7 +53,7 @@ module.exports.task1 = (request, response) => {
   }
 
   let { value } = queryParams;
-  if (queryParams.name === 'quantity') value = Number(value);
+  if (typeof Number(value) === 'number') value = Number(value);
 
   const result = sort(arrayClothes, queryParams.name, value);
 
@@ -70,11 +72,11 @@ module.exports.task3 = (request, response) => {
   const { method } = request;
   const arrayClothes = store || [];
 
-  if (method === 'GET') return methodNotAllowed(response);
+  if (method !== 'GET') return methodNotAllowed(response);
 
   const result = task3(arrayClothes);
 
-  return ok(request, result);
+  return ok(response, result);
 };
 
 module.exports.setDataGlobal = (request, response) => {
@@ -100,7 +102,7 @@ module.exports.writeDataInFile = (request, response) => {
 
   fs.writeFileSync(
     path.resolve(__dirname, 'inputData.json'),
-    JSON.stringify(data),
+    JSON.stringify(data, 0, 2),
   );
 
   store = data;
