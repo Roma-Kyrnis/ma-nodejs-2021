@@ -82,7 +82,7 @@ module.exports.task3 = (request, response) => {
 module.exports.setDataGlobal = (request, response) => {
   const { method, body: data } = request;
 
-  if (method === 'POST') return methodNotAllowed(response);
+  if (method !== 'POST') return methodNotAllowed(response);
   if (isIncorrectData(data)) {
     return badRequest(response, { message: 'Incorrect data!' });
   }
@@ -95,7 +95,7 @@ module.exports.setDataGlobal = (request, response) => {
 module.exports.writeDataInFile = (request, response) => {
   const { method, body: data } = request;
 
-  if (method === 'POST') return methodNotAllowed(response);
+  if (method !== 'POST') return methodNotAllowed(response);
   if (isIncorrectData(data)) {
     return badRequest(response, { message: 'Incorrect data!' });
   }
