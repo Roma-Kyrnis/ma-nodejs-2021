@@ -1,16 +1,15 @@
 const {
-  task1,
-  task2,
-  task3,
+  functionOne: task1,
+  functionTwo: task2,
+  functionThree: task3,
   setDataGlobal,
   writeDataInFile,
 } = require('./controller');
 
 function notFound(res) {
-  res.setHeader('Content-Type', 'application/json');
+  res.setHeader('Content-Type', 'application/text');
   res.statusCode = 404;
-  res.write('404');
-  res.end();
+  res.end('404');
 }
 
 module.exports = (request, response) => {
