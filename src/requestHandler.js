@@ -1,6 +1,7 @@
 const { parse: parseQuery } = require('querystring');
 const { URL } = require('url');
 const router = require('./router');
+const { ORIGIN } = require('./config').server;
 
 function internalServerError(res, err) {
   const errMess = { message: 'Internal error occurred' };
@@ -15,7 +16,7 @@ function internalServerError(res, err) {
 module.exports = async (request, response) => {
   try {
     const { url } = request;
-    const parsedUrl = new URL(url, process.env.ORIGIN);
+    const parsedUrl = new URL(url, ORIGIN);
     const queryParams = parseQuery(parsedUrl.search.substr(1));
 
     let body = [];
