@@ -23,7 +23,7 @@ module.exports = async (request, response) => {
 
     request
       .on('error', err => {
-        throw new Error(err);
+        console.error(err);
       })
       .on('data', chunk => {
         body.push(chunk);
