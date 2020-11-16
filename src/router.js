@@ -4,8 +4,10 @@ const {
   functionThree: task3,
   setDataGlobal,
   writeDataInFile,
-  sale
+  sale,
 } = require('./controller');
+
+const { CALLBACK, PROMISE, ASYNC } = require('./config').sale;
 
 function notFound(res) {
   res.setHeader('Content-Type', 'application/text');
@@ -13,7 +15,7 @@ function notFound(res) {
   res.end('404');
 }
 
-module.exports = (request, response) => {
+module.exports = async (request, response) => {
   const { url } = request;
 
   switch (url.pathname) {
@@ -37,8 +39,16 @@ module.exports = (request, response) => {
       writeDataInFile(request, response);
       break;
 
-    case '/sale':
-      sale(request, response);
+    case '/saleCallback':
+      await sale(request, response, CALLBACK);
+      break;
+
+    case '/salePromise':
+      await sale(request, response, PROMISE);
+      break;
+
+    case '/saleAsync':
+      await sale(request, response, ASYNC);
       break;
 
     default:

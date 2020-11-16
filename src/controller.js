@@ -105,13 +105,13 @@ function writeDataInFile(request, response) {
   return ok(response);
 }
 
-function sale(request, response) {
+async function sale(request, response, nameFunction) {
   const { method } = request;
 
   if (method !== 'GET') return methodNotAllowed(response);
 
-  const arraySales = task3(store);
-  const result = generateSale(arraySales);
+  const arrayClothes = task3(store);
+  const result = await generateSale(arrayClothes, nameFunction);
 
   return ok(response, result);
 }

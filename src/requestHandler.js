@@ -21,17 +21,17 @@ module.exports = async (request, response) => {
 
     let body = [];
 
-    request
+    await request
       .on('error', err => {
         console.error(err);
       })
       .on('data', chunk => {
         body.push(chunk);
       })
-      .on('end', () => {
+      .on('end', async () => {
         body = Buffer.concat(body).toString();
 
-        router(
+        await router(
           {
             ...request,
             body: body ? JSON.parse(body) : {},

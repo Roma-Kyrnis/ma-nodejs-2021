@@ -1,13 +1,15 @@
+const { nextTick } = require('process');
 const { promisify } = require('util');
 
-const { sale } = require('../config');
+const { sale: SALE } = require('../config');
 
 // eslint-disable-next-line no-extend-native
-Array.prototype.myMap = (oldArray, callback) => {
+Array.prototype.myMap = async (oldArray, callback) => {
   const newArray = [];
 
   for (let i = 0; i < oldArray.length; i++) {
-    newArray.push(callback(oldArray[i], i, oldArray));
+    // eslint-disable-next-line no-await-in-loop
+    newArray.push(await callback(oldArray[i], i, oldArray));
   }
 
   return newArray;
@@ -17,54 +19,104 @@ function randomNumber(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function generateSaleOne(callback) {
+async function callbackFunction(callback) {
+  let result;
+
+  setTimeout(() => {
+    const number = randomNumber(SALE.MIN, SALE.MAX);
+
+    if (number >= SALE.NOT_MORE_THAN) {
+      result = callback(new Error('Incorrect sale: SALE'));
+    }
+
+    result = callback(0, number);
+  }, SALE.TIME_GENERATE_SALE);
+
+  return result;
+}
+
+function promiseFunction() {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      const result = randomNumber(sale.MIN, sale.MAX);
+      const result = randomNumber(SALE.MIN, SALE.MAX);
 
-      if (result >= sale.NOT_MORE_THAN) {
-        reject(callback(new Error('Incorrect sale')));
+      if (result >= SALE.NOT_MORE_THAN) {
+        reject(new Error('Incorrect sale: SALE'));
       }
 
-      resolve(callback(result));
-    }, sale.TIME_GENERATE_SALE);
+      resolve(result);
+    }, SALE.TIME_GENERATE_SALE);
   });
 }
 
-function generateSaleTwo(callback) {
-  promisify(
-    setTimeout(() => {
-      const result = randomNumber(sale.MIN, sale.MAX);
-
-      if (result >= sale.NOT_MORE_THAN) {
-        throw callback(new Error('Incorrect sale'));
-      }
-
-      return callback(result);
-    }, sale.TIME_GENERATE_SALE),
-  );
+async function methodCallback() {
+  const result = await callbackFunction(async (err, res) => {
+    if (err) {
+      const func = await methodCallback();
+      return func;
+    }
+    return res;
+  });
+  return result;
 }
 
-async function one(callback) {
-  const result = await generateSale(callback);
-  if (result.name === 'Error') console.error(result);
-  // else resolve(result);
-  //         return new Promise((resolve, reject) => {
-  // });
+function methodPromise() {
+  let result;
+
+  promiseFunction()
+    .then(res => {
+      result = res;
+    })
+    .catch(() => {
+      result = methodPromise();
+    });
+
+  return result;
 }
 
-async function start() {
+async function methodAsync() {
+  let result;
+
   try {
-    const res = await one(console.log);
-
-    console.log(res);
-  } catch (err) {
-    console.log(err);
+    result = await promiseFunction();
+  } catch {
+    result = await methodAsync();
   }
+
+  return result;
 }
 
-start();
+async function generateSale(nameFunction, times = 1) {
+  let discount;
 
-module.exports = generateSaleOne;
-// const numbers = [1, 4, 9];
-// numbers.myMap(numbers, console.log);
+  if (nameFunction === SALE.CALLBACK) discount = methodCallback();
+  if (nameFunction === SALE.PROMISE) discount = methodPromise();
+  if (nameFunction === SALE.ASYNC) discount = await methodAsync();
+
+  if (times > 1) {
+    const result = await generateSale(nameFunction, times - 1);
+    return (discount / 100) * result;
+  }
+
+  return discount / 100;
+}
+
+async function sale(arrayClothes, nameFunction) {
+  return arrayClothes.myMap(arrayClothes, async value => {
+    const clothes = { ...value, sale: 0 };
+
+    try {
+      if (SALE.DOUBLE(value)) {
+        clothes.sale = await generateSale(nameFunction, 2);
+      } else if (SALE.TRIPLE(value)) {
+        clothes.sale = await generateSale(nameFunction, 3);
+      } else clothes.sale = await generateSale(nameFunction);
+    } catch (err) {
+      console.log('Can not generate sale');
+    }
+
+    return clothes;
+  });
+}
+
+module.exports = sale;
