@@ -5,15 +5,19 @@
       "plugin:prettier/recommended"
   ],
   "env": {
+    "commonjs": true,
+    "es6": true,
     "node": true
   },
   "plugins": [
       "prettier"
   ],
+  "parserOptions": {
+    "ecmaVersion": 2020
+  },
   "rules": {
       "prettier/prettier": "error",
       "no-console": "off",
-      "no-plusplus": [2, { "allowForLoopAfterthoughts": true }],
-      "no-restricted-syntax": "off"
+      "no-plusplus": [2, { "allowForLoopAfterthoughts": true }]
   }
 }
