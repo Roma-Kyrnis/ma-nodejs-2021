@@ -1,4 +1,3 @@
-const { nextTick } = require('process');
 const { promisify } = require('util');
 
 const { sale: SALE } = require('../config');
@@ -20,19 +19,17 @@ function randomNumber(min, max) {
 }
 
 async function callbackFunction(callback) {
-  let result;
+  const promise = promisify((time, func) => setTimeout(func, time));
 
-  setTimeout(() => {
-    const number = randomNumber(SALE.MIN, SALE.MAX);
+  await promise(SALE.TIME_GENERATE_SALE);
 
-    if (number >= SALE.NOT_MORE_THAN) {
-      result = callback(new Error('Incorrect sale: SALE'));
-    }
+  const number = randomNumber(SALE.MIN, SALE.MAX);
 
-    result = callback(0, number);
-  }, SALE.TIME_GENERATE_SALE);
+  if (number >= SALE.NOT_MORE_THAN) {
+    return callback('Incorrect sale!');
+  }
 
-  return result;
+  return callback(0, number);
 }
 
 function promiseFunction() {
@@ -41,10 +38,9 @@ function promiseFunction() {
       const result = randomNumber(SALE.MIN, SALE.MAX);
 
       if (result >= SALE.NOT_MORE_THAN) {
-        reject(new Error('Incorrect sale: SALE'));
+        return reject(new Error('Incorrect sale: SALE'));
       }
-
-      resolve(result);
+      return resolve(result);
     }, SALE.TIME_GENERATE_SALE);
   });
 }
@@ -55,15 +51,19 @@ async function methodCallback() {
       const func = await methodCallback();
       return func;
     }
+
     return res;
   });
+
   return result;
 }
 
 function methodPromise() {
   let result;
 
-  promiseFunction()
+  const promise = promiseFunction();
+
+  promise
     .then(res => {
       result = res;
     })
@@ -89,20 +89,28 @@ async function methodAsync() {
 async function generateSale(nameFunction, times = 1) {
   let discount;
 
-  if (nameFunction === SALE.CALLBACK) discount = methodCallback();
+  if (nameFunction === SALE.CALLBACK) discount = await methodCallback();
   if (nameFunction === SALE.PROMISE) discount = methodPromise();
   if (nameFunction === SALE.ASYNC) discount = await methodAsync();
 
   if (times > 1) {
     const result = await generateSale(nameFunction, times - 1);
-    return (discount / 100) * result;
+
+    const first = (((100 - discount) / 100) * ((100 - result) / 100)).toFixed(
+      2,
+    );
+    const second = 100 - Number(first) * 100;
+
+    // Not work good(
+
+    return second;
   }
 
-  return discount / 100;
+  return discount;
 }
 
 async function sale(arrayClothes, nameFunction) {
-  return arrayClothes.myMap(arrayClothes, async value => {
+  const result = await arrayClothes.myMap(arrayClothes, async value => {
     const clothes = { ...value, sale: 0 };
 
     try {
@@ -117,6 +125,8 @@ async function sale(arrayClothes, nameFunction) {
 
     return clothes;
   });
+
+  return result;
 }
 
 module.exports = sale;
