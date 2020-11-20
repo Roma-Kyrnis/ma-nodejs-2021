@@ -58,18 +58,14 @@ async function methodCallback() {
   return result;
 }
 
-function methodPromise() {
+async function methodPromise() {
   let result;
 
-  const promise = promiseFunction();
-
-  promise
-    .then(res => {
-      result = res;
-    })
-    .catch(() => {
-      result = methodPromise();
-    });
+  try {
+    result = await promiseFunction();
+  } catch (err) {
+    result = await methodPromise();
+  }
 
   return result;
 }
@@ -86,24 +82,36 @@ async function methodAsync() {
   return result;
 }
 
+async function coverAsync() {
+  let res;
+
+  try {
+    res = await methodAsync();
+  } catch (err) {
+    console.log(err);
+  }
+
+  return res;
+}
+
 async function generateSale(nameFunction, times = 1) {
   let discount;
 
   if (nameFunction === SALE.CALLBACK) discount = await methodCallback();
-  if (nameFunction === SALE.PROMISE) discount = methodPromise();
-  if (nameFunction === SALE.ASYNC) discount = await methodAsync();
+  if (nameFunction === SALE.PROMISE) discount = await methodPromise();
+  if (nameFunction === SALE.ASYNC) discount = await coverAsync();
 
   if (times > 1) {
     const result = await generateSale(nameFunction, times - 1);
 
-    const first = (((100 - discount) / 100) * ((100 - result) / 100)).toFixed(
-      2,
-    );
-    const second = 100 - Number(first) * 100;
+    const numberDiscount = (
+      ((100 - discount) / 100) *
+      ((100 - result) / 100)
+    ).toFixed(2);
 
-    // Not work good(
+    const percentDiscount = 100 - Number(numberDiscount) * 100;
 
-    return second;
+    return percentDiscount;
   }
 
   return discount;
