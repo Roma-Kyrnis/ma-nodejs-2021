@@ -5,6 +5,7 @@ const {
   setDataGlobal,
   writeDataInFile,
   sale,
+  writeAsyncInFile,
 } = require('./controller');
 
 const { CALLBACK, PROMISE, ASYNC } = require('./config').sale;
@@ -15,7 +16,7 @@ function notFound(res) {
   res.end('404');
 }
 
-module.exports = async (request, response) => {
+async function handleRoutes(request, response) {
   const { url } = request;
 
   switch (url.pathname) {
@@ -55,4 +56,20 @@ module.exports = async (request, response) => {
       notFound(response);
       break;
   }
-};
+}
+
+async function handleStreamRoutes(request, response) {
+  const { url } = request;
+
+  switch (url) {
+    case '/upload':
+      await writeAsyncInFile(request, response);
+      break;
+
+    default:
+      notFound(response);
+      break;
+  }
+}
+
+module.exports = { handleRoutes, handleStreamRoutes };

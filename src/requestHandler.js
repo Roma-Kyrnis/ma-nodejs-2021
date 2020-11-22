@@ -1,6 +1,6 @@
 const { parse: parseQuery } = require('querystring');
 const { URL } = require('url');
-const router = require('./router');
+const { handleRoutes, handleStreamRoutes } = require('./router');
 const { ORIGIN } = require('./config').server;
 
 function internalServerError(res, err) {
@@ -15,6 +15,11 @@ function internalServerError(res, err) {
 
 module.exports = async (request, response) => {
   try {
+    if (/^text\/csv/.test(request.headers['content-type'])) {
+      handleStreamRoutes(request, response);
+      return;
+    }
+
     const { url } = request;
     const parsedUrl = new URL(url, ORIGIN);
     const queryParams = parseQuery(parsedUrl.search.substr(1));
@@ -31,7 +36,7 @@ module.exports = async (request, response) => {
       .on('end', async () => {
         body = Buffer.concat(body).toString();
 
-        await router(
+        await handleRoutes(
           {
             ...request,
             body: body ? JSON.parse(body) : {},

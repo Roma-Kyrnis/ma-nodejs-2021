@@ -4,6 +4,7 @@ const path = require('path');
 const {
   tasks: { task1: sort, task2: biggestPrice, task3 },
   generateSale,
+  writeCSVFile,
 } = require('./services');
 
 let store = require('./inputData');
@@ -24,6 +25,13 @@ function methodNotAllowed(res) {
   res.setHeader('Content-Type', 'application/json');
   res.statusCode = 405;
   res.end(JSON.stringify({ message: 'Method not allowed!' }));
+}
+
+function internalServerError(res) {
+  res.setHeader('Content-Type', 'application/json');
+  res.statusCode = 500;
+  res.write(JSON.stringify({ message: 'Internal error occurred' }));
+  res.end();
 }
 
 function isIncorrectData(data) {
@@ -116,6 +124,21 @@ async function sale(request, response, nameFunction) {
   return ok(response, result);
 }
 
+async function writeAsyncInFile(request, response) {
+  const { method } = request;
+
+  if (method !== 'POST') return methodNotAllowed(response);
+
+  try {
+    await writeCSVFile(request);
+  } catch (err) {
+    console.error('In controller', err);
+    internalServerError(response);
+  }
+
+  return ok(response);
+}
+
 module.exports = {
   functionOne,
   functionTwo,
@@ -123,4 +146,5 @@ module.exports = {
   setDataGlobal,
   writeDataInFile,
   sale,
+  writeAsyncInFile,
 };

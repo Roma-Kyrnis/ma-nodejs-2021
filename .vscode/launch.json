@@ -9,7 +9,7 @@
       "request": "launch",
       "name": "nodemon",
       "runtimeExecutable": "nodemon",
-      "program": "${workspaceFolder}/src/app.js",
+      "program": "${workspaceFolder}/src",
       // "program": "${workspaceFolder}/src/test.js",
       "restart": true,
       "console": "integratedTerminal",
@@ -21,7 +21,7 @@
       "request": "launch",
       "name": "Launch Program",
       "skipFiles": ["<node_internals>/**"],
-      "program": "${workspaceFolder}/src/app.js"
+      "program": "${workspaceFolder}/src"
     }
   ]
 }
