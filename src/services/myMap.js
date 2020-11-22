@@ -19,7 +19,7 @@ function randomNumber(min, max) {
 }
 
 async function callbackFunction(callback) {
-  const promise = promisify((time, func) => setTimeout(func, time));
+  const promise = promisify(setTimeout);
 
   await promise(SALE.TIME_GENERATE_SALE);
 
@@ -29,7 +29,7 @@ async function callbackFunction(callback) {
     return callback('Incorrect sale!');
   }
 
-  return callback(0, number);
+  return callback(null, number);
 }
 
 function promiseFunction() {
