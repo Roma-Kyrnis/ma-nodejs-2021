@@ -1,4 +1,4 @@
 const tasks = require('./tasks');
-const generateSale = require('./myMap');
+const createDiscount = require('./discount');
 
-module.exports = { tasks, generateSale };
+module.exports = { tasks, createDiscount };

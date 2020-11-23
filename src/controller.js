@@ -1,10 +1,13 @@
+/* eslint-disable no-return-await */
+/* eslint-disable no-restricted-syntax */
 const fs = require('fs');
 const path = require('path');
 
 const {
   tasks: { task1: sort, task2: biggestPrice, task3 },
-  generateSale,
+  createDiscount,
 } = require('./services');
+const { sale: SALE } = require('./config');
 
 let store = require('./inputData');
 
@@ -24,6 +27,13 @@ function methodNotAllowed(res) {
   res.setHeader('Content-Type', 'application/json');
   res.statusCode = 405;
   res.end(JSON.stringify({ message: 'Method not allowed!' }));
+}
+
+function internalServerError(res) {
+  res.setHeader('Content-Type', 'application/json');
+  res.statusCode = 500;
+  res.write(JSON.stringify({ message: 'Internal error occurred' }));
+  res.end();
 }
 
 function isIncorrectData(data) {
@@ -105,15 +115,73 @@ function writeDataInFile(request, response) {
   return ok(response);
 }
 
-async function sale(request, response, nameFunction) {
+// function salesCallback(request, response) {
+//   const { method } = request;
+
+//   if (method !== 'GET') return methodNotAllowed(response);
+
+//   const arrayClothes = task3(store);
+
+//   return callbackCreateSale(arrayClothes, (err, result) => {
+//     if (err) {
+//       console.error('In controller salesCallback', err);
+
+//       return internalServerError(response);
+//     }
+
+//     return ok(response, result);
+//   });
+// }
+
+// async function salesPromise(request, response) {
+//   const { method } = request;
+
+//   if (method !== 'GET') return methodNotAllowed(response);
+
+//   const arrayClothes = task3(store);
+
+//   return promiseCreateSale(arrayClothes, (err, result) => {
+//     if (err) {
+//       console.error('In controller promiseCreateSale', err);
+
+//       return internalServerError(response);
+//     }
+
+//     return ok(response, result);
+//   });
+// }
+
+async function salesAsync(request, response) {
   const { method } = request;
 
   if (method !== 'GET') return methodNotAllowed(response);
 
   const arrayClothes = task3(store);
-  const result = await generateSale(arrayClothes, nameFunction);
 
-  return ok(response, result);
+  const outputArray = [];
+  for await (const clothes of arrayClothes) {
+    const isEqualTypes = (basedObject, equalObject) =>
+      (basedObject.type ? equalObject.type === basedObject.type : true) &&
+      (basedObject.color ? equalObject.color === basedObject.color : true);
+
+    const sumFunctions = async (func, times = 1) => {
+      const sale = await func();
+      if (times > 1) return sale + (await sumFunctions(func, times - 1));
+
+      return sale;
+    };
+
+    let discount;
+    if (isEqualTypes(SALE.TRIPLE, clothes)) {
+      discount = await sumFunctions(createDiscount, 3);
+    } else if (isEqualTypes(SALE.DOUBLE, clothes)) {
+      discount = await sumFunctions(createDiscount, 2);
+    } else discount = await createDiscount();
+
+    outputArray.push({ ...clothes, discount });
+  }
+
+  return ok(response, { clothes: outputArray });
 }
 
 module.exports = {
@@ -122,5 +190,7 @@ module.exports = {
   functionThree,
   setDataGlobal,
   writeDataInFile,
-  sale,
+  // salesCallback,
+  // salesPromise,
+  salesAsync,
 };
