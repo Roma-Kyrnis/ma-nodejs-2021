@@ -5,7 +5,7 @@ const {
   setDataGlobal,
   writeDataInFile,
   // salesCallback,
-  // salesPromise,
+  salesPromise,
   salesAsync,
 } = require('./controller');
 
@@ -43,9 +43,9 @@ module.exports = async (request, response) => {
     //   salesCallback(request, response);
     //   break;
 
-    // case '/products/discounts/promise':
-    //   salesPromise(request, response);
-    //   break;
+    case '/products/discounts/promise':
+      salesPromise(request, response);
+      break;
 
     case '/products/discounts/async':
       await salesAsync(request, response);

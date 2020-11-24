@@ -133,23 +133,49 @@ function writeDataInFile(request, response) {
 //   });
 // }
 
-// async function salesPromise(request, response) {
-//   const { method } = request;
+function salesPromise(request, response) {
+  const { method } = request;
 
-//   if (method !== 'GET') return methodNotAllowed(response);
+  if (method !== 'GET') return methodNotAllowed(response);
 
-//   const arrayClothes = task3(store);
+  const arrayClothes = task3(store);
 
-//   return promiseCreateSale(arrayClothes, (err, result) => {
-//     if (err) {
-//       console.error('In controller promiseCreateSale', err);
+  const arrayPromise = arrayClothes.map(clothes => {
+    const isEqualTypes = (basedObject, equalObject) =>
+      (basedObject.type ? equalObject.type === basedObject.type : true) &&
+      (basedObject.color ? equalObject.color === basedObject.color : true);
 
-//       return internalServerError(response);
-//     }
+    const sumFunctions = (func, times = 1, number = 0) => {
+      return func().then(discount => {
+        if (times > 1) {
+          return sumFunctions(func, times - 1, discount + number);
+        }
 
-//     return ok(response, result);
-//   });
-// }
+        return discount + number;
+      });
+    };
+
+    if (isEqualTypes(SALE.TRIPLE, clothes)) {
+      return sumFunctions(createDiscount, 3);
+    }
+
+    if (isEqualTypes(SALE.DOUBLE, clothes)) {
+      return sumFunctions(createDiscount, 2);
+    }
+
+    return createDiscount();
+  });
+
+  Promise.all(arrayPromise).then(arrayDiscounts => {
+    console.log(arrayDiscounts);
+
+    const outputArray = arrayClothes.map((clothes, index) => {
+      return { ...clothes, discount: arrayDiscounts[index] };
+    });
+
+    ok(response, { clothes: outputArray });
+  });
+}
 
 async function salesAsync(request, response) {
   const { method } = request;
@@ -191,6 +217,6 @@ module.exports = {
   setDataGlobal,
   writeDataInFile,
   // salesCallback,
-  // salesPromise,
+  salesPromise,
   salesAsync,
 };
