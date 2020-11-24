@@ -7,7 +7,6 @@ const {
   tasks: { task1: sort, task2: biggestPrice, task3 },
   createDiscount: { generateValidDiscountPromise, generateValidDiscount },
 } = require('./services');
-const { sale: SALE } = require('./config');
 
 let store = require('./inputData');
 
@@ -124,10 +123,6 @@ function salesCallback(request, response) {
 
   const arrayCallback = lastCallback => {
     const getDiscount = (clothes, discountCallback) => {
-      const isEqualTypes = (basedObject, equalObject) =>
-        (basedObject.type ? equalObject.type === basedObject.type : true) &&
-        (basedObject.color ? equalObject.color === basedObject.color : true);
-
       const sumFunctions = (func, times = 1, startDiscount = 0, callback) => {
         func((err, discount) => {
           if (err) return callback(err);
@@ -145,11 +140,11 @@ function salesCallback(request, response) {
         });
       };
 
-      if (isEqualTypes(SALE.TRIPLE, clothes)) {
+      if (clothes.type === 'hat' && clothes.color === 'red') {
         return sumFunctions(generateValidDiscount, 3, 0, discountCallback);
       }
 
-      if (isEqualTypes(SALE.DOUBLE, clothes)) {
+      if (clothes.type === 'hat') {
         return sumFunctions(generateValidDiscount, 2, 0, discountCallback);
       }
 
@@ -194,35 +189,29 @@ function salesPromise(request, response) {
   const arrayClothes = task3(store);
 
   const arrayPromise = arrayClothes.map(clothes => {
-    const isEqualTypes = (basedObject, equalObject) =>
-      (basedObject.type ? equalObject.type === basedObject.type : true) &&
-      (basedObject.color ? equalObject.color === basedObject.color : true);
+    const validDiscountPromises = [generateValidDiscountPromise()];
 
-    const sumFunctions = (func, times = 1, startDiscount = 0) => {
-      return func().then(discount => {
-        if (times > 1) {
-          return sumFunctions(func, times - 1, discount + startDiscount);
-        }
+    if (clothes.type === 'hat') {
+      validDiscountPromises.push(generateValidDiscountPromise());
 
-        return discount + startDiscount;
+      if (clothes.color === 'red') {
+        validDiscountPromises.push(generateValidDiscountPromise());
+      }
+    }
+
+    return Promise.all(validDiscountPromises).then(discounts => {
+      let result = 0;
+
+      discounts.forEach(discount => {
+        result += discount;
       });
-    };
 
-    if (isEqualTypes(SALE.TRIPLE, clothes)) {
-      return sumFunctions(generateValidDiscountPromise, 3);
-    }
-
-    if (isEqualTypes(SALE.DOUBLE, clothes)) {
-      return sumFunctions(generateValidDiscountPromise, 2);
-    }
-
-    return generateValidDiscountPromise();
+      return result;
+    });
   });
 
   return Promise.all(arrayPromise)
     .then(arrayDiscounts => {
-      console.log(arrayDiscounts);
-
       const outputArray = arrayClothes.map((clothes, index) => {
         return { ...clothes, discount: arrayDiscounts[index] };
       });
