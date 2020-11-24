@@ -208,16 +208,15 @@ function salesPromise(request, response) {
       });
     };
 
-    const promiseGenerateFunc = generateValidDiscountPromise();
     if (isEqualTypes(SALE.TRIPLE, clothes)) {
-      return sumFunctions(promiseGenerateFunc, 3);
+      return sumFunctions(generateValidDiscountPromise, 3);
     }
 
     if (isEqualTypes(SALE.DOUBLE, clothes)) {
-      return sumFunctions(promiseGenerateFunc, 2);
+      return sumFunctions(generateValidDiscountPromise, 2);
     }
 
-    return promiseGenerateFunc();
+    return generateValidDiscountPromise();
   });
 
   return Promise.all(arrayPromise)
@@ -245,18 +244,12 @@ async function salesAsync(request, response) {
 
   const outputArray = [];
   for await (const clothes of arrayClothes) {
-    const isEqualTypes = (basedObject, equalObject) =>
-      (basedObject.type ? equalObject.type === basedObject.type : true) &&
-      (basedObject.color ? equalObject.color === basedObject.color : true);
+    let discount = await generateValidDiscountPromise();
+    if (clothes.type === 'hat') {
+      discount += await generateValidDiscountPromise();
 
-    const promiseGenerateFunc = generateValidDiscountPromise();
-    let discount = await promiseGenerateFunc();
-
-    if (isEqualTypes(SALE.DOUBLE, clothes)) {
-      discount += await promiseGenerateFunc();
-
-      if (isEqualTypes(SALE.TRIPLE, clothes)) {
-        discount += await promiseGenerateFunc();
+      if (clothes.color === 'red') {
+        discount += await generateValidDiscountPromise();
       }
     }
 

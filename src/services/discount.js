@@ -31,6 +31,6 @@ function generateValidDiscountPromise() {
 }
 
 module.exports = {
-  generateValidDiscountPromise,
+  generateValidDiscountPromise: generateValidDiscountPromise(),
   generateValidDiscount,
 };
