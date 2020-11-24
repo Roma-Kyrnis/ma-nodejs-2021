@@ -6,7 +6,6 @@ const path = require('path');
 const {
   tasks: { task1: sort, task2: biggestPrice, task3 },
   createDiscount: {
-    generateValidDiscountAsync,
     generateValidDiscountPromise,
     generateValidDiscount,
   },
@@ -260,12 +259,13 @@ async function salesAsync(request, response) {
       return sale;
     };
 
+    const promiseGenerateFunc = generateValidDiscountPromise();
     let discount;
     if (isEqualTypes(SALE.TRIPLE, clothes)) {
-      discount = await sumFunctions(generateValidDiscountAsync, 3);
+      discount = await sumFunctions(promiseGenerateFunc, 3);
     } else if (isEqualTypes(SALE.DOUBLE, clothes)) {
-      discount = await sumFunctions(generateValidDiscountAsync, 2);
-    } else discount = await generateValidDiscountAsync();
+      discount = await sumFunctions(promiseGenerateFunc, 2);
+    } else discount = await promiseGenerateFunc();
 
     outputArray.push({ ...clothes, discount });
   }
