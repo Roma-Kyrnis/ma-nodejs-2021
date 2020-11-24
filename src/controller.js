@@ -5,10 +5,7 @@ const path = require('path');
 
 const {
   tasks: { task1: sort, task2: biggestPrice, task3 },
-  createDiscount: {
-    generateValidDiscountPromise,
-    generateValidDiscount,
-  },
+  createDiscount: { generateValidDiscountPromise, generateValidDiscount },
 } = require('./services');
 const { sale: SALE } = require('./config');
 
@@ -252,20 +249,16 @@ async function salesAsync(request, response) {
       (basedObject.type ? equalObject.type === basedObject.type : true) &&
       (basedObject.color ? equalObject.color === basedObject.color : true);
 
-    const sumFunctions = async (func, times = 1) => {
-      const sale = await func();
-      if (times > 1) return sale + (await sumFunctions(func, times - 1));
-
-      return sale;
-    };
-
     const promiseGenerateFunc = generateValidDiscountPromise();
-    let discount;
-    if (isEqualTypes(SALE.TRIPLE, clothes)) {
-      discount = await sumFunctions(promiseGenerateFunc, 3);
-    } else if (isEqualTypes(SALE.DOUBLE, clothes)) {
-      discount = await sumFunctions(promiseGenerateFunc, 2);
-    } else discount = await promiseGenerateFunc();
+    let discount = await promiseGenerateFunc();
+
+    if (isEqualTypes(SALE.DOUBLE, clothes)) {
+      discount += await promiseGenerateFunc();
+
+      if (isEqualTypes(SALE.TRIPLE, clothes)) {
+        discount += await promiseGenerateFunc();
+      }
+    }
 
     outputArray.push({ ...clothes, discount });
   }
