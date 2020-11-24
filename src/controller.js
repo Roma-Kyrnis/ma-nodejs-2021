@@ -5,7 +5,11 @@ const path = require('path');
 
 const {
   tasks: { task1: sort, task2: biggestPrice, task3 },
-  createDiscount,
+  createDiscount: {
+    generateValidDiscountAsync,
+    generateValidDiscountPromise,
+    generateValidDiscount,
+  },
 } = require('./services');
 const { sale: SALE } = require('./config');
 
@@ -115,23 +119,76 @@ function writeDataInFile(request, response) {
   return ok(response);
 }
 
-// function salesCallback(request, response) {
-//   const { method } = request;
+function salesCallback(request, response) {
+  const { method } = request;
 
-//   if (method !== 'GET') return methodNotAllowed(response);
+  if (method !== 'GET') return methodNotAllowed(response);
 
-//   const arrayClothes = task3(store);
+  const arrayClothes = task3(store);
 
-//   return callbackCreateSale(arrayClothes, (err, result) => {
-//     if (err) {
-//       console.error('In controller salesCallback', err);
+  const arrayCallback = lastCallback => {
+    const getDiscount = (clothes, discountCallback) => {
+      const isEqualTypes = (basedObject, equalObject) =>
+        (basedObject.type ? equalObject.type === basedObject.type : true) &&
+        (basedObject.color ? equalObject.color === basedObject.color : true);
 
-//       return internalServerError(response);
-//     }
+      const sumFunctions = (func, times = 1, startDiscount = 0, callback) => {
+        func((err, discount) => {
+          if (err) return callback(err);
 
-//     return ok(response, result);
-//   });
-// }
+          if (times > 1) {
+            return sumFunctions(
+              func,
+              times - 1,
+              discount + startDiscount,
+              callback,
+            );
+          }
+
+          return callback(null, discount + startDiscount);
+        });
+      };
+
+      if (isEqualTypes(SALE.TRIPLE, clothes)) {
+        return sumFunctions(generateValidDiscount, 3, 0, discountCallback);
+      }
+
+      if (isEqualTypes(SALE.DOUBLE, clothes)) {
+        return sumFunctions(generateValidDiscount, 2, 0, discountCallback);
+      }
+
+      return generateValidDiscount(discountCallback);
+    };
+
+    const outputArray = [];
+
+    const everyDiscountCallback = (err, discount) => {
+      if (err) return lastCallback(err);
+
+      outputArray.push({ ...arrayClothes[outputArray.length], discount });
+
+      if (arrayClothes.length === outputArray.length) {
+        return lastCallback(null, outputArray);
+      }
+
+      return getDiscount(
+        arrayClothes[outputArray.length],
+        everyDiscountCallback,
+      );
+    };
+
+    getDiscount(arrayClothes[0], everyDiscountCallback);
+  };
+
+  return arrayCallback((err, res) => {
+    if (err) {
+      console.error('array callback', err);
+      return internalServerError(response);
+    }
+
+    return ok(response, { clothes: res });
+  });
+}
 
 function salesPromise(request, response) {
   const { method } = request;
@@ -145,36 +202,42 @@ function salesPromise(request, response) {
       (basedObject.type ? equalObject.type === basedObject.type : true) &&
       (basedObject.color ? equalObject.color === basedObject.color : true);
 
-    const sumFunctions = (func, times = 1, number = 0) => {
+    const sumFunctions = (func, times = 1, startDiscount = 0) => {
       return func().then(discount => {
         if (times > 1) {
-          return sumFunctions(func, times - 1, discount + number);
+          return sumFunctions(func, times - 1, discount + startDiscount);
         }
 
-        return discount + number;
+        return discount + startDiscount;
       });
     };
 
+    const promiseGenerateFunc = generateValidDiscountPromise();
     if (isEqualTypes(SALE.TRIPLE, clothes)) {
-      return sumFunctions(createDiscount, 3);
+      return sumFunctions(promiseGenerateFunc, 3);
     }
 
     if (isEqualTypes(SALE.DOUBLE, clothes)) {
-      return sumFunctions(createDiscount, 2);
+      return sumFunctions(promiseGenerateFunc, 2);
     }
 
-    return createDiscount();
+    return promiseGenerateFunc();
   });
 
-  Promise.all(arrayPromise).then(arrayDiscounts => {
-    console.log(arrayDiscounts);
+  return Promise.all(arrayPromise)
+    .then(arrayDiscounts => {
+      console.log(arrayDiscounts);
 
-    const outputArray = arrayClothes.map((clothes, index) => {
-      return { ...clothes, discount: arrayDiscounts[index] };
+      const outputArray = arrayClothes.map((clothes, index) => {
+        return { ...clothes, discount: arrayDiscounts[index] };
+      });
+
+      ok(response, { clothes: outputArray });
+    })
+    .catch(err => {
+      console.error('In promise all', err);
+      internalServerError(response);
     });
-
-    ok(response, { clothes: outputArray });
-  });
 }
 
 async function salesAsync(request, response) {
@@ -199,10 +262,10 @@ async function salesAsync(request, response) {
 
     let discount;
     if (isEqualTypes(SALE.TRIPLE, clothes)) {
-      discount = await sumFunctions(createDiscount, 3);
+      discount = await sumFunctions(generateValidDiscountAsync, 3);
     } else if (isEqualTypes(SALE.DOUBLE, clothes)) {
-      discount = await sumFunctions(createDiscount, 2);
-    } else discount = await createDiscount();
+      discount = await sumFunctions(generateValidDiscountAsync, 2);
+    } else discount = await generateValidDiscountAsync();
 
     outputArray.push({ ...clothes, discount });
   }
@@ -216,7 +279,7 @@ module.exports = {
   functionThree,
   setDataGlobal,
   writeDataInFile,
-  // salesCallback,
+  salesCallback,
   salesPromise,
   salesAsync,
 };

@@ -4,7 +4,7 @@ const {
   functionThree: task3,
   setDataGlobal,
   writeDataInFile,
-  // salesCallback,
+  salesCallback,
   salesPromise,
   salesAsync,
 } = require('./controller');
@@ -39,9 +39,9 @@ module.exports = async (request, response) => {
       writeDataInFile(request, response);
       break;
 
-    // case '/products/discounts/callback':
-    //   salesCallback(request, response);
-    //   break;
+    case '/products/discounts/callback':
+      salesCallback(request, response);
+      break;
 
     case '/products/discounts/promise':
       salesPromise(request, response);
