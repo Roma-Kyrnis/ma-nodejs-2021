@@ -1,5 +1,17 @@
 [
   {
+    "type": "hat",
+    "color": "red",
+    "quantity": 7,
+    "price": "$5"
+  },
+  {
+    "type": "hat",
+    "color": "green",
+    "quantity": 0,
+    "price": "$6"
+  },
+  {
     "type": "socks",
     "color": "red",
     "quantity": 10,
@@ -16,18 +28,6 @@
     "color": "blue",
     "quantity": 8,
     "priceForPair": "$6"
-  },
-  {
-    "type": "hat",
-    "color": "red",
-    "quantity": 7,
-    "price": "$5"
-  },
-  {
-    "type": "hat",
-    "color": "green",
-    "quantity": 0,
-    "price": "$6"
   },
   {
     "type": "socks",

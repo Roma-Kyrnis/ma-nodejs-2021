@@ -31,7 +31,7 @@ function generateValidDiscountPromise() {
 }
 
 // eslint-disable-next-line consistent-return
-async function createDiscount() {
+async function generateValidDiscountAsync() {
   const promise = generateValidDiscountPromise();
   try {
     return await promise();
@@ -40,4 +40,8 @@ async function createDiscount() {
   }
 }
 
-module.exports = createDiscount;
+module.exports = {
+  generateValidDiscountAsync,
+  generateValidDiscountPromise,
+  generateValidDiscount,
+};
