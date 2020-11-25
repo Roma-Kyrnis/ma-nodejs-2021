@@ -1,4 +1,4 @@
-const inputData = require('../inputData.json');
+const inputData = require('../../inputData.json');
 
 function biggestPrice(arrayClothes) {
   const result = { price: 0, clothes: {} };

@@ -13,7 +13,7 @@ function internalServerError(res, err) {
   res.end();
 }
 
-module.exports = async (request, response) => {
+module.exports = (request, response) => {
   try {
     const { url } = request;
     const parsedUrl = new URL(url, ORIGIN);
@@ -28,18 +28,22 @@ module.exports = async (request, response) => {
       .on('data', chunk => {
         body.push(chunk);
       })
-      .on('end', () => {
+      .on('end', async () => {
         body = Buffer.concat(body).toString();
 
-        router(
-          {
-            ...request,
-            body: body ? JSON.parse(body) : {},
-            url: parsedUrl,
-            queryParams,
-          },
-          response,
-        );
+        try {
+          await router(
+            {
+              ...request,
+              body: body ? JSON.parse(body) : {},
+              url: parsedUrl,
+              queryParams,
+            },
+            response,
+          );
+        } catch (err) {
+          console.error('some router problem', err);
+        }
       });
   } catch (error) {
     console.log(error);

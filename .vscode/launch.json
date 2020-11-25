@@ -10,6 +10,7 @@
       "name": "nodemon",
       "runtimeExecutable": "nodemon",
       "program": "${workspaceFolder}/src/app.js",
+      // "program": "${workspaceFolder}/src/test.js",
       "restart": true,
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",

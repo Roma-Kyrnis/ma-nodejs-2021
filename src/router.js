@@ -4,6 +4,9 @@ const {
   functionThree: task3,
   setDataGlobal,
   writeDataInFile,
+  salesCallback,
+  salesPromise,
+  salesAsync,
 } = require('./controller');
 
 function notFound(res) {
@@ -12,7 +15,7 @@ function notFound(res) {
   res.end('404');
 }
 
-module.exports = (request, response) => {
+module.exports = async (request, response) => {
   const { url } = request;
 
   switch (url.pathname) {
@@ -34,6 +37,18 @@ module.exports = (request, response) => {
 
     case '/writeDataInFile':
       writeDataInFile(request, response);
+      break;
+
+    case '/products/discounts/callback':
+      salesCallback(request, response);
+      break;
+
+    case '/products/discounts/promise':
+      salesPromise(request, response);
+      break;
+
+    case '/products/discounts/async':
+      await salesAsync(request, response);
       break;
 
     default:
