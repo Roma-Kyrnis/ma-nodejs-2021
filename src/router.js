@@ -4,12 +4,12 @@ const {
   functionThree: task3,
   setDataGlobal,
   writeDataInFile,
-  sale,
+  salesCallback,
+  salesPromise,
+  salesAsync,
   writeAsyncInFile,
   filenames,
 } = require('./controller');
-
-const { CALLBACK, PROMISE, ASYNC } = require('./config').sale;
 
 function notFound(res) {
   res.setHeader('Content-Type', 'application/text');
@@ -41,16 +41,16 @@ async function handleRoutes(request, response) {
       writeDataInFile(request, response);
       break;
 
-    case '/saleCallback':
-      await sale(request, response, CALLBACK);
+    case '/products/discounts/callback':
+      salesCallback(request, response);
       break;
 
-    case '/salePromise':
-      await sale(request, response, PROMISE);
+    case '/products/discounts/promise':
+      salesPromise(request, response);
       break;
 
-    case '/saleAsync':
-      await sale(request, response, ASYNC);
+    case '/products/discounts/async':
+      await salesAsync(request, response);
       break;
 
     case '/upload/filenames':
