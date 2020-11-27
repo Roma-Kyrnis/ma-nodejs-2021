@@ -1,61 +1,70 @@
 /* eslint-disable no-useless-return */
 const { Transform } = require('stream');
 
-const csv = require('fast-csv');
-
-function convertStringToJsonString(text, isFirst) {
-  const result = { text: '', remnant: '' };
-
-  const arrayStings = text.split('\n');
-
-  let arrayNameFields = [];
-  arrayStings.forEach((string, index) => {
-    const arrayValues = string.split(',');
-
-    if (index === 0 && isFirst) {
-      arrayNameFields = arrayValues;
-      return;
-    }
-
-    const product = {};
-
-    arrayNameFields.forEach(fieldName => {
-      
-    })
-  });
-
-  return result;
-}
+const { parseString } = require('fast-csv');
 
 function createCsvToJson() {
   const transform = (chunk, encoding, callback) => {
     let result = '';
 
-    if (!this.isNotFirst) {
+    const stringProducts = chunk.toString('utf8');
+    let stringProductsWithoutRemnant = stringProducts.slice(
+      0,
+      stringProducts.lastIndexOf('\n'),
+    );
+
+    if (this.isNotFirst) {
+      if (this.remnant) {
+        stringProductsWithoutRemnant = `${this.columnsNames}\n${this.remnant}${stringProductsWithoutRemnant}`;
+      }
+
+      result += ',';
+    } else {
       this.isNotFirst = true;
+      this.columnsNames = stringProductsWithoutRemnant.split('\n', 1);
 
       result += '[';
     }
 
-    let text;
-    if (Buffer.isBuffer(chunk)) text += chunk.toString();
+    this.remnant = stringProducts.slice(stringProducts.lastIndexOf('\n') + 1);
 
-    const objectWithTextAndRemnant = convertStringToJsonString(
-      text,
-      !this.isNotFirst,
-    );
+    const parseOptions = {
+      headers: true,
+      renameHeaders: false,
+      delimiter: ',',
+      rowDelimiter: '\n',
+      quoteHeaders: false,
+      quoteColumns: false,
+    };
 
-    result += objectWithTextAndRemnant.text;
-    this.remnant = objectWithTextAndRemnant.remnant;
+    const addAllColumnsInProduct = rowProduct => {
+      const { type, color, quantity, price, isPair } = rowProduct;
+      const fullProduct = { type, color, quantity: quantity || 0 };
 
-    callback(null, result);
+      if (isPair) fullProduct.priceForPair = price;
+      else fullProduct.price = price;
+
+      return fullProduct;
+    };
+
+    parseString(stringProductsWithoutRemnant, parseOptions)
+      .on('error', error => console.error('on error csv', error))
+      .on('data', rowProduct => {
+        const fullProduct = addAllColumnsInProduct(rowProduct);
+
+        result += `${JSON.stringify(fullProduct)},`;
+      })
+      .on('end', rowCount => {
+        console.log(`Parsed ${rowCount} rows`);
+
+        callback(null, result.slice(0, -1));
+      });
   };
 
   const flush = callback => {
-    callback(null, ']');
+    callback(null, `${this.remnant || ''}]`);
   };
 
-  csv.parse({ headers: true });
   return Transform({ transform, flush });
 }
 

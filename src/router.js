@@ -6,6 +6,7 @@ const {
   writeDataInFile,
   sale,
   writeAsyncInFile,
+  filenames,
 } = require('./controller');
 
 const { CALLBACK, PROMISE, ASYNC } = require('./config').sale;
@@ -50,6 +51,10 @@ async function handleRoutes(request, response) {
 
     case '/saleAsync':
       await sale(request, response, ASYNC);
+      break;
+
+    case '/upload/filenames':
+      await filenames(request, response);
       break;
 
     default:

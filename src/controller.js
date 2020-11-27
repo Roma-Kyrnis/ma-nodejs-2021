@@ -5,6 +5,7 @@ const {
   tasks: { task1: sort, task2: biggestPrice, task3 },
   generateSale,
   writeCSVFile,
+  getNameFilesInUploads,
 } = require('./services');
 
 let store = require('./inputData');
@@ -133,10 +134,26 @@ async function writeAsyncInFile(request, response) {
     await writeCSVFile(request);
   } catch (err) {
     console.error('In controller', err);
-    internalServerError(response);
+    return internalServerError(response);
   }
 
   return ok(response);
+}
+
+async function filenames(request, response) {
+  const { method } = request;
+
+  if (method !== 'GET') return methodNotAllowed(response);
+
+  let names;
+  try {
+    names = await getNameFilesInUploads(request);
+  } catch (err) {
+    console.error('nameFiles In controller', err);
+    return internalServerError(response);
+  }
+
+  return ok(response, names);
 }
 
 module.exports = {
@@ -147,4 +164,5 @@ module.exports = {
   writeDataInFile,
   sale,
   writeAsyncInFile,
+  filenames,
 };
