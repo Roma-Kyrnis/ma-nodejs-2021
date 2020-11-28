@@ -8,6 +8,7 @@ const {
   createDiscount: { generateValidDiscountPromise, generateValidDiscount },
   writeCSVFile,
   getNameFilesInUploads,
+  optimizationFiles,
 } = require('./services');
 
 let store = require('./inputData');
@@ -15,6 +16,12 @@ let store = require('./inputData');
 function ok(res, body = { message: 'Ok' }) {
   res.setHeader('Content-Type', 'application/json');
   res.statusCode = 200;
+  res.end(JSON.stringify(body));
+}
+
+function accepted(res, body = { message: 'Accepted' }) {
+  res.setHeader('Content-Type', 'application/json');
+  res.statusCode = 202;
   res.end(JSON.stringify(body));
 }
 
@@ -272,13 +279,23 @@ async function filenames(request, response) {
 
   let names;
   try {
-    names = await getNameFilesInUploads(request);
+    names = await getNameFilesInUploads();
   } catch (err) {
     console.error('nameFiles In controller', err);
     return internalServerError(response);
   }
 
   return ok(response, names);
+}
+
+function optimization(request, response) {
+  const { method } = request;
+
+  if (method !== 'POST') return methodNotAllowed(response);
+
+  optimizationFiles(request);
+
+  return accepted(response);
 }
 
 module.exports = {
@@ -292,4 +309,5 @@ module.exports = {
   salesAsync,
   writeAsyncInFile,
   filenames,
+  optimization,
 };

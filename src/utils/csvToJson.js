@@ -18,7 +18,7 @@ function createCsvToJson() {
         stringProductsWithoutRemnant = `${this.columnsNames}\n${this.remnant}${stringProductsWithoutRemnant}`;
       }
 
-      result += ',';
+      result += ',\n';
     } else {
       this.isNotFirst = true;
       this.columnsNames = stringProductsWithoutRemnant.split('\n', 1);
@@ -41,7 +41,7 @@ function createCsvToJson() {
       const { type, color, quantity, price, isPair } = rowProduct;
       const fullProduct = { type, color, quantity: quantity || 0 };
 
-      if (isPair) fullProduct.priceForPair = price;
+      if (isPair === 'true') fullProduct.priceForPair = price;
       else fullProduct.price = price;
 
       return fullProduct;
@@ -52,12 +52,12 @@ function createCsvToJson() {
       .on('data', rowProduct => {
         const fullProduct = addAllColumnsInProduct(rowProduct);
 
-        result += `${JSON.stringify(fullProduct)},`;
+        result += `${JSON.stringify(fullProduct)},\n`;
       })
       .on('end', rowCount => {
         console.log(`Parsed ${rowCount} rows`);
 
-        callback(null, result.slice(0, -1));
+        callback(null, result.slice(0, -2));
       });
   };
 

@@ -6,6 +6,8 @@ const { v4: uuidv4 } = require('uuid');
 
 const { MAIN } = require('../config').dirStoreNames;
 
+if (!fs.existsSync(MAIN)) fs.mkdirSync(MAIN);
+
 const promisifiedPipeline = promisify(pipeline);
 
 const { createCsvToJson } = require('../utils');

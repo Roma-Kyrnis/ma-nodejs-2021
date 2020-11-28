@@ -9,6 +9,7 @@ const {
   salesAsync,
   writeAsyncInFile,
   filenames,
+  optimization,
 } = require('./controller');
 
 function notFound(res) {
@@ -55,6 +56,11 @@ async function handleRoutes(request, response) {
 
     case '/upload/filenames':
       await filenames(request, response);
+      break;
+
+    case !/^\/upload\/optimization\/[a-z0-9-]+\.json$/.test(url.pathname) ||
+      url.pathname:
+      optimization(request, response);
       break;
 
     default:
