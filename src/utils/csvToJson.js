@@ -15,14 +15,14 @@ function createCsvToJson() {
 
     if (this.isNotFirst) {
       if (this.remnant) {
-        stringProductsWithoutRemnant = `${this.columnsHeaders}\n${this.remnant}${stringProductsWithoutRemnant}`; // ${this.columnsHeaders}\n
+        stringProductsWithoutRemnant = `${this.remnant}${stringProductsWithoutRemnant}`;
       }
 
       result += ',\n';
     } else {
       this.isNotFirst = true;
       [this.columnsHeaders] = stringProductsWithoutRemnant.split('\n', 1);
-      stringProductsWithoutRemnant.split(
+      stringProductsWithoutRemnant = stringProductsWithoutRemnant.slice(
         stringProductsWithoutRemnant.indexOf('\n') + 1,
       );
       this.rowCount = 0;
