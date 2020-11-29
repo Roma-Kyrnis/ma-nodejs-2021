@@ -1,20 +1,4 @@
-let stopServer;
-let stopInterval;
-
-function exitHandler(err) {
-  if (err) console.error(err);
-
-  stopInterval();
-
-  stopServer(() => {
-    process.exit(0);
-  });
-}
-
-function gracefulShutdown(server, interval) {
-  stopServer = server;
-  stopInterval = interval;
-
+function gracefulShutdown(exitHandler) {
   process.on('multipleResolves', exitHandler);
 
   process.on('rejectionHandled', exitHandler);

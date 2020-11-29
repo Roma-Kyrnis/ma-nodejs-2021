@@ -23,7 +23,7 @@ async function getNameFilesInFolder() {
           size: fileStats.size, // bytes
         });
       } else if (fileStats.nlink === 2 && filename === 'optimized') {
-        optimizationFilenames = await fsp.readdir(`${MAIN}/${filename}`);
+        optimizationFilenames = await fsp.readdir(absolutePathToFile);
       }
     }
 

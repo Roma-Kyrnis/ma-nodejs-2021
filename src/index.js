@@ -1,13 +1,21 @@
-const server = require('./app');
-const { gracefulShutdown } = require('./services/server');
+const server = require('./server');
 const {
-  setPeriodOptimization,
-  stopOptimization,
-} = require('./services/server').optimization;
+  gracefulShutdown,
+  scheduler: { setScheduler, stopScheduler },
+} = require('./utils');
 
 function start() {
-  gracefulShutdown(server.stopServer, stopOptimization);
-  setPeriodOptimization();
+  gracefulShutdown(err => {
+    if (err) console.log(err);
+
+    stopScheduler();
+
+    server.stopServer(() => {
+      process.exit(1);
+    });
+  });
+
+  setScheduler(() => console.log('Schedule optimization'));
   server.startServer();
 }
 

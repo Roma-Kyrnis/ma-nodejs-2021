@@ -8,10 +8,10 @@ const {
   createDiscount: { generateValidDiscountPromise, generateValidDiscount },
   writeCSVFile,
   getNameFilesInUploads,
-  optimizationFiles,
-} = require('./services');
+  optimizationFile,
+} = require('../services');
 
-let store = require('./inputData');
+let store = require('../../inputData');
 
 function ok(res, body = { message: 'Ok' }) {
   res.setHeader('Content-Type', 'application/json');
@@ -293,7 +293,7 @@ function optimization(request, response) {
 
   if (method !== 'POST') return methodNotAllowed(response);
 
-  optimizationFiles(request);
+  optimizationFile(request);
 
   return accepted(response);
 }

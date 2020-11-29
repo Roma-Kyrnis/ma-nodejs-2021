@@ -1,7 +1,7 @@
 const { parse: parseQuery } = require('querystring');
 const { URL } = require('url');
 const { handleRoutes, handleStreamRoutes } = require('./router');
-const { ORIGIN } = require('./config').server;
+const { ORIGIN } = require('../config').server;
 
 function internalServerError(res, err) {
   const errMess = { message: 'Internal error occurred' };

@@ -6,13 +6,13 @@ const {
 
 if (!fs.existsSync(OPTIMIZATION)) fs.mkdirSync(OPTIMIZATION);
 
-function sortArray(inputArray, defaultArray = []) {
-  const outputArray = defaultArray;
+function sortArray(inputArray, defaultArray) {
+  const sortedArray = defaultArray;
 
   for (const product of inputArray) {
     const { type, color, quantity, price, priceForPair } = product;
 
-    const enabledProductIndex = outputArray.findIndex(
+    const enabledProductIndex = sortedArray.findIndex(
       enabledProduct =>
         enabledProduct.type === type &&
         enabledProduct.color === color &&
@@ -21,32 +21,30 @@ function sortArray(inputArray, defaultArray = []) {
     );
 
     if (enabledProductIndex >= 0) {
-      outputArray[enabledProductIndex].quantity += parseInt(quantity, 10);
+      sortedArray[enabledProductIndex].quantity += parseInt(quantity, 10);
     } else {
-      outputArray.push({ ...product, quantity: Number(quantity) });
+      sortedArray.push({ ...product, quantity: Number(quantity) });
     }
   }
 
-  return outputArray;
+  return sortedArray;
 }
 
-function optimizationFiles(req) {
+function optimizationFile(req) {
   const { url } = req;
   const filename = url.pathname.slice(url.pathname.lastIndexOf('/'));
   const pathToOriginalFile = MAIN + filename;
   const pathToOptimizedFile = OPTIMIZATION + filename;
   const inputStream = fs.createReadStream(pathToOriginalFile);
 
-  let sortedProductsArray;
+  let sortedProductsArray = [];
   let stringRemnant = '';
 
   inputStream.on('data', chunk => {
     let productsString = chunk;
     if (Buffer.isBuffer(chunk)) productsString = chunk.toString('utf8');
 
-    if (stringRemnant) {
-      stringRemnant += productsString.split('{', 1)[0];
-    }
+    if (stringRemnant) stringRemnant += productsString.split('{', 1)[0];
 
     const productsStringJson =
       stringRemnant +
@@ -54,30 +52,35 @@ function optimizationFiles(req) {
         productsString.indexOf('{'),
         productsString.lastIndexOf('}') + 1,
       );
-    stringRemnant = productsString.slice(productsString.lastIndexOf('}') + 2);
 
     const productsArrayJson = JSON.parse(`[${productsStringJson}]`);
 
     sortedProductsArray = sortArray(productsArrayJson, sortedProductsArray);
-  });
-  inputStream.on('end', () => {
-    console.log('Successfully Optimizate array products');
 
-    let totalQuantity = 0;
-    for (const product of sortedProductsArray) {
-      totalQuantity += product.quantity;
-    }
+    stringRemnant = productsString.slice(productsString.lastIndexOf('},') + 2);
+  });
+
+  inputStream.on('end', () => {
+    console.log('Successfully optimized array products');
+
+    const totalQuantity = sortedProductsArray.reduce(
+      (accumulator, currentValue) => accumulator + currentValue,
+    );
     console.log('Total quantity products: ', totalQuantity);
 
     fs.writeFile(
       pathToOptimizedFile,
       JSON.stringify(sortedProductsArray, 0, '  '),
       () => {
-        fs.unlink(pathToOriginalFile, () => console.log('File deleted'));
+        console.log(`File ${filename} has been overwritten`);
+        fs.unlink(pathToOriginalFile, () => {
+          console.log(`Previous version of file ${filename} has been deleted`);
+        });
       },
     );
   });
+
   inputStream.on('error', err => console.log(err));
 }
 
-module.exports = optimizationFiles;
+module.exports = optimizationFile;

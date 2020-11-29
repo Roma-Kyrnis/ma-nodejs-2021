@@ -1,7 +1,7 @@
 const http = require('http');
 
 const requestsHandler = require('./requestHandler');
-const { PORT } = require('./config').server;
+const { PORT } = require('../config').server;
 
 const server = http.createServer(requestsHandler);
 
