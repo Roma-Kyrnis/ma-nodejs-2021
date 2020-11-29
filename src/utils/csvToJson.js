@@ -15,36 +15,47 @@ function createCsvToJson() {
 
     if (this.isNotFirst) {
       if (this.remnant) {
-        stringProductsWithoutRemnant = `${this.columnsNames}\n${this.remnant}${stringProductsWithoutRemnant}`;
+        stringProductsWithoutRemnant = `${this.columnsHeaders}\n${this.remnant}${stringProductsWithoutRemnant}`; // ${this.columnsHeaders}\n
       }
 
       result += ',\n';
     } else {
       this.isNotFirst = true;
-      this.columnsNames = stringProductsWithoutRemnant.split('\n', 1);
+      [this.columnsHeaders] = stringProductsWithoutRemnant.split('\n', 1);
+      this.rowCount = 0;
 
       result += '[';
     }
 
     this.remnant = stringProducts.slice(stringProducts.lastIndexOf('\n') + 1);
 
+    const addAllColumnsInProduct = arrayValuesProduct => {
+      const arrayNamesColumns = this.columnsHeaders.split(',');
+
+      const product = {};
+      arrayValuesProduct.forEach((valueProduct, index) => {
+        product[arrayNamesColumns[index]] = valueProduct;
+      });
+
+      const fullProduct = {
+        type: product.type,
+        color: product.color,
+        quantity: product.quantity,
+      };
+
+      if (product.isPair === 'true') fullProduct.priceForPair = product.price;
+      else fullProduct.price = product.price;
+
+      return fullProduct;
+    };
+
     const parseOptions = {
-      headers: true,
+      headers: false,
       renameHeaders: false,
       delimiter: ',',
       rowDelimiter: '\n',
       quoteHeaders: false,
       quoteColumns: false,
-    };
-
-    const addAllColumnsInProduct = rowProduct => {
-      const { type, color, quantity, price, isPair } = rowProduct;
-      const fullProduct = { type, color, quantity: quantity || 0 };
-
-      if (isPair === 'true') fullProduct.priceForPair = price;
-      else fullProduct.price = price;
-
-      return fullProduct;
     };
 
     parseString(stringProductsWithoutRemnant, parseOptions)
@@ -55,6 +66,7 @@ function createCsvToJson() {
         result += `${JSON.stringify(fullProduct)},\n`;
       })
       .on('end', rowCount => {
+        this.rowCount += rowCount;
         console.log(`Parsed ${rowCount} rows`);
 
         callback(null, result.slice(0, -2));
@@ -62,6 +74,7 @@ function createCsvToJson() {
   };
 
   const flush = callback => {
+    console.log(`Parsed ${this.rowCount} rows at all!`);
     callback(null, `${this.remnant || ''}]`);
   };
 

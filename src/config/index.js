@@ -2,9 +2,9 @@ require('dotenv').config();
 
 const config = {
   server: {
-    PORT: process.env.PORT,
-    ORIGIN: process.env.ORIGIN,
-    OPTIMIZATION_TIME: process.env.OPTIMIZATION_TIME,
+    PORT: process.env.PORT || 3000,
+    ORIGIN: process.env.ORIGIN || 'localhost',
+    OPTIMIZATION_TIME: process.env.OPTIMIZATION_TIME || 10 * 60 * 1000, // 10 minutes
   },
 
   sale: {
