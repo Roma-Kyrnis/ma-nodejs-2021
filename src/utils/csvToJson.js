@@ -22,6 +22,9 @@ function createCsvToJson() {
     } else {
       this.isNotFirst = true;
       [this.columnsHeaders] = stringProductsWithoutRemnant.split('\n', 1);
+      stringProductsWithoutRemnant.split(
+        stringProductsWithoutRemnant.indexOf('\n') + 1,
+      );
       this.rowCount = 0;
 
       result += '[';
