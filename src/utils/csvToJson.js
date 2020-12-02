@@ -20,6 +20,7 @@ function createCsvToJson() {
 
       result += ',\n';
     } else {
+      this.remnant = '';
       this.isNotFirst = true;
       [this.columnsHeaders] = stringProductsWithoutRemnant.split('\n', 1);
       stringProductsWithoutRemnant = stringProductsWithoutRemnant.slice(
@@ -77,11 +78,12 @@ function createCsvToJson() {
   };
 
   const flush = callback => {
+    this.isNotFirst = false;
     console.log(`Parsed ${this.rowCount} rows at all!`);
     callback(null, `${this.remnant || ''}]`);
   };
 
-  return Transform({ transform, flush });
+  return new Transform({ transform, flush });
 }
 
 module.exports = createCsvToJson;

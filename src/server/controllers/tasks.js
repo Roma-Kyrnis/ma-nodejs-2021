@@ -5,7 +5,7 @@ const {
 
 function functionOne(request, response) {
   const { method, queryParams } = request;
-  const arrayClothes = store || [];
+  const arrayClothes = store.get() || [];
 
   if (method !== 'GET') return httpResponses.methodNotAllowed(response);
   if (!queryParams.name && !queryParams.value) {
@@ -30,7 +30,7 @@ function functionTwo(request, response) {
 
 function functionThree(request, response) {
   const { method } = request;
-  const arrayClothes = store || [];
+  const arrayClothes = store.get() || [];
 
   if (method !== 'GET') return httpResponses.methodNotAllowed(response);
 
