@@ -64,7 +64,10 @@ function optimizationFile(req) {
     console.log('Successfully optimized array products');
 
     const totalQuantity = sortedProductsArray.reduce(
-      (accumulator, currentValue) => accumulator + currentValue,
+      (accumulator, currentValue) => {
+        return accumulator + currentValue.quantity;
+      },
+      0,
     );
     console.log('Total quantity products: ', totalQuantity);
 

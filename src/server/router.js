@@ -1,16 +1,4 @@
-const {
-  functionOne: task1,
-  functionTwo: task2,
-  functionThree: task3,
-  setDataGlobal,
-  writeDataInFile,
-  salesCallback,
-  salesPromise,
-  salesAsync,
-  writeAsyncInFile,
-  filenames,
-  optimization,
-} = require('./controller');
+const { tasks, configureStore, sales, uploads } = require('./controllers');
 
 function notFound(res) {
   res.setHeader('Content-Type', 'application/text');
@@ -23,44 +11,44 @@ async function handleRoutes(request, response) {
 
   switch (url.pathname) {
     case '/task1':
-      task1(request, response);
+      tasks.task1(request, response);
       break;
 
     case '/task2':
-      task2(request, response);
+      tasks.task2(request, response);
       break;
 
     case '/task3':
-      task3(request, response);
+      tasks.task3(request, response);
       break;
 
     case '/setDataGlobal':
-      setDataGlobal(request, response);
+      configureStore.setDataGlobal(request, response);
       break;
 
     case '/writeDataInFile':
-      writeDataInFile(request, response);
+      configureStore.writeDataInFile(request, response);
       break;
 
     case '/products/discounts/callback':
-      salesCallback(request, response);
+      sales.salesCallback(request, response);
       break;
 
     case '/products/discounts/promise':
-      salesPromise(request, response);
+      sales.salesPromise(request, response);
       break;
 
     case '/products/discounts/async':
-      await salesAsync(request, response);
+      await sales.salesAsync(request, response);
       break;
 
     case '/upload/filenames':
-      await filenames(request, response);
+      await uploads.filenames(request, response);
       break;
 
     case !/^\/upload\/optimization\/[a-z0-9-]+\.json$/.test(url.pathname) ||
       url.pathname:
-      optimization(request, response);
+      uploads.optimization(request, response);
       break;
 
     default:
@@ -74,7 +62,7 @@ async function handleStreamRoutes(request, response) {
 
   switch (url) {
     case '/upload':
-      await writeAsyncInFile(request, response);
+      await uploads.writeAsyncInFile(request, response);
       break;
 
     default:

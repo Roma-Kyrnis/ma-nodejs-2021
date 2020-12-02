@@ -3,6 +3,11 @@ const {
   gracefulShutdown,
   scheduler: { setScheduler, stopScheduler },
 } = require('./utils');
+const {
+  writeCSVFile,
+  getNameFilesInUploads,
+  optimizationFile,
+} = require('./services');
 
 function start() {
   gracefulShutdown(err => {
@@ -15,7 +20,15 @@ function start() {
     });
   });
 
-  setScheduler(() => console.log('Schedule optimization'));
+  setScheduler(async () => {
+    console.log('Schedule optimization');
+
+    const files = await getNameFilesInUploads();
+
+    for (const file of files.uploads) {
+      optimizationFile({ url: new URL(`/${file.filename}`) });
+    }
+  });
   server.startServer();
 }
 
