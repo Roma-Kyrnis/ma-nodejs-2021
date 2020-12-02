@@ -11,15 +11,15 @@ async function handleRoutes(request, response) {
 
   switch (url.pathname) {
     case '/task1':
-      tasks.task1(request, response);
+      tasks.functionOne(request, response);
       break;
 
     case '/task2':
-      tasks.task2(request, response);
+      tasks.functionTwo(request, response);
       break;
 
     case '/task3':
-      tasks.task3(request, response);
+      tasks.functionThree(request, response);
       break;
 
     case '/setDataGlobal':
@@ -31,15 +31,15 @@ async function handleRoutes(request, response) {
       break;
 
     case '/products/discounts/callback':
-      sales.salesCallback(request, response);
+      sales.callback(request, response);
       break;
 
     case '/products/discounts/promise':
-      sales.salesPromise(request, response);
+      sales.promise(request, response);
       break;
 
     case '/products/discounts/async':
-      await sales.salesAsync(request, response);
+      await sales.async(request, response);
       break;
 
     case '/upload/filenames':
