@@ -2,13 +2,9 @@ const {
   tasks: { task3 },
   createDiscount: { generateValidDiscountPromise },
 } = require('../../../services');
-const { store, httpResponses } = require('../../../utils');
+const { store } = require('../../../utils');
 
-function salesPromise(request, response) {
-  const { method } = request;
-
-  if (method !== 'GET') return httpResponses.methodNotAllowed(response);
-
+function salesPromise(req, res) {
   const arrayClothes = task3(store.get());
 
   const arrayPromise = arrayClothes.map(clothes => {
@@ -39,11 +35,11 @@ function salesPromise(request, response) {
         return { ...clothes, discount: arrayDiscounts[index] };
       });
 
-      httpResponses.ok(response, { clothes: outputArray });
+      return res.status(200).json({ products: outputArray });
     })
     .catch(err => {
-      console.error('In promise all', err);
-      httpResponses.internalServerError(response);
+      console.error(err);
+      return res.status(500).json({ message: 'Internal server error' });
     });
 }
 

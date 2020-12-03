@@ -1,10 +1,17 @@
 require('dotenv').config();
 
+const { fatalError } = require('../utils');
+
 const config = {
   server: {
     PORT: process.env.PORT || 3000,
-    ORIGIN: process.env.ORIGIN || 'http://localhost:3000',
+    HOST: process.env.HOST || 'localhost',
     OPTIMIZATION_TIME: process.env.OPTIMIZATION_TIME || 10 * 60 * 1000, // 10 minutes
+  },
+
+  user: {
+    NAME: process.env.USER_NAME || fatalError('No user name'),
+    PASSWORD: process.env.USER_PASSWORD || fatalError('No user password'),
   },
 
   sale: {

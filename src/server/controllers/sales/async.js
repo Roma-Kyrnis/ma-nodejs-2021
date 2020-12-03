@@ -2,30 +2,30 @@ const {
   tasks: { task3 },
   createDiscount: { generateValidDiscountPromise },
 } = require('../../../services');
-const { store, httpResponses } = require('../../../utils');
+const { store } = require('../../../utils');
 
-async function salesAsync(request, response) {
-  const { method } = request;
-
-  if (method !== 'GET') return httpResponses.methodNotAllowed(response);
-
+async function salesAsync(req, res) {
   const arrayClothes = task3(store.get());
-
   const outputArray = [];
-  for await (const clothes of arrayClothes) {
-    let discount = await generateValidDiscountPromise();
-    if (clothes.type === 'hat') {
-      discount += await generateValidDiscountPromise();
-
-      if (clothes.color === 'red') {
+  try {
+    for await (const clothes of arrayClothes) {
+      let discount = await generateValidDiscountPromise();
+      if (clothes.type === 'hat') {
         discount += await generateValidDiscountPromise();
-      }
-    }
 
-    outputArray.push({ ...clothes, discount });
+        if (clothes.color === 'red') {
+          discount += await generateValidDiscountPromise();
+        }
+      }
+
+      outputArray.push({ ...clothes, discount });
+    }
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'Internal server error' });
   }
 
-  return httpResponses.ok(response, { clothes: outputArray });
+  return res.status(200).json({ products: outputArray });
 }
 
 module.exports = salesAsync;

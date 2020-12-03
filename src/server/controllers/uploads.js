@@ -1,51 +1,35 @@
-/* eslint-disable no-return-await */
-
-const { httpResponses } = require('../../utils');
 const {
   writeCSVFile,
   getNameFilesInUploads,
   optimizationFile,
 } = require('../../services');
 
-async function writeAsyncInFile(request, response) {
-  const { method } = request;
-
-  if (method !== 'POST') return httpResponses.methodNotAllowed(response);
-
+async function writeAsyncInFile(req, res) {
   try {
-    await writeCSVFile(request);
-  } catch (err) {
-    console.error('In controller', err);
-    return httpResponses.internalServerError(response);
-  }
+    await writeCSVFile(req);
 
-  return httpResponses.ok(response);
+    res.status(200).json({ message: 'ok' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
 }
 
-async function filenames(request, response) {
-  const { method } = request;
-
-  if (method !== 'GET') return httpResponses.methodNotAllowed(response);
-
-  let names;
+async function filenames(req, res) {
   try {
-    names = await getNameFilesInUploads();
-  } catch (err) {
-    console.error('nameFiles In controller', err);
-    return httpResponses.internalServerError(response);
-  }
+    const result = await getNameFilesInUploads();
 
-  return httpResponses.ok(response, names);
+    res.status(200).json({ files: result });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
 }
 
-function optimization(request, response) {
-  const { method } = request;
+function optimization(req, res) {
+  optimizationFile(req);
 
-  if (method !== 'POST') return httpResponses.methodNotAllowed(response);
-
-  optimizationFile(request);
-
-  return httpResponses.accepted(response);
+  res.status(202).json({ message: 'Accepted' });
 }
 
 module.exports = { writeAsyncInFile, filenames, optimization };

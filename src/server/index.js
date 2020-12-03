@@ -1,17 +1,54 @@
-const http = require('http');
+/* eslint-disable consistent-return */
+const express = require('express');
+const bodyParser = require('body-parser');
+const basicAuth = require('express-basic-auth');
 
-const requestsHandler = require('./requestHandler');
-const { PORT } = require('../config').server;
+const router = require('./router');
+const {
+  server: { HOST, PORT },
+  user,
+} = require('../config');
+// const { authorization } = require('../utils');
 
-const server = http.createServer(requestsHandler);
+const app = express();
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+const basicAuthOptions = {
+  users: { [user.NAME]: user.PASSWORD },
+  unauthorizedResponse: { message: 'Unauthorized' },
+};
+
+// (req, res) => {
+//   res.status(403).json({ message: 'Forbidden' });
+// },
+
+app.use('', basicAuth(basicAuthOptions), router);
+
+let server;
+
+app.use((error, req, res, next) => {
+  console.error({ error }, 'Global catch errors');
+  res.status(error.status || 500);
+  const errMessage = { message: error.message || 'Internal server error!' };
+
+  res.json({ errMessage });
+});
 
 function startServer() {
-  server.listen(Number(PORT), () => {
-    console.log('Server started.');
+  server = app.listen(PORT, HOST, () => {
+    console.log(`Server is listening on "${HOST}:${PORT}"!`);
   });
+
+  // server.listen(Number(PORT), () => {
+  //   console.log('Server started.');
+  // });
 }
 
 function stopServer(callback) {
+  if (!server) return console.error('Server is not running');
+
   server.close(err => {
     if (err) {
       console.error(err, 'failed to close server');

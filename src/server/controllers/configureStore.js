@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const { store, httpResponses } = require('../../utils');
+const { store } = require('../../utils');
 
 function isIncorrectData(data) {
   if (!Array.isArray(data) || data.length === 0) return true;
@@ -15,35 +15,33 @@ function isIncorrectData(data) {
   return false;
 }
 
-function setDataGlobal(request, response) {
-  const { method, body: data } = request;
+function setDataGlobal(req, res) {
+  const { body: data } = req;
 
-  if (method !== 'POST') return httpResponses.methodNotAllowed(response);
   if (isIncorrectData(data)) {
-    return httpResponses.badRequest(response, { message: 'Incorrect data!' });
+    return res.status(400).json({ message: 'Incorrect data!' });
   }
 
   store.set(data);
 
-  return httpResponses.ok(response);
+  return res.status(200).json({ message: 'ok' });
 }
 
-function writeDataInFile(request, response) {
-  const { method, body: data } = request;
+function writeDataInFile(req, res) {
+  const { body: data } = req;
 
-  if (method !== 'POST') return httpResponses.methodNotAllowed(response);
   if (isIncorrectData(data)) {
-    return httpResponses.badRequest(response, { message: 'Incorrect data!' });
+    return res.status(400).json({ message: 'Incorrect data!' });
   }
 
   fs.writeFileSync(
-    path.resolve(__dirname, 'inputData.json'),
+    path.resolve(process.cwd(), '/inputData.json'),
     JSON.stringify(data, 0, 2),
   );
 
   store.set(data);
 
-  return httpResponses.ok(response);
+  return res.status(200).json({ message: 'ok' });
 }
 
 module.exports = { setDataGlobal, writeDataInFile };
