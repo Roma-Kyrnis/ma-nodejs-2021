@@ -8,7 +8,6 @@ const {
   server: { HOST, PORT },
   user,
 } = require('../config');
-// const { authorization } = require('../utils');
 
 const app = express();
 
@@ -20,14 +19,11 @@ const basicAuthOptions = {
   unauthorizedResponse: { message: 'Unauthorized' },
 };
 
-// (req, res) => {
-//   res.status(403).json({ message: 'Forbidden' });
-// },
-
 app.use('', basicAuth(basicAuthOptions), router);
 
 let server;
 
+// eslint-disable-next-line no-unused-vars
 app.use((error, req, res, next) => {
   console.error({ error }, 'Global catch errors');
   res.status(error.status || 500);
@@ -40,10 +36,6 @@ function startServer() {
   server = app.listen(PORT, HOST, () => {
     console.log(`Server is listening on "${HOST}:${PORT}"!`);
   });
-
-  // server.listen(Number(PORT), () => {
-  //   console.log('Server started.');
-  // });
 }
 
 function stopServer(callback) {
