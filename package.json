@@ -7,8 +7,8 @@
     "start": "node src"
   },
   "dependencies": {
+    "byline": "^5.0.0",
     "dotenv": "^8.2.0",
-    "fast-csv": "^4.3.5",
     "uuid": "^8.3.1"
   },
   "devDependencies": {

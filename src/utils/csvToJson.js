@@ -1,44 +1,23 @@
-/* eslint-disable no-useless-return */
 const { Transform } = require('stream');
 
-const { parseString } = require('fast-csv');
-
 function createCsvToJson() {
+  let isNotFirst = false;
+  let insertLineSeparator = false;
+  let columnsHeaders = [];
+  let rowCount = 0;
+
   const transform = (chunk, encoding, callback) => {
     let result = '';
 
-    const stringProducts = chunk.toString('utf8');
-    let stringProductsWithoutRemnant = stringProducts.slice(
-      0,
-      stringProducts.lastIndexOf('\n'),
-    );
+    const stringProduct = chunk.toString('utf8');
+    if (columnsHeaders.toString() === stringProduct) return callback(null, '');
 
-    if (this.isNotFirst) {
-      if (this.remnant) {
-        stringProductsWithoutRemnant = `${this.remnant}${stringProductsWithoutRemnant}`;
-      }
-
-      result += ',\n';
-    } else {
-      this.remnant = '';
-      this.isNotFirst = true;
-      [this.columnsHeaders] = stringProductsWithoutRemnant.split('\n', 1);
-      stringProductsWithoutRemnant = stringProductsWithoutRemnant.slice(
-        stringProductsWithoutRemnant.indexOf('\n') + 1,
-      );
-      this.rowCount = 0;
-
-      result += '[';
-    }
-
-    this.remnant = stringProducts.slice(stringProducts.lastIndexOf('\n') + 1);
+    const arrayProduct = stringProduct.split(',');
 
     const addAllColumnsInProduct = arrayValuesProduct => {
-      const arrayNamesColumns = this.columnsHeaders.split(',');
-
       const product = {};
       arrayValuesProduct.forEach((valueProduct, index) => {
-        product[arrayNamesColumns[index]] = valueProduct;
+        product[columnsHeaders[index]] = valueProduct;
       });
 
       const fullProduct = {
@@ -53,34 +32,26 @@ function createCsvToJson() {
       return fullProduct;
     };
 
-    const parseOptions = {
-      headers: false,
-      renameHeaders: false,
-      delimiter: ',',
-      rowDelimiter: '\n',
-      quoteHeaders: false,
-      quoteColumns: false,
-    };
+    if (isNotFirst) {
+      rowCount += 1;
 
-    parseString(stringProductsWithoutRemnant, parseOptions)
-      .on('error', error => console.error('on error csv', error))
-      .on('data', rowProduct => {
-        const fullProduct = addAllColumnsInProduct(rowProduct);
+      if (insertLineSeparator) result += ',\n';
+      else insertLineSeparator = true;
 
-        result += `${JSON.stringify(fullProduct)},\n`;
-      })
-      .on('end', rowCount => {
-        this.rowCount += rowCount;
-        console.log(`Parsed ${rowCount} rows`);
+      const product = addAllColumnsInProduct(arrayProduct);
+      result += `${JSON.stringify(product)}`;
+    } else {
+      result += '[';
+      isNotFirst = true;
+      columnsHeaders = arrayProduct;
+    }
 
-        callback(null, result.slice(0, -2));
-      });
+    return callback(null, result);
   };
 
   const flush = callback => {
-    this.isNotFirst = false;
-    console.log(`Parsed ${this.rowCount} rows at all!`);
-    callback(null, `${this.remnant || ''}]`);
+    console.log(`Parsed ${rowCount} rows at all!`);
+    callback(null, ']');
   };
 
   return new Transform({ transform, flush });
