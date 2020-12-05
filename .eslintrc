@@ -17,7 +17,8 @@
   },
   "rules": {
       "prettier/prettier": "error",
-      "no-console": "off",
-      "no-plusplus": [2, { "allowForLoopAfterthoughts": true }]
+      "no-console": "warn",
+      "no-plusplus": [2, { "allowForLoopAfterthoughts": true }],
+      "no-restricted-syntax":"off"
   }
 }
