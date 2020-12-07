@@ -2,13 +2,9 @@ const {
   tasks: { task3 },
   createDiscount: { generateValidDiscount },
 } = require('../../../services');
-const { store, httpResponses } = require('../../../utils');
+const { store } = require('../../../utils');
 
-function salesCallback(request, response) {
-  const { method } = request;
-
-  if (method !== 'GET') return httpResponses.methodNotAllowed(response);
-
+function salesCallback(req, res) {
   const arrayClothes = task3(store.get());
 
   const arrayCallback = lastCallback => {
@@ -61,13 +57,13 @@ function salesCallback(request, response) {
     getDiscount(arrayClothes[0], everyDiscountCallback);
   };
 
-  return arrayCallback((err, res) => {
+  return arrayCallback((err, result) => {
     if (err) {
-      console.error('array callback', err);
-      return httpResponses.internalServerError(response);
+      console.error(err);
+      return res.status(500).json({ message: 'Internal server error' });
     }
 
-    return httpResponses.ok(response, { clothes: res });
+    return res.status(200).json({ products: result });
   });
 }
 

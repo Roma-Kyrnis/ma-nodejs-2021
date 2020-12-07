@@ -1,42 +1,34 @@
-const { store, httpResponses } = require('../../utils');
+const { store } = require('../../utils');
 const {
   tasks: { task1: sort, task2: biggestPrice, task3 },
 } = require('../../services');
 
-function functionOne(request, response) {
-  const { method, queryParams } = request;
+function functionOne(req, res) {
+  const { query } = req;
   const arrayClothes = store.get() || [];
 
-  if (method !== 'GET') return httpResponses.methodNotAllowed(response);
-  if (!queryParams.name && !queryParams.value) {
-    return httpResponses.badRequest(response, { Message: 'No param!' });
+  if (!query.name && !query.value) {
+    return res.status(200).json({ Message: 'No param!' });
   }
 
-  let { value } = queryParams;
+  let { value } = query;
   if (!Number.isNaN(Number(value))) value = Number(value);
 
-  const result = sort(arrayClothes, queryParams.name, value);
+  const result = sort(arrayClothes, query.name, value);
 
-  return httpResponses.ok(response, result);
+  return res.status(200).json(result);
 }
 
-function functionTwo(request, response) {
-  const { method } = request;
-
-  if (method !== 'GET') return httpResponses.methodNotAllowed(response);
-
-  return httpResponses.ok(response, biggestPrice);
+function functionTwo(req, res) {
+  return res.status(200).json(biggestPrice);
 }
 
-function functionThree(request, response) {
-  const { method } = request;
+function functionThree(req, res) {
   const arrayClothes = store.get() || [];
-
-  if (method !== 'GET') return httpResponses.methodNotAllowed(response);
 
   const result = task3(arrayClothes);
 
-  return httpResponses.ok(response, result);
+  return res.status(200).json(result);
 }
 
 module.exports = { functionOne, functionTwo, functionThree };
