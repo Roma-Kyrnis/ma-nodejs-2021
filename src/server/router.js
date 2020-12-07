@@ -1,6 +1,4 @@
-const { Router } = require('@awaitjs/express');
-
-const router = Router();
+const router = require('@awaitjs/express').Router();
 
 const { tasks, configureStore, sales, uploads } = require('./controllers');
 
