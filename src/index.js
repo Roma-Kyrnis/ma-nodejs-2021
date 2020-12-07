@@ -5,7 +5,7 @@ const {
 } = require('./utils');
 const { getNameFilesInUploads, optimizationFile } = require('./services');
 const {
-  server: { ORIGIN },
+  server: { ORIGIN, OPTIMIZATION_TIME },
 } = require('./config');
 
 function start() {
@@ -27,7 +27,7 @@ function start() {
     for (const file of files.uploads) {
       optimizationFile({ url: new URL(`/${file.filename}`, ORIGIN) });
     }
-  });
+  }, OPTIMIZATION_TIME);
   server.startServer();
 }
 

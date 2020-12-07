@@ -1,9 +1,7 @@
-const { server } = require('../config');
-
 let ticker;
 
-function setScheduler(callback) {
-  ticker = setInterval(callback, server.OPTIMIZATION_TIME);
+function setScheduler(callback, repeatTime) {
+  ticker = setInterval(callback, repeatTime);
 }
 
 function stopScheduler() {
