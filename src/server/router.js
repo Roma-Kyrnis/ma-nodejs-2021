@@ -15,6 +15,6 @@ router.get('/products/discounts/async', sales.async);
 
 router.post('/upload', uploads.writeAsyncInFile);
 router.get('/upload/filenames', uploads.filenames);
-router.post(/^\/upload\/optimization\/[a-z0-9-]+\.json$/, uploads.optimization);
+router.post('/upload/optimization/:filename', uploads.optimization);
 
 module.exports = router;

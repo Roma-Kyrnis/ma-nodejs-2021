@@ -31,10 +31,9 @@ function sortArray(inputArray, defaultArray) {
 }
 
 function optimizationFile(req) {
-  const { url } = req;
-  const filename = url.pathname.slice(url.pathname.lastIndexOf('/'));
-  const pathToOriginalFile = MAIN + filename;
-  const pathToOptimizedFile = OPTIMIZATION + filename;
+  const { filename } = req.params;
+  const pathToOriginalFile = `${MAIN}/${filename}`;
+  const pathToOptimizedFile = `${OPTIMIZATION}/${filename}`;
   const inputStream = fs.createReadStream(pathToOriginalFile);
 
   let sortedProductsArray = [];
