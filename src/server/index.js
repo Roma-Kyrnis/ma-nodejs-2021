@@ -19,7 +19,7 @@ const basicAuthOptions = {
   unauthorizedResponse: { message: 'Unauthorized' },
 };
 
-app.use('', basicAuth(basicAuthOptions), router);
+app.use(basicAuth(basicAuthOptions), router);
 
 let server;
 
