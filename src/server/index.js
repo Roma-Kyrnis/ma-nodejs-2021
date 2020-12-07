@@ -26,10 +26,16 @@ let server;
 // eslint-disable-next-line no-unused-vars
 app.use((error, req, res, next) => {
   console.error({ error }, 'Global catch errors');
-  res.status(error.status || 500);
-  const errMessage = { message: error.message || 'Internal server error!' };
 
-  res.json({ errMessage });
+  let errMessage = { message: 'Internal server error!' };
+  if (parseInt(error.status, 10) === 500 || !error.message) {
+    res.status = 500;
+  } else {
+    res.status(error.status);
+    errMessage = { message: error.message };
+  }
+
+  res.json(errMessage);
 });
 
 function startServer() {
