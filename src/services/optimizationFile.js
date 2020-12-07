@@ -30,10 +30,12 @@ function sortArray(inputArray, defaultArray) {
   return sortedArray;
 }
 
-function optimizationFile(req) {
+async function optimizationFile(req) {
   const { filename } = req.params;
   const pathToOriginalFile = `${MAIN}/${filename}`;
   const pathToOptimizedFile = `${OPTIMIZATION}/${filename}`;
+
+  if (!fs.existsSync(pathToOriginalFile)) throw new Error('No such file');
   const inputStream = fs.createReadStream(pathToOriginalFile);
 
   let sortedProductsArray = [];

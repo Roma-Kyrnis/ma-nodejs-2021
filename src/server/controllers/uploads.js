@@ -26,10 +26,15 @@ async function filenames(req, res) {
   }
 }
 
-function optimization(req, res) {
-  optimizationFile(req);
+async function optimization(req, res) {
+  try {
+    await optimizationFile(req);
 
-  res.status(202).json({ message: 'Accepted' });
+    res.status(202).json({ message: 'Accepted' });
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({ message: err.message || 'Bad request' });
+  }
 }
 
 module.exports = { writeAsyncInFile, filenames, optimization };

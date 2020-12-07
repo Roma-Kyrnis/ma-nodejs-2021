@@ -1,4 +1,6 @@
-const router = require('express').Router();
+const { Router } = require('@awaitjs/express');
+
+const router = Router();
 
 const { tasks, configureStore, sales, uploads } = require('./controllers');
 
@@ -10,11 +12,11 @@ router.post('/setDataGlobal', configureStore.setDataGlobal);
 router.post('/writeDataInFile', configureStore.writeDataInFile);
 
 router.get('/products/discounts/callback', sales.callback);
-router.get('/products/discounts/promise', sales.promise);
-router.get('/products/discounts/async', sales.async);
+router.getAsync('/products/discounts/promise', sales.promise);
+router.getAsync('/products/discounts/async', sales.async);
 
-router.post('/upload', uploads.writeAsyncInFile);
-router.get('/upload/filenames', uploads.filenames);
-router.post('/upload/optimization/:filename', uploads.optimization);
+router.postAsync('/upload', uploads.writeAsyncInFile);
+router.getAsync('/upload/filenames', uploads.filenames);
+router.postAsync('/upload/optimization/:filename', uploads.optimization);
 
 module.exports = router;
