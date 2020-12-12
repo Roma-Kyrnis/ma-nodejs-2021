@@ -1,12 +1,8 @@
-const {
-  writeCSVFile,
-  getNameFilesInUploads,
-  optimizationFile,
-} = require('../../services');
+const { uploads } = require('../../services');
 
 async function writeAsyncInFile(req, res) {
   try {
-    await writeCSVFile(req);
+    await uploads.writeCSVFile(req);
 
     res.status(200).json({ message: 'ok' });
   } catch (err) {
@@ -15,9 +11,20 @@ async function writeAsyncInFile(req, res) {
   }
 }
 
+async function writeAsyncInDB(req, res) {
+  try {
+    await uploads.saveCSVToDB(req);
+
+    res.status(202).json({ message: 'Accepted' });
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({ message: err.message || 'Bad request' });
+  }
+}
+
 async function filenames(req, res) {
   try {
-    const result = await getNameFilesInUploads();
+    const result = await uploads.getNameFilesInUploads();
 
     res.status(200).json({ files: result });
   } catch (err) {
@@ -28,7 +35,7 @@ async function filenames(req, res) {
 
 async function optimization(req, res) {
   try {
-    await optimizationFile(req);
+    await uploads.optimizationFile(req);
 
     res.status(202).json({ message: 'Accepted' });
   } catch (err) {
@@ -37,4 +44,9 @@ async function optimization(req, res) {
   }
 }
 
-module.exports = { writeAsyncInFile, filenames, optimization };
+module.exports = {
+  writeAsyncInFile,
+  filenames,
+  optimization,
+  writeAsyncInDB,
+};
