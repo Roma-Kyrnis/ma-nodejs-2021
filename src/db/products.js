@@ -13,14 +13,15 @@ async function createDBWithTable() {
 
     await client.query(
       `CREATE TABLE IF NOT EXISTS ${PRODUCTS}(
-          id SERIAL PRIMARY KEY,
-          type VARCHAR(255) NOT NULL,
-          color VARCHAR(255) NOT NULL,
-          price NUMERIC(10,2) NOT NULL,
+          id SERIAL,
+          type VARCHAR(255),
+          color VARCHAR(255),
+          price NUMERIC(10,2),
           quantity BIGINT NOT NULL,
           created_at TIMESTAMP DEFAULT NULL,
           updated_at TIMESTAMP DEFAULT NULL,
-          deleted_at TIMESTAMP DEFAULT NULL
+          deleted_at TIMESTAMP DEFAULT NULL,
+          PRIMARY KEY (type, color, price)
         )`,
     );
   } catch (err) {
@@ -49,7 +50,11 @@ async function createProduct({ type, color, price, quantity }) {
     const timestamp = new Date();
 
     const res = await client.query(
-      `INSERT INTO ${PRODUCTS}(type, color, price, quantity, created_at, updated_at, deleted_at) VALUES($1, $2, $3, $4, $5, $6, $7) IF NOT EXIST RETURNING *`,
+      `INSERT INTO ${PRODUCTS}(type, color, price, quantity, created_at, updated_at, deleted_at)
+      VALUES($1, $2, $3, $4, $5, $6, $7)
+      ON CONFLICT (type, color, price) DO UPDATE
+        SET quantity = ${PRODUCTS}.quantity + $4
+      RETURNING *`,
       [type, color, price, quantity, timestamp, timestamp, null],
     );
 
@@ -62,6 +67,9 @@ async function createProduct({ type, color, price, quantity }) {
 
 async function getProduct(id) {
   try {
+    // const res = await client.query(
+    //   `IF EXISTS (SELECT lastval(id) FROM ${PRODUCTS} WHERE deleted_at IS NULL) THEN (SELECT NOW()) ELSE (SELECT lastval(id) FROM ${PRODUCTS})`,
+    // );
     const res = await client.query(
       `SELECT * FROM ${PRODUCTS} WHERE id = $1 AND deleted_at IS NULL`,
       [id],
@@ -119,26 +127,26 @@ async function updateProduct({ id, ...product }) {
   }
 }
 
-async function updateProductByTypes() {
-  try {
-    const res = await client.query(
-      `UPDATE ${PRODUCTS}
-        WHERE
-      } RETURNING *`,
-    );
-    // const res = await client.query(
-    //   `UPDATE ${PRODUCTS} SET ${query.join(',')} WHERE id = $${
-    //     values.length
-    //   } RETURNING *`,
-    //   values,
-    // );
+// async function updateProductByTypes() {
+//   try {
+//     const res = await client.query(
+//       `UPDATE ${PRODUCTS}
+//         WHERE
+//       } RETURNING *`,
+//     );
+//     // const res = await client.query(
+//     //   `UPDATE ${PRODUCTS} SET ${query.join(',')} WHERE id = $${
+//     //     values.length
+//     //   } RETURNING *`,
+//     //   values,
+//     // );
 
-    return res.rows[0];
-  } catch (err) {
-    console.error(err.message || err);
-    throw err;
-  }
-}
+//     return res.rows[0];
+//   } catch (err) {
+//     console.error(err.message || err);
+//     throw err;
+//   }
+// }
 
 async function deleteProduct(id) {
   try {

@@ -58,8 +58,7 @@ function createWriteStreamToDB() {
   const write = async (chunk, encoding, callback) => {
     const product = JSON.parse(chunk.toString());
 
-    console.log(product);
-    // await products.updateProduct({id, product});
+    products.createProduct(product);
     callback();
   };
 
