@@ -1,6 +1,9 @@
 require('dotenv').config();
 
-const { fatalError } = require('../utils');
+const fatalError = message => {
+  console.error(`FATAL: ${message}`);
+  process.exit(1);
+};
 
 const config = {
   server: {
@@ -10,13 +13,13 @@ const config = {
   },
 
   db: {
-    user: process.env.DB_USER || fatalError('FATAL: DB_USER is not defined'),
-    host: process.env.DB_HOST || fatalError('FATAL: DB_HOST is not defined'),
-    port: process.env.DB_PORT || fatalError('FATAL: DB_PORT is not defined'),
+    user: process.env.DB_USER || fatalError('DB_USER is not defined'),
+    host: process.env.DB_HOST || fatalError('DB_HOST is not defined'),
+    port: process.env.DB_PORT || fatalError('DB_PORT is not defined'),
     database:
-      process.env.DB_NAME || fatalError('FATAL: DB_NAME is not defined'),
+      process.env.DB_NAME || fatalError('DB_NAME is not defined'),
     password:
-      process.env.DB_PASS || fatalError('FATAL: DB_PASS is not defined'),
+      process.env.DB_PASS || fatalError('DB_PASS is not defined'),
   },
 
   user: {

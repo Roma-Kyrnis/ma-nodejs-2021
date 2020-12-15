@@ -9,11 +9,11 @@ const PRODUCTS = 'products';
 async function createDBWithTable() {
   try {
     await client.query(`SELECT 'CREATE DATABASE ${database}'
-    WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '${database}')`); // \\gexec
+    WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '${database}')`);
 
     await client.query(
       `CREATE TABLE IF NOT EXISTS ${PRODUCTS}(
-          id SERIAL,
+          id INT GENERATED ALWAYS AS IDENTITY,
           type VARCHAR(255),
           color VARCHAR(255),
           price NUMERIC(10,2),
@@ -126,27 +126,6 @@ async function updateProduct({ id, ...product }) {
     throw err;
   }
 }
-
-// async function updateProductByTypes() {
-//   try {
-//     const res = await client.query(
-//       `UPDATE ${PRODUCTS}
-//         WHERE
-//       } RETURNING *`,
-//     );
-//     // const res = await client.query(
-//     //   `UPDATE ${PRODUCTS} SET ${query.join(',')} WHERE id = $${
-//     //     values.length
-//     //   } RETURNING *`,
-//     //   values,
-//     // );
-
-//     return res.rows[0];
-//   } catch (err) {
-//     console.error(err.message || err);
-//     throw err;
-//   }
-// }
 
 async function deleteProduct(id) {
   try {

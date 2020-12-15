@@ -24,11 +24,9 @@ function createTransformStreamToDB() {
       const fullProduct = {
         type: product.type,
         color: product.color,
+        price: product.price,
         quantity: product.quantity,
       };
-
-      if (product.isPair === 'true') fullProduct.priceForPair = product.price;
-      else fullProduct.price = product.price;
 
       return fullProduct;
     };
