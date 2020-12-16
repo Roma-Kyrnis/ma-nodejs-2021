@@ -8,7 +8,7 @@ node_modules/
 test.js
 
 # Upload dir for user files
-uploads/
+/uploads
 
 # DB dirrectory
 .data
