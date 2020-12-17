@@ -1,18 +1,22 @@
 const { products } = require('../db');
 
-async function createProduct(req) {
-  const { type, color, price = 0, quantity = 1 } = req.body;
+function throwIfInvalid(isValid, message) {
+  if (isValid) {
+    const err = new Error(`ERROR: ${message}`);
+    err.status = 400;
+    throw err;
+  }
 
-  if (!type) {
-    const err = new Error('ERROR: No product type defined');
-    err.status = 400;
-    throw err;
-  }
-  if (!color) {
-    const err = new Error('ERROR: No product color defined');
-    err.status = 400;
-    throw err;
-  }
+  return true;
+}
+
+async function createProduct({ body }) {
+  throwIfInvalid(!Array.from(body).length, 'No body');
+
+  const { type, color, price = 0, quantity = 1 } = body;
+
+  throwIfInvalid(!type, 'No product type defined');
+  throwIfInvalid(!color, 'No product color defined');
 
   const product = {
     type,
@@ -20,6 +24,9 @@ async function createProduct(req) {
     price: parseInt(price, 10),
     quantity: parseInt(quantity, 10),
   };
+
+  throwIfInvalid(Number.isNaN(product.price), 'Invalid price');
+  throwIfInvalid(Number.isNaN(product.quantity), 'Invalid quantity');
 
   try {
     const res = await products.createProduct(product);
@@ -34,11 +41,7 @@ async function createProduct(req) {
 async function getProduct(req) {
   const { id } = req.params;
 
-  if (!id) {
-    const err = new Error('ERROR: No product id defined');
-    err.status = 400;
-    throw err;
-  }
+  throwIfInvalid(!id, 'No product id defined');
 
   try {
     const res = await products.getProduct(parseInt(id, 10));
@@ -66,11 +69,7 @@ async function getAllProducts() {
 async function updateProduct(req) {
   const product = { ...req.body, id: req.params.id };
 
-  if (!product.id) {
-    const err = new Error('ERROR: No product id defined');
-    err.status = 400;
-    throw err;
-  }
+  throwIfInvalid(!product.id, 'No product id defined');
 
   try {
     const res = await products.updateProduct(product);
@@ -86,11 +85,7 @@ async function updateProduct(req) {
 async function deleteProduct(req) {
   const { id } = req.params;
 
-  if (!id) {
-    const err = new Error('ERROR: No product id defined');
-    err.status = 400;
-    throw err;
-  }
+  throwIfInvalid(!id, 'No product id defined');
 
   try {
     const res = await products.deleteProduct(parseInt(id, 10));

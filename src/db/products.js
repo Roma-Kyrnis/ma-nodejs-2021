@@ -2,9 +2,8 @@
 const client = require('./pg');
 const {
   db: { database },
+  tables: { PRODUCTS },
 } = require('../config');
-
-const PRODUCTS = 'products';
 
 async function createDBWithTable() {
   try {

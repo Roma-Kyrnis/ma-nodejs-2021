@@ -24,10 +24,10 @@ router.getAsync('/upload/filenames', uploads.filenames);
 router.postAsync('/upload/optimization/:filename', uploads.optimization);
 router.postAsync('/upload/toDB', uploads.writeAsyncInDB);
 
-router.postAsync('/products/add', products.createProduct);
-router.getAsync('/products/get/:id', products.getProduct);
-router.putAsync('/products/update/:id', products.updateProduct);
-router.deleteAsync('/products/delete/:id', products.deleteProduct);
-router.getAsync('/products/getAll', products.getAllProducts);
+router.postAsync('/products', products.createProduct);
+router.getAsync('/products', products.getAllProducts);
+router.getAsync('/products/:id', products.getProduct);
+router.patchAsync('/products/:id', products.updateProduct);
+router.deleteAsync('/products/:id', products.deleteProduct);
 
 module.exports = router;
