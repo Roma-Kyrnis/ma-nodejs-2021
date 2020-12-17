@@ -29,7 +29,8 @@ async function createProduct({ body }) {
 async function getProduct(req) {
   const id = parseInt(req.params.id, 10);
 
-  throwIfInvalid(!id || Number.isNaN(id), 400, 'No product id defined');
+  throwIfInvalid(!id, 400, 'No product id defined');
+  throwIfInvalid(Number.isNaN(id), 400, 'Incorrect id');
 
   const res = await products.getProduct(id);
 
@@ -61,7 +62,8 @@ async function updateProduct(req) {
 async function deleteProduct(req) {
   const id = parseInt(req.params.id, 10);
 
-  throwIfInvalid(!id || Number.isNaN(id), 400, 'No product id defined');
+  throwIfInvalid(!id, 400, 'No product id defined');
+  throwIfInvalid(Number.isNaN(id), 400, 'Incorrect id');
 
   const res = await products.deleteProduct(id);
 
