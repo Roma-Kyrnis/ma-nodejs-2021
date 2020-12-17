@@ -3,6 +3,7 @@ const gracefulShutdown = require('./gracefulShutdown');
 const scheduler = require('./scheduler');
 const store = require('./store');
 const createCSVToDB = require('./csvToDB');
+const throwIfInvalid = require('./throwIfInvalid');
 
 module.exports = {
   createCsvToJson,
@@ -10,4 +11,5 @@ module.exports = {
   scheduler,
   store,
   createCSVToDB,
+  throwIfInvalid,
 };
