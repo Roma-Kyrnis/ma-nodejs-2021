@@ -27,11 +27,11 @@ async function createProduct({ body }) {
 }
 
 async function getProduct(req) {
-  const { id } = req.params;
+  const id = parseInt(req.params.id, 10);
 
-  throwIfInvalid(!id, 400, 'No product id defined');
+  throwIfInvalid(!id || Number.isNaN(id), 400, 'No product id defined');
 
-  const res = await products.getProduct(parseInt(id, 10));
+  const res = await products.getProduct(id);
 
   console.log(`DEBUG: Product is: ${JSON.stringify(res)}`);
 
@@ -59,11 +59,11 @@ async function updateProduct(req) {
 }
 
 async function deleteProduct(req) {
-  const { id } = req.params;
+  const id = parseInt(req.params.id, 10);
 
-  throwIfInvalid(!id, 400, 'No product id defined');
+  throwIfInvalid(!id || Number.isNaN(id), 400, 'No product id defined');
 
-  const res = await products.deleteProduct(parseInt(id, 10));
+  const res = await products.deleteProduct(id);
 
   return res;
 }
