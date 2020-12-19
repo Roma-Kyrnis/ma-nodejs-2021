@@ -10,15 +10,48 @@ const config = {
   },
 
   db: {
-    user: process.env.DB_USER || fatalError('DB_USER is not defined'),
-    host: process.env.DB_HOST || fatalError('DB_HOST is not defined'),
-    port: process.env.DB_PORT || fatalError('DB_PORT is not defined'),
-    database: process.env.DB_NAME || fatalError('DB_NAME is not defined'),
-    password: process.env.DB_PASS || fatalError('DB_PASS is not defined'),
+    defaultType: process.env.DB_WRAPPER_TYPE || 'knex',
+
+    config: {
+      knex: {
+        client: 'postgresql',
+        connection: {
+          user:
+            process.env.DB_USER || fatalError('FATAL: DB_USER is not defined'),
+          host:
+            process.env.DB_HOST || fatalError('FATAL: DB_HOST is not defined'),
+          port:
+            process.env.DB_PORT || fatalError('FATAL: DB_PORT is not defined'),
+          database:
+            process.env.DB_NAME || fatalError('FATAL: DB_NAME is not defined'),
+          password:
+            process.env.DB_PASS || fatalError('FATAL: DB_PASS is not defined'),
+        },
+        pool: {
+          min: 2,
+          max: 10,
+        },
+        debug: true,
+      },
+      // pg: {
+      //   user:
+      //     process.env.DB_USER || fatalError('FATAL: DB_USER is not defined'),
+      //   host:
+      //     process.env.DB_HOST || fatalError('FATAL: DB_HOST is not defined'),
+      //   port:
+      //     process.env.DB_PORT || fatalError('FATAL: DB_PORT is not defined'),
+      //   database:
+      //     process.env.DB_NAME || fatalError('FATAL: DB_NAME is not defined'),
+      //   password:
+      //     process.env.DB_PASS || fatalError('FATAL: DB_PASS is not defined'),
+      // },
+    },
   },
 
   tables: {
     PRODUCTS: 'products',
+    TYPES: 'types',
+    COLORS: 'colors',
   },
 
   user: {

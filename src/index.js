@@ -4,9 +4,7 @@ const {
   scheduler: { setScheduler, stopScheduler },
 } = require('./utils');
 const { getNameFilesInUploads, optimizationFile } = require('./services');
-const {
-  products: { createDBWithTable },
-} = require('./db');
+const { init } = require('./db');
 const {
   server: { ORIGIN, OPTIMIZATION_TIME },
 } = require('./config');
@@ -22,7 +20,7 @@ async function start() {
     });
   });
 
-  await createDBWithTable();
+  await init();
 
   setScheduler(async () => {
     console.log('Schedule optimization');

@@ -3,7 +3,7 @@ const client = require('./pg');
 const {
   db: { database },
   tables: { PRODUCTS },
-} = require('../config');
+} = require('../../config');
 
 async function createDBWithTable() {
   try {
@@ -104,6 +104,7 @@ async function updateProduct({ id, ...product }) {
   }
 
   if (!values.length) {
+    
     const err = new Error('ERROR: Nothing to update');
     err.status = 400;
     throw err;
