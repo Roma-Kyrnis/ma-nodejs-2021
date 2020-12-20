@@ -53,12 +53,8 @@ async function getAllProducts() {
 async function updateProduct(req) {
   const product = { ...req.body, id: req.params.id };
 
-<<<<<<< HEAD:src/services/products/index.js
-  throwIfInvalid(!product.id, 400, 'No product id defined');
-  throwIfInvalid(Number.isNaN(product.id), 400, 'Incorrect id');
-=======
   throwIfInvalid(product.id, 400, 'No product id defined');
->>>>>>> homework-06:src/services/products.js
+  throwIfInvalid(!Number.isNaN(product.id), 400, 'Incorrect id');
 
   const res = await products.updateProduct(product);
 
