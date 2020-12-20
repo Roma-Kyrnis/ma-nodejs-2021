@@ -1,6 +1,9 @@
 const createError = require('http-errors');
 
-const { products } = require('../../services');
+const { products } = require('../../../services');
+
+const types = require('./types');
+const colors = require('./colors');
 
 async function createProduct(req, res, next) {
   try {
@@ -55,4 +58,10 @@ module.exports = {
   getAllProducts,
   updateProduct,
   deleteProduct,
+
+  // Types
+  types,
+
+  // Colors
+  colors,
 };

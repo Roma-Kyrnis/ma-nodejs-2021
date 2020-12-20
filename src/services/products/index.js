@@ -1,9 +1,12 @@
-const { products } = require('../db');
+const { products } = require('../../db');
 
-const { throwIfInvalid } = require('../utils');
+const { throwIfInvalid } = require('../../utils');
+
+const types = require('./types');
+const colors = require('./colors');
 
 async function createProduct({ body }) {
-  throwIfInvalid(!Array.from(body).length, 400, 'No body');
+  throwIfInvalid(!Object.keys(body).toString(), 400, 'No body');
 
   const { type, color, price = 0, quantity = 1 } = body;
 
@@ -51,6 +54,7 @@ async function updateProduct(req) {
   const product = { ...req.body, id: req.params.id };
 
   throwIfInvalid(!product.id, 400, 'No product id defined');
+  throwIfInvalid(Number.isNaN(product.id), 400, 'Incorrect id');
 
   const res = await products.updateProduct(product);
 
@@ -76,4 +80,10 @@ module.exports = {
   getAllProducts,
   updateProduct,
   deleteProduct,
+
+  // Types
+  types,
+
+  // Colors
+  colors,
 };
