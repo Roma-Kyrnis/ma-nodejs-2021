@@ -11,7 +11,7 @@ const {
 
 const app = express();
 
-app.use(bodyParser.json());
+app.use(bodyParser.json({ strict: false, type: '*/*' }));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const basicAuthOptions = {

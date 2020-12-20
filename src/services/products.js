@@ -3,12 +3,12 @@ const { products } = require('../db');
 const { throwIfInvalid } = require('../utils');
 
 async function createProduct({ body }) {
-  throwIfInvalid(!Array.from(body).length, 400, 'No body');
+  throwIfInvalid(body !== null, 400, 'No body');
 
   const { type, color, price = 0, quantity = 1 } = body;
 
-  throwIfInvalid(!type, 400, 'No product type defined');
-  throwIfInvalid(!color, 400, 'No product color defined');
+  throwIfInvalid(type, 400, 'No product type defined');
+  throwIfInvalid(color, 400, 'No product color defined');
 
   const product = {
     type,
@@ -17,8 +17,8 @@ async function createProduct({ body }) {
     quantity: parseInt(quantity, 10),
   };
 
-  throwIfInvalid(Number.isNaN(product.price), 400, 'Invalid price');
-  throwIfInvalid(Number.isNaN(product.quantity), 400, 'Invalid quantity');
+  throwIfInvalid(!Number.isNaN(product.price), 400, 'Invalid price');
+  throwIfInvalid(!Number.isNaN(product.quantity), 400, 'Invalid quantity');
 
   const res = await products.createProduct(product);
 
@@ -29,8 +29,8 @@ async function createProduct({ body }) {
 async function getProduct(req) {
   const id = parseInt(req.params.id, 10);
 
-  throwIfInvalid(!id, 400, 'No product id defined');
-  throwIfInvalid(Number.isNaN(id), 400, 'Incorrect id');
+  throwIfInvalid(id, 400, 'No product id defined');
+  throwIfInvalid(!Number.isNaN(id), 400, 'Incorrect id');
 
   const res = await products.getProduct(id);
 
@@ -50,7 +50,7 @@ async function getAllProducts() {
 async function updateProduct(req) {
   const product = { ...req.body, id: req.params.id };
 
-  throwIfInvalid(!product.id, 400, 'No product id defined');
+  throwIfInvalid(product.id, 400, 'No product id defined');
 
   const res = await products.updateProduct(product);
 
@@ -62,8 +62,8 @@ async function updateProduct(req) {
 async function deleteProduct(req) {
   const id = parseInt(req.params.id, 10);
 
-  throwIfInvalid(!id, 400, 'No product id defined');
-  throwIfInvalid(Number.isNaN(id), 400, 'Incorrect id');
+  throwIfInvalid(id, 400, 'No product id defined');
+  throwIfInvalid(!Number.isNaN(id), 400, 'Incorrect id');
 
   const res = await products.deleteProduct(id);
 
