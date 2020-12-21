@@ -23,7 +23,7 @@ async function init() {
 
       await wrapper.testConnection();
       console.log(`INFO: DB wrapper for ${k} initiated`);
-      await wrapper.createDBWithTables();
+      await wrapper.createDBIfNotExists();
 
       db[k] = wrapper;
     }
