@@ -23,10 +23,11 @@ async function init() {
 
       await wrapper.testConnection();
       console.log(`INFO: DB wrapper for ${k} initiated`);
-      await wrapper.createDBWithTables();
 
       db[k] = wrapper;
     }
+
+    await db[clientType].createDBWithTables();
   } catch (err) {
     fatalError(`FATAL: ${err.message || err}`);
   }
