@@ -67,7 +67,7 @@ async function updateColor({ id, color }) {
   } catch (err) {
     console.error(err.message || err);
     return throwIfInvalid(
-      err,
+      !err,
       400,
       'Cannot update, table already has this color',
     );
