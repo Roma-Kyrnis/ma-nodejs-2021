@@ -1,16 +1,6 @@
 const router = require('@awaitjs/express').Router();
 
-const {
-  tasks,
-  configureStore,
-  sales,
-  uploads,
-  products,
-} = require('./controllers');
-
-router.get('/task1', tasks.functionOne);
-router.get('/task2', tasks.functionTwo);
-router.get('/task3', tasks.functionThree);
+const { configureStore, sales, uploads, products } = require('./controllers');
 
 router.post('/setDataGlobal', configureStore.setDataGlobal);
 router.post('/writeDataInFile', configureStore.writeDataInFile);

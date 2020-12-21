@@ -1,11 +1,11 @@
 const {
-  tasks: { task3 },
   createDiscount: { generateValidDiscountPromise },
 } = require('../../../services');
+const fullClothes = require('./fullClothes');
 const { store } = require('../../../utils');
 
 async function salesAsync(req, res) {
-  const arrayClothes = task3(store.get());
+  const arrayClothes = fullClothes(store.get());
   const outputArray = [];
   try {
     for await (const clothes of arrayClothes) {
