@@ -3,11 +3,11 @@ const { types } = require('../../db');
 const { throwIfInvalid } = require('../../utils');
 
 async function createType({ body }) {
-  throwIfInvalid(body !== null, 400, 'No body');
+  throwIfInvalid(!Object.keys(body).toString(), 400, 'No body');
 
   const { type } = body;
 
-  throwIfInvalid(type, 400, 'No type defined');
+  throwIfInvalid(!type, 400, 'No type defined');
 
   const res = await types.createType(type);
 
@@ -18,8 +18,8 @@ async function createType({ body }) {
 async function getType(req) {
   const id = parseInt(req.params.id, 10);
 
-  throwIfInvalid(id, 400, 'No type id defined');
-  throwIfInvalid(!Number.isNaN(id), 400, 'Incorrect id');
+  throwIfInvalid(!id, 400, 'No type id defined');
+  throwIfInvalid(Number.isNaN(id), 400, 'Incorrect id');
 
   const res = await types.getType(id);
 
@@ -40,9 +40,9 @@ async function updateType(req) {
   const id = parseInt(req.params.id, 10);
   const { type } = req.body;
 
-  throwIfInvalid(id, 400, 'No type id defined');
-  throwIfInvalid(!Number.isNaN(id), 400, 'Incorrect id');
-  throwIfInvalid(type, 400, 'No type defined');
+  throwIfInvalid(!id, 400, 'No type id defined');
+  throwIfInvalid(Number.isNaN(id), 400, 'Incorrect id');
+  throwIfInvalid(!type, 400, 'No type defined');
 
   const res = await types.updateType({ id, type });
 
@@ -54,8 +54,8 @@ async function updateType(req) {
 async function deleteType(req) {
   const id = parseInt(req.params.id, 10);
 
-  throwIfInvalid(id, 400, 'No type id defined');
-  throwIfInvalid(!Number.isNaN(id), 400, 'Incorrect id');
+  throwIfInvalid(!id, 400, 'No type id defined');
+  throwIfInvalid(Number.isNaN(id), 400, 'Incorrect id');
 
   const res = await types.deleteType(id);
 

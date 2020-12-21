@@ -5,8 +5,6 @@ const {
   tables: { PRODUCTS },
 } = require('../../config');
 
-const { throwIfInvalid } = require('../../utils');
-
 async function createDBWithTable() {
   try {
     await client.query(`SELECT 'CREATE DATABASE ${database}'
@@ -105,7 +103,12 @@ async function updateProduct({ id, ...product }) {
     values.push(value);
   }
 
-  throwIfInvalid(values.length, 400, 'Nothing to update')
+  if (!values.length) {
+    
+    const err = new Error('ERROR: Nothing to update');
+    err.status = 400;
+    throw err;
+  }
 
   values.push(parseInt(id, 10));
 

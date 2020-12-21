@@ -9,7 +9,6 @@ const {
 const dbProducts = require('./products');
 const dbTypes = require('./types');
 const dbColors = require('./colors');
-const { throwIfInvalid } = require('../../utils');
 
 let knex;
 
@@ -77,8 +76,6 @@ async function close() {
 }
 
 module.exports = config => {
-  throwIfInvalid(config, 400, 'No config');
-
   knex = new Knex(config);
 
   const products = dbProducts(knex);
