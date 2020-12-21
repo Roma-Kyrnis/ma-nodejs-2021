@@ -28,6 +28,7 @@ async function createDBWithTables() {
         table.string('type').notNullable();
         table.unique('type');
         table.timestamps();
+        table.timestamp('deleted_at').defaultTo(null);
       });
     }
 
@@ -41,6 +42,7 @@ async function createDBWithTables() {
         table.string('color').notNullable();
         table.unique('color');
         table.timestamps();
+        table.timestamp('deleted_at').defaultTo(null);
       });
     }
 
