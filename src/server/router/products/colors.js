@@ -5,7 +5,7 @@ const {
 } = require('../../controllers');
 
 router.postAsync('/', colors.createColor);
-router.getAsync('/', colors.getAllColor);
+router.getAsync('/', colors.getAllColors);
 router.getAsync('/:id', colors.getColor);
 router.patchAsync('/:id', colors.updateColor);
 router.deleteAsync('/:id', colors.deleteColor);
