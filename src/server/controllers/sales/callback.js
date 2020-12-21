@@ -1,11 +1,11 @@
 const {
-  tasks: { task3 },
   createDiscount: { generateValidDiscount },
 } = require('../../../services');
+const fullClothes = require('./fullClothes');
 const { store } = require('../../../utils');
 
 function salesCallback(req, res) {
-  const arrayClothes = task3(store.get());
+  const arrayClothes = fullClothes(store.get());
 
   const arrayCallback = lastCallback => {
     const getDiscount = (clothes, discountCallback) => {
