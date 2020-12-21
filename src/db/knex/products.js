@@ -12,14 +12,14 @@ async function createProduct({ type, color, price = 0, quantity = 1 }) {
 
     const [typeId] = await knex(TYPES).where({ type }).select('id');
     throwIfInvalid(
-      !typeId,
+      typeId,
       400,
       'Cannot add this product, no such type defined in the table types',
     );
 
     const [colorId] = await knex(COLORS).where({ color }).select('id');
     throwIfInvalid(
-      !colorId,
+      colorId,
       400,
       'Cannot add this product, no such color defined in the table colors',
     );
@@ -135,7 +135,7 @@ async function updateProduct({ id, ...product }) {
     }
   }
 
-  throwIfInvalid(!queryLength, 400, 'Nothing to update');
+  throwIfInvalid(queryLength, 400, 'Nothing to update');
 
   query.updated_at = timestamp;
 
@@ -149,7 +149,7 @@ async function updateProduct({ id, ...product }) {
   } catch (err) {
     console.error(err.message || err);
     return throwIfInvalid(
-      err,
+      !err,
       400,
       'Cannot update, table already has this product',
     );

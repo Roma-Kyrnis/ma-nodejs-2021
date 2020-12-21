@@ -9,6 +9,7 @@ const {
 const dbProducts = require('./products');
 const dbTypes = require('./types');
 const dbColors = require('./colors');
+const { throwIfInvalid } = require('../../utils');
 
 let knex;
 
@@ -20,7 +21,10 @@ async function createDBWithTables() {
     const hasTableTypes = await knex.schema.hasTable(TYPES);
     if (!hasTableTypes) {
       await knex.schema.createTable(TYPES, table => {
-        table.increments('id');
+        table.specificType(
+          'id',
+          'INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY',
+        );
         table.string('type').notNullable();
         table.unique('type');
         table.timestamps();
@@ -30,7 +34,10 @@ async function createDBWithTables() {
     const hasTableColors = await knex.schema.hasTable(COLORS);
     if (!hasTableColors) {
       await knex.schema.createTable(COLORS, table => {
-        table.increments('id');
+        table.specificType(
+          'id',
+          'INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY',
+        );
         table.string('color').notNullable();
         table.unique('color');
         table.timestamps();
@@ -40,7 +47,10 @@ async function createDBWithTables() {
     const hasTableProducts = await knex.schema.hasTable(PRODUCTS);
     if (!hasTableProducts) {
       await knex.schema.createTable(PRODUCTS, table => {
-        table.specificType('id', 'INT GENERATED ALWAYS AS IDENTITY');
+        table.specificType(
+          'id',
+          'INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY',
+        );
         table.integer('typeId').references('id').inTable('types').notNullable();
         table
           .integer('colorId')
@@ -76,6 +86,8 @@ async function close() {
 }
 
 module.exports = config => {
+  throwIfInvalid(config, 500, 'No config!');
+
   knex = new Knex(config);
 
   const products = dbProducts(knex);
