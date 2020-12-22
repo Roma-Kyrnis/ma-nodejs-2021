@@ -33,18 +33,18 @@ const config = {
         },
         debug: true,
       },
-      // pg: {
-      //   user:
-      //     process.env.DB_USER || fatalError('FATAL: DB_USER is not defined'),
-      //   host:
-      //     process.env.DB_HOST || fatalError('FATAL: DB_HOST is not defined'),
-      //   port:
-      //     process.env.DB_PORT || fatalError('FATAL: DB_PORT is not defined'),
-      //   database:
-      //     process.env.DB_NAME || fatalError('FATAL: DB_NAME is not defined'),
-      //   password:
-      //     process.env.DB_PASS || fatalError('FATAL: DB_PASS is not defined'),
-      // },
+      pg: {
+        user:
+          process.env.DB_USER || fatalError('FATAL: DB_USER is not defined'),
+        host:
+          process.env.DB_HOST || fatalError('FATAL: DB_HOST is not defined'),
+        port:
+          process.env.DB_PORT || fatalError('FATAL: DB_PORT is not defined'),
+        database:
+          process.env.DB_NAME || fatalError('FATAL: DB_NAME is not defined'),
+        password:
+          process.env.DB_PASS || fatalError('FATAL: DB_PASS is not defined'),
+      },
     },
   },
 
