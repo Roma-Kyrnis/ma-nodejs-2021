@@ -2,15 +2,15 @@
 const Knex = require('knex');
 
 const {
-  db: { database },
   tables: { PRODUCTS, TYPES, COLORS },
 } = require('../../config');
+const { throwIfInvalid } = require('../../utils');
 
 const dbProducts = require('./products');
 const dbTypes = require('./types');
 const dbColors = require('./colors');
-const { throwIfInvalid } = require('../../utils');
 
+let database;
 let knex;
 
 async function createDBWithTables() {
@@ -89,6 +89,9 @@ async function close() {
 
 module.exports = config => {
   throwIfInvalid(config, 500, 'No config!');
+
+  throwIfInvalid(config.connection.database, 500, 'Undefined database');
+  database = config.connection.database;
 
   knex = new Knex(config);
 

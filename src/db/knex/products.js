@@ -50,7 +50,7 @@ async function getProduct(id) {
     console.log(id);
     const [res] = await knex(PRODUCTS)
       .where(`${PRODUCTS}.id`, id)
-      .andWhere({ deleted_at: null })
+      .andWhere(`${PRODUCTS}.deleted_at`, null)
       .join(TYPES, `${PRODUCTS}.typeId`, '=', `${TYPES}.id`)
       .join(COLORS, `${PRODUCTS}.colorId`, '=', `${COLORS}.id`)
       .select(
@@ -93,6 +93,7 @@ async function updateProduct({ id, ...product }) {
 
   const timestamp = new Date();
 
+  // eslint-disable-next-line no-unused-vars
   for await (const [index, [key, value]] of Object.entries(product).entries()) {
     switch (key) {
       case 'type':
