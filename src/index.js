@@ -3,7 +3,7 @@ const {
   gracefulShutdown,
   scheduler: { setScheduler, stopScheduler },
 } = require('./utils');
-const { getNameFilesInUploads, optimizationFile } = require('./services');
+const { uploads } = require('./services');
 const { init } = require('./db');
 const {
   server: { ORIGIN, OPTIMIZATION_TIME },
@@ -25,10 +25,10 @@ async function start() {
   setScheduler(async () => {
     console.log('Schedule optimization');
 
-    const files = await getNameFilesInUploads();
+    const files = await uploads.getNameFilesInUploads();
 
     for (const file of files.uploads) {
-      optimizationFile({ url: new URL(`/${file.filename}`, ORIGIN) });
+      uploads.optimizationFile({ url: new URL(`/${file.filename}`, ORIGIN) });
     }
   }, OPTIMIZATION_TIME);
   server.startServer();

@@ -4,24 +4,25 @@ const {
 
 const { throwIfInvalid } = require('../../utils');
 
-let knex;
+let pgClient;
 
 async function createColor(color) {
   try {
     const timestamp = new Date();
 
-    const [res] = await knex(COLORS)
-      .insert({
-        color,
-        created_at: timestamp,
-        updated_at: timestamp,
-      })
-      .returning('id')
-      .onConflict('color')
-      .merge()
-      .returning('id');
+    const res = await pgClient.query(
+      `
+      INSERT INTO ${COLORS}(color, created_at, updated_at, deleted_at)
+        VALUES($1, $2, $3, $4)
+      ON CONFLICT (color)
+        DO UPDATE
+          SET updated_at = excluded.updated_at
+      RETURNING *
+    `,
+      [color, timestamp, timestamp, null],
+    );
 
-    return res;
+    return res.rows[0];
   } catch (err) {
     console.error(err.message || err);
     throw err;
@@ -32,11 +33,15 @@ async function getColor(id) {
   try {
     console.log({ id });
 
-    const [res] = await knex(COLORS)
-      .where({ id, deleted_at: null })
-      .select('*');
+    const res = await pgClient.query(
+      `SELECT *
+        FROM ${COLORS}
+      WHERE id = $1 AND deleted_at IS NULL
+    `,
+      [id],
+    );
 
-    return res;
+    return res.rows[0];
   } catch (err) {
     console.error(err.message || err);
     throw err;
@@ -45,9 +50,11 @@ async function getColor(id) {
 
 async function getAllColors() {
   try {
-    const res = await knex(COLORS).where({ deleted_at: null }).select('*');
+    const res = await pgClient.query(
+      `SELECT * FROM ${COLORS} WHERE deleted_at IS NULL`,
+    );
 
-    return res;
+    return res.rows;
   } catch (err) {
     console.error(err.message || err);
     throw err;
@@ -55,15 +62,16 @@ async function getAllColors() {
 }
 
 async function updateColor({ id, color }) {
-  const timestamp = new Date();
-
   try {
-    const [res] = await knex(COLORS)
-      .where({ id })
-      .update({ color, updated_at: timestamp })
-      .returning('*');
+    const res = await pgClient.query(
+      `UPDATE ${COLORS}
+        SET color = $1,
+            updated_at = $2
+        WHERE id = $3`,
+      [color, new Date(), id],
+    );
 
-    return res;
+    return res.rows[0];
   } catch (err) {
     console.error(err.message || err);
     return throwIfInvalid(
@@ -76,8 +84,12 @@ async function updateColor({ id, color }) {
 
 async function deleteColor(id) {
   try {
-    await knex(COLORS).where({ id }).update({ deleted_at: new Date() });
-
+    await pgClient.query(
+      `UPDATE ${COLORS}
+        SET deleted_at = $1
+        WHERE id = $2`,
+      [new Date(), id],
+    );
     return true;
   } catch (err) {
     console.error(err.message || err);
@@ -86,7 +98,7 @@ async function deleteColor(id) {
 }
 
 module.exports = client => {
-  knex = client;
+  pgClient = client;
 
   return {
     createColor,

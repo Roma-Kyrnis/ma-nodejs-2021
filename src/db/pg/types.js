@@ -4,24 +4,25 @@ const {
 
 const { throwIfInvalid } = require('../../utils');
 
-let knex;
+let pgClient;
 
 async function createType(type) {
   try {
     const timestamp = new Date();
 
-    const [res] = await knex(TYPES)
-      .insert({
-        type,
-        created_at: timestamp,
-        updated_at: timestamp,
-      })
-      .returning('*')
-      .onConflict('type')
-      .merge()
-      .returning('*');
+    const res = await pgClient.query(
+      `
+      INSERT INTO ${TYPES}(type, created_at, updated_at, deleted_at)
+        VALUES($1, $2, $3, $4)
+      ON CONFLICT (type)
+        DO UPDATE
+          SET updated_at = excluded.updated_at
+      RETURNING *
+    `,
+      [type, timestamp, timestamp, null],
+    );
 
-    return res;
+    return res.rows[0];
   } catch (err) {
     console.error(err.message || err);
     throw err;
@@ -32,9 +33,15 @@ async function getType(id) {
   try {
     console.log({ id });
 
-    const [res] = await knex(TYPES).where({ id, deleted_at: null }).select('*');
+    const res = await pgClient.query(
+      `SELECT *
+        FROM ${TYPES}
+      WHERE id = $1 AND deleted_at IS NULL
+    `,
+      [id],
+    );
 
-    return res;
+    return res.rows[0];
   } catch (err) {
     console.error(err.message || err);
     throw err;
@@ -43,9 +50,11 @@ async function getType(id) {
 
 async function getAllTypes() {
   try {
-    const res = await knex(TYPES).where({ deleted_at: null }).select('*');
+    const res = await pgClient.query(
+      `SELECT * FROM ${TYPES} WHERE deleted_at IS NULL`,
+    );
 
-    return res;
+    return res.rows;
   } catch (err) {
     console.error(err.message || err);
     throw err;
@@ -53,15 +62,16 @@ async function getAllTypes() {
 }
 
 async function updateType({ id, type }) {
-  const timestamp = new Date();
-
   try {
-    const [res] = await knex(TYPES)
-      .where({ id })
-      .update({ type, updated_at: timestamp })
-      .returning('*');
+    const res = await pgClient.query(
+      `UPDATE ${TYPES}
+        SET type = $1,
+            updated_at = $2
+        WHERE id = $3`,
+      [type, new Date(), id],
+    );
 
-    return res;
+    return res.rows[0];
   } catch (err) {
     console.error(err.message || err);
     return throwIfInvalid(
@@ -74,8 +84,12 @@ async function updateType({ id, type }) {
 
 async function deleteType(id) {
   try {
-    await knex(TYPES).where({ id }).update({ deleted_at: new Date() });
-
+    await pgClient.query(
+      `UPDATE ${TYPES}
+        SET deleted_at = $1
+        WHERE id = $2`,
+      [new Date(), id],
+    );
     return true;
   } catch (err) {
     console.error(err.message || err);
@@ -84,7 +98,7 @@ async function deleteType(id) {
 }
 
 module.exports = client => {
-  knex = client;
+  pgClient = client;
 
   return {
     createType,
