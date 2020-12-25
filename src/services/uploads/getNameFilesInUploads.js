@@ -2,7 +2,7 @@ const fsp = require('fs').promises;
 
 const {
   dirStoreNames: { MAIN, OPTIMIZATION },
-} = require('../config');
+} = require('../../config');
 
 async function getNameFilesInFolder() {
   const filenamesWithTimeAndSize = { uploads: [], optimized: [] };

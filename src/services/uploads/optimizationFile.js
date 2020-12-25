@@ -2,7 +2,7 @@ const fs = require('fs');
 
 const {
   dirStoreNames: { MAIN, OPTIMIZATION },
-} = require('../config');
+} = require('../../config');
 
 if (!fs.existsSync(OPTIMIZATION)) fs.mkdirSync(OPTIMIZATION);
 

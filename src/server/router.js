@@ -1,10 +1,6 @@
 const router = require('@awaitjs/express').Router();
 
-const { tasks, configureStore, sales, uploads } = require('./controllers');
-
-router.get('/task1', tasks.functionOne);
-router.get('/task2', tasks.functionTwo);
-router.get('/task3', tasks.functionThree);
+const { configureStore, sales, uploads, products } = require('./controllers');
 
 router.post('/setDataGlobal', configureStore.setDataGlobal);
 router.post('/writeDataInFile', configureStore.writeDataInFile);
@@ -16,5 +12,12 @@ router.getAsync('/products/discounts/async', sales.async);
 router.postAsync('/upload', uploads.writeAsyncInFile);
 router.getAsync('/upload/filenames', uploads.filenames);
 router.postAsync('/upload/optimization/:filename', uploads.optimization);
+router.postAsync('/upload/toDB', uploads.writeAsyncInDB);
+
+router.postAsync('/products', products.createProduct);
+router.getAsync('/products', products.getAllProducts);
+router.getAsync('/products/:id', products.getProduct);
+router.patchAsync('/products/:id', products.updateProduct);
+router.deleteAsync('/products/:id', products.deleteProduct);
 
 module.exports = router;

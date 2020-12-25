@@ -5,10 +5,13 @@ const {
 } = require('./utils');
 const { getNameFilesInUploads, optimizationFile } = require('./services');
 const {
+  products: { createDBWithTable },
+} = require('./db');
+const {
   server: { ORIGIN, OPTIMIZATION_TIME },
 } = require('./config');
 
-function start() {
+async function start() {
   gracefulShutdown(err => {
     if (err) console.log(err);
 
@@ -18,6 +21,8 @@ function start() {
       process.exit(1);
     });
   });
+
+  await createDBWithTable();
 
   setScheduler(async () => {
     console.log('Schedule optimization');

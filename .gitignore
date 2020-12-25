@@ -1,4 +1,14 @@
+# Modules
 node_modules/
+
+# Configuretion file
 .env
+
+# Test
 test.js
-uploads/
+
+# Upload dir for user files
+/uploads
+
+# DB dirrectory
+.data

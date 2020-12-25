@@ -1,13 +1,9 @@
-const tasks = require('./tasks');
 const createDiscount = require('./discount');
-const writeCSVFile = require('./writeCSVFile');
-const getNameFilesInUploads = require('./getNameFilesInUploads');
-const optimizationFile = require('./optimizationFile');
+const uploads = require('./uploads');
+const products = require('./products');
 
 module.exports = {
-  tasks,
   createDiscount,
-  writeCSVFile,
-  getNameFilesInUploads,
-  optimizationFile,
+  uploads,
+  products,
 };
