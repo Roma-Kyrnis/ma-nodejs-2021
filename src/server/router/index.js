@@ -1,4 +1,4 @@
-const router = require('@awaitjs/express').Router();
+const router = require('express').Router();
 
 const controller = require('../controllers');
 
@@ -8,8 +8,8 @@ const upload = require('./upload');
 router.post('/setDataGlobal', controller.configureStore.setDataGlobal);
 router.post('/writeDataInFile', controller.configureStore.writeDataInFile);
 
-router.useAsync('/products', products);
+router.use('/products', products);
 
-router.useAsync('/upload', upload);
+router.use('/upload', upload);
 
 module.exports = router;
