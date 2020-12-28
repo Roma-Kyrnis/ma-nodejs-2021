@@ -20,7 +20,7 @@ function errorHandler(error, req, res, next) {
   res.json(errMessage);
 }
 
-function login(req, res) {
+async function login(req, res) {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || authHeader.indexOf('Basic ') === -1) {
@@ -34,7 +34,13 @@ function login(req, res) {
   const [username, password] = credentials.split(':');
 
   if (username === user.NAME && password === user.PASSWORD) {
-    res.json({ token: generateAccessToken(username) });
+    try {
+      const token = await generateAccessToken(username);
+
+      res.json({ token });
+    } catch (err) {
+      return res.status(400).json({ message: 'Invalid auth token provided.' });
+    }
   }
 
   return res
@@ -51,7 +57,9 @@ function authenticateToken(req, res, next) {
   jwt.verify(token, SECRET_KEY, (err, data) => {
     console.log(err);
     if (err) return res.sendStatus(403);
+
     req.authData = data;
+
     return next();
   });
 }

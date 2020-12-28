@@ -5,8 +5,12 @@ const {
 } = require('../config');
 
 function generateAccessToken(username) {
-  jwt.sign(username, SECRET_KEY, { expiresIn: '1800s' }, (err, token) => {
-    return token;
+  return new Promise((resolve, reject) => {
+    jwt.sign(username, SECRET_KEY, { expiresIn: '1800s' }, (err, token) => {
+      if (err) return reject(err);
+
+      return resolve(token);
+    });
   });
 }
 
