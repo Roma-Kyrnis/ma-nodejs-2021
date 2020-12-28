@@ -23,19 +23,20 @@
     "express": "^4.17.1",
     "express-basic-auth": "^1.2.0",
     "http-errors": "^1.8.0",
-    "knex": "^0.21.13",
+    "jsonwebtoken": "^8.5.1",
+    "knex": "^0.21.15",
     "node-pg-migrate": "^5.9.0",
     "pg": "^8.5.1",
-    "uuid": "^8.3.1"
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "eslint": "^7.10.0",
+    "eslint": "^7.16.0",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-config-prettier": "^6.12.0",
     "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-prettier": "^3.1.4",
-    "husky": "^4.3.0",
-    "prettier": "^2.1.2"
+    "eslint-plugin-prettier": "^3.3.0",
+    "husky": "^4.3.6",
+    "prettier": "^2.2.1"
   },
   "repository": {
     "type": "git",

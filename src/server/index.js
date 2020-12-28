@@ -1,42 +1,24 @@
 /* eslint-disable consistent-return */
 const express = require('express');
 const bodyParser = require('body-parser');
-const basicAuth = require('express-basic-auth');
 
 const router = require('./router');
 const {
   server: { HOST, PORT },
-  user,
 } = require('../config');
+const { errorHandler, login, authenticateToken } = require('./middleware');
 
 const app = express();
 
 app.use(bodyParser.json({ strict: false, type: '*/*' }));
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const basicAuthOptions = {
-  users: { [user.NAME]: user.PASSWORD },
-  unauthorizedResponse: { message: 'Unauthorized' },
-};
+app.use('/login', login);
+app.use(authenticateToken, router);
 
-app.use(basicAuth(basicAuthOptions), router);
+app.use(errorHandler);
 
 let server;
-
-// eslint-disable-next-line no-unused-vars
-app.use((error, req, res, next) => {
-  console.error({ error }, 'Global catch errors');
-
-  let errMessage = { message: 'Internal server error!' };
-  if (error.status && parseInt(error.status, 10) !== 500 && error.message) {
-    res.status(error.status);
-    errMessage = { message: error.message };
-  } else {
-    res.status(500);
-  }
-
-  res.json(errMessage);
-});
 
 function startServer() {
   server = app.listen(PORT, HOST, () => {

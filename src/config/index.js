@@ -6,6 +6,8 @@ const config = {
   server: {
     PORT: process.env.PORT || 3000,
     HOST: process.env.HOST || 'localhost',
+    SECRET_KEY:
+      process.env.ACCESS_TOKEN_SECRET || fatalError('No ACCESS_TOKEN_SECRET'),
     OPTIMIZATION_TIME: process.env.OPTIMIZATION_TIME || 10 * 60 * 1000, // 10 minutes
   },
 
