@@ -37,7 +37,7 @@ async function login(req, res) {
     try {
       const token = await generateAccessToken(username, SECRET_KEY);
 
-      res.json({ token });
+      return res.json({ token });
     } catch (err) {
       return res.status(400).json({ message: 'Invalid auth token provided.' });
     }
