@@ -27,7 +27,7 @@ async function init() {
       db[k] = wrapper;
     }
 
-    await db[clientType].createDBWithTables();
+    await db[clientType].createDBIfNotExists();
   } catch (err) {
     fatalError(`FATAL: ${err.message || err}`);
   }

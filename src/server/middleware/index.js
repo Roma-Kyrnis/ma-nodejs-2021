@@ -51,7 +51,7 @@ async function login(req, res) {
 // eslint-disable-next-line consistent-return
 function authenticateToken(req, res, next) {
   const authHeader = req.headers.authorization;
-  const token = authHeader && authHeader.split(' ')[1];
+  const token = authHeader.split(' ')[1];
   if (token == null) return res.sendStatus(401); // if there isn't any token
 
   jwt.verify(token, SECRET_KEY, (err, data) => {

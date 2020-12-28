@@ -13,7 +13,7 @@ const app = express();
 app.use(bodyParser.json({ strict: false, type: '*/*' }));
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use('/login', login);
+app.get('/login', login);
 app.use(authenticateToken, router);
 
 app.use(errorHandler);
