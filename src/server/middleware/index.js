@@ -35,7 +35,7 @@ async function login(req, res) {
 
   if (username === user.NAME && password === user.PASSWORD) {
     try {
-      const token = await generateAccessToken(username);
+      const token = await generateAccessToken(username, SECRET_KEY);
 
       res.json({ token });
     } catch (err) {
