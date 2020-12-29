@@ -93,8 +93,7 @@ async function updateProduct({ id, ...product }) {
 
   const timestamp = new Date();
 
-  // eslint-disable-next-line no-unused-vars
-  for await (const [index, [key, value]] of Object.entries(product)) {
+  for await (const [key, value] of Object.entries(product)) {
     switch (key) {
       case 'type':
         [query.typeId] = await knex(TYPES)
