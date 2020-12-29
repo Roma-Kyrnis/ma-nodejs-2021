@@ -6,15 +6,14 @@ const router = require('./router');
 const {
   server: { HOST, PORT },
 } = require('../config');
-const { errorHandler, login, authenticateToken } = require('./middleware');
+const { errorHandler } = require('./middleware');
 
 const app = express();
 
 app.use(bodyParser.json({ strict: false, type: '*/*' }));
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.get('/login', login);
-app.use(authenticateToken, router);
+app.use(router);
 
 app.use(errorHandler);
 

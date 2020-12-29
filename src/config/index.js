@@ -6,8 +6,16 @@ const config = {
   server: {
     PORT: process.env.PORT || 3000,
     HOST: process.env.HOST || 'localhost',
-    SECRET_KEY:
-      process.env.ACCESS_TOKEN_SECRET || fatalError('No ACCESS_TOKEN_SECRET'),
+    HASH_SECRET: process.env.HASH_SECRET || fatalError('No HASH_SECRET'),
+    ACCESS: {
+      SECRET_KEY:
+        process.env.ACCESS_TOKEN_SECRET || fatalError('No ACCESS_TOKEN_SECRET'),
+      TOKEN_LIFE:
+        process.env.ACCESS_TOKEN_LIFE || fatalError('No ACCESS_TOKEN_LIFE'),
+      REFRESH_TOKEN_LIFE:
+        process.env.ACCESS_REFRESH_TOKEN_LIFE ||
+        fatalError('No ACCESS_REFRESH_TOKEN_LIFE'),
+    },
     OPTIMIZATION_TIME: process.env.OPTIMIZATION_TIME || 10 * 60 * 1000, // 10 minutes
   },
 
@@ -54,11 +62,7 @@ const config = {
     PRODUCTS: 'products',
     TYPES: 'types',
     COLORS: 'colors',
-  },
-
-  user: {
-    NAME: process.env.USER_NAME || fatalError('No user name'),
-    PASSWORD: process.env.USER_PASSWORD || fatalError('No user password'),
+    ADMINS: 'admins',
   },
 
   sale: {

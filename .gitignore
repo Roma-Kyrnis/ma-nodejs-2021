@@ -12,3 +12,6 @@ test.js
 
 # DB dirrectory
 .data
+
+# Static users
+admins.json

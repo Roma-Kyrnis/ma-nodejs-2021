@@ -3,6 +3,7 @@ const Knex = require('knex');
 
 const { throwIfInvalid } = require('../../utils');
 
+const dbAdmins = require('./admins');
 const dbProducts = require('./products');
 const dbTypes = require('./types');
 const dbColors = require('./colors');
@@ -46,6 +47,7 @@ module.exports = config => {
   knex = new Knex(config);
 
   const products = dbProducts(knex);
+  const admins = dbAdmins(knex);
   const types = dbTypes(knex);
   const colors = dbColors(knex);
 
@@ -56,6 +58,7 @@ module.exports = config => {
 
     // --------------
 
+    admins,
     products,
     types,
     colors,

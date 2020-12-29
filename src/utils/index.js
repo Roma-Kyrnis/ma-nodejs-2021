@@ -4,7 +4,7 @@ const scheduler = require('./scheduler');
 const store = require('./store');
 const createCSVToDB = require('./csvToDB');
 const throwIfInvalid = require('./throwIfInvalid');
-const generateAccessToken = require('./generateAccessToken');
+const accessToken = require('./accessToken');
 
 module.exports = {
   createCsvToJson,
@@ -13,5 +13,5 @@ module.exports = {
   store,
   createCSVToDB,
   throwIfInvalid,
-  generateAccessToken,
+  accessToken,
 };
