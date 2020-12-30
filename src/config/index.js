@@ -1,5 +1,7 @@
 require('dotenv').config();
 
+const defaultAdmins = require('../../admins.json');
+
 const fatalError = require('../utils/fatalError');
 
 const config = {
@@ -10,6 +12,9 @@ const config = {
     ACCESS: {
       SECRET_KEY:
         process.env.ACCESS_TOKEN_SECRET || fatalError('No ACCESS_TOKEN_SECRET'),
+      REFRESH_TOKEN_SECRET:
+        process.env.REFRESH_TOKEN_SECRET ||
+        fatalError('No REFRESH_TOKEN_SECRET'),
       TOKEN_LIFE:
         process.env.ACCESS_TOKEN_LIFE || fatalError('No ACCESS_TOKEN_LIFE'),
       REFRESH_TOKEN_LIFE:
@@ -76,6 +81,8 @@ const config = {
     MAIN: `${process.cwd()}/uploads`,
     OPTIMIZATION: `${process.cwd()}/uploads/optimized`,
   },
+
+  defaultAdmins: defaultAdmins || fatalError('Admins are not defined'),
 };
 
 module.exports = config;

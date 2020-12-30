@@ -1,6 +1,8 @@
 const {
   db: { config, defaultType },
+  defaultAdmins,
 } = require('../config');
+const { createAdminHash } = require('../utils');
 const fatalError = require('../utils/fatalError');
 
 const db = {};
@@ -28,6 +30,13 @@ async function init() {
     }
 
     await db[clientType].createDBIfNotExists();
+
+    const admins = defaultAdmins.map(admin => ({
+      hash: createAdminHash(admin.username, admin.password),
+      name: admin.username,
+    }));
+
+    await db[clientType].admins.createAdmins(admins);
   } catch (err) {
     fatalError(`FATAL: ${err.message || err}`);
   }
@@ -66,6 +75,23 @@ async function testConnection() {
 async function close() {
   return funcWrapper(dbWrapper().close)();
 }
+
+// -----Admins-------
+async function createAdmins(admins) {
+  return funcWrapper(dbWrapper().admins.createAdmins)(admins);
+}
+// async function getAdmin(hash) {
+//   return funcWrapper(dbWrapper().admins.getAdmin)(hash);
+// }
+// async function getAllProducts() {
+//   return funcWrapper(dbWrapper().products.getAllProducts)();
+// }
+async function updateAdmin(admin) {
+  return funcWrapper(dbWrapper().admins.updateAdmin)(admin);
+}
+// async function deleteProduct(id) {
+//   return funcWrapper(dbWrapper().products.deleteProduct)(id);
+// }
 
 // -----Products-------
 async function createProduct(product) {
@@ -128,6 +154,12 @@ module.exports = {
 
   testConnection,
   close,
+
+  admins: {
+    createAdmins,
+    // getAdmin,
+    updateAdmin,
+  },
 
   products: {
     createProduct,

@@ -2,7 +2,12 @@ const jwt = require('jsonwebtoken');
 
 const {
   server: {
-    ACCESS: { SECRET_KEY, TOKEN_LIFE, REFRESH_TOKEN_LIFE },
+    ACCESS: {
+      SECRET_KEY,
+      REFRESH_TOKEN_SECRET,
+      TOKEN_LIFE,
+      REFRESH_TOKEN_LIFE,
+    },
   },
 } = require('../config');
 
@@ -16,11 +21,11 @@ function generateAccessToken(user) {
   });
 }
 
-function generateRefreshToken(user, secretKey) {
+function generateRefreshToken(user) {
   return new Promise((resolve, reject) => {
     jwt.sign(
       user,
-      secretKey,
+      REFRESH_TOKEN_SECRET,
       { expiresIn: REFRESH_TOKEN_LIFE },
       (err, token) => {
         if (err) return reject(err);

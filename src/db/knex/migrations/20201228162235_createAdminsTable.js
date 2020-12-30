@@ -3,8 +3,9 @@ exports.up = async knex => {
     table.increments('id');
     table.string('hash').notNullable();
     table.string('name').notNullable();
-    table.uuid('refresh-token').nullable().defaultTo(null);
-    table.unique('hash', 'name');
+    table.string('refresh-token').nullable().defaultTo(null);
+    table.unique('name');
+    table.timestamp('deleted_at').nullable().defaultTo(null);
     table.timestamps();
   });
 };

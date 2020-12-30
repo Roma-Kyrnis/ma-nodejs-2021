@@ -1,7 +1,4 @@
-const { user } = require('../../config');
-const {
-  accessToken: { generateAccessToken },
-} = require('../../utils');
+const { authorization } = require('../../services');
 
 async function login(req, res) {
   const authHeader = req.headers.authorization;
@@ -16,15 +13,10 @@ async function login(req, res) {
   );
   const [username, password] = credentials.split(':');
 
-  if (username === user.NAME && password === user.PASSWORD) {
-    try {
-      const token = await generateAccessToken({ username });
+  if (username && password) {
+    const userTokens = await authorization.login(username, password);
 
-      return res.json({ token });
-    } catch (err) {
-      console.log(err);
-      return res.status(400).json({ message: 'Invalid auth token provided.' });
-    }
+    return res.json(userTokens);
   }
 
   return res
@@ -32,4 +24,8 @@ async function login(req, res) {
     .json({ message: 'Invalid Authentication Credentials' });
 }
 
-module.exports = login;
+async function refreshTokens(req, res) {}
+
+async function logout(req, res) {}
+
+module.exports = { login };
