@@ -1,7 +1,7 @@
 const crypto = require('crypto');
 
 const {
-  users: { HASH_SECRET },
+  server: { HASH_SECRET },
 } = require('../config');
 
 function createHash(login, password) {
