@@ -1,7 +1,5 @@
 const { Transform, Writable } = require('stream');
 
-const { products } = require('../db');
-
 function createTransformStreamToDB() {
   let isNotFirst = false;
   let columnsHeaders = [];
@@ -52,11 +50,11 @@ function createTransformStreamToDB() {
   return new Transform({ transform, flush });
 }
 
-function createWriteStreamToDB() {
+function createWriteStreamToDB(writeToDB) {
   const write = async (chunk, encoding, callback) => {
     const product = JSON.parse(chunk.toString());
 
-    products.createProduct(product);
+    writeToDB(product);
     callback();
   };
 

@@ -5,13 +5,17 @@ const byline = require('byline');
 
 const promisifiedPipeline = promisify(pipeline);
 
+const {
+  products: { createProduct },
+} = require('../../db');
+
 const { createCSVToDB } = require('../../utils');
 
 async function writeCSVFile(inputStream) {
   const gunzip = createGunzip();
   const csvToDB = createCSVToDB.createTransformStreamToDB();
 
-  const outputStream = createCSVToDB.createWriteStreamToDB();
+  const outputStream = createCSVToDB.createWriteStreamToDB(createProduct);
 
   try {
     await promisifiedPipeline(
