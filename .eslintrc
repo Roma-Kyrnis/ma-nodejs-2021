@@ -20,6 +20,7 @@
       "no-console": "warn",
       "no-plusplus": [2, { "allowForLoopAfterthoughts": true }],
       "no-restricted-syntax":"off",
-      "no-useless-catch": "off"
+      "no-useless-catch": "off",
+      "no-return-await": "off"
   }
 }
