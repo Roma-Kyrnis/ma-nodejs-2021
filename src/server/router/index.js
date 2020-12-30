@@ -7,8 +7,8 @@ const products = require('./products');
 const upload = require('./upload');
 
 router.getAsync('/login', authorization.login);
-// router.getAsync('/refresh-tokens', authorization.refreshTokens);
-// router.getAsync('/logout', authorization.logout);
+router.getAsync('/refresh-tokens', authorization.refreshTokens);
+router.getAsync('/logout', authorization.logout);
 
 router.post('/setDataGlobal', authenticateToken, configureStore.setDataGlobal);
 router.post(

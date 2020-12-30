@@ -11,9 +11,9 @@ const {
   },
 } = require('../config');
 
-function generateAccessToken(user) {
+function generateToken(payload, secretKey, tokenLife) {
   return new Promise((resolve, reject) => {
-    jwt.sign(user, SECRET_KEY, { expiresIn: TOKEN_LIFE }, (err, token) => {
+    jwt.sign(payload, secretKey, { expiresIn: tokenLife }, (err, token) => {
       if (err) return reject(err);
 
       return resolve(token);
@@ -21,33 +21,35 @@ function generateAccessToken(user) {
   });
 }
 
-function generateRefreshToken(user) {
+function verifyToken(token, secretKey) {
   return new Promise((resolve, reject) => {
-    jwt.sign(
-      user,
-      REFRESH_TOKEN_SECRET,
-      { expiresIn: REFRESH_TOKEN_LIFE },
-      (err, token) => {
-        if (err) return reject(err);
+    jwt.verify(token, secretKey, (err, data) => {
+      if (err) return reject(err);
 
-        return resolve(token);
-      },
-    );
+      return resolve(data);
+    });
   });
 }
 
-function verifyAccessToken(token) {
-  return new Promise((resolve, reject) => {
-    jwt.verify(token, SECRET_KEY, (err, data) => {
-      if (err) reject(err);
+function generateAccessToken(payload) {
+  return generateToken(payload, SECRET_KEY, TOKEN_LIFE);
+}
 
-      resolve(data);
-    });
-  });
+function generateRefreshToken(payload) {
+  return generateToken(payload, REFRESH_TOKEN_SECRET, REFRESH_TOKEN_LIFE);
+}
+
+function verifyAccessToken(token) {
+  return verifyToken(token, SECRET_KEY);
+}
+
+function verifyRefreshToken(token) {
+  return verifyToken(token, REFRESH_TOKEN_SECRET);
 }
 
 module.exports = {
   generateAccessToken,
   generateRefreshToken,
   verifyAccessToken,
+  verifyRefreshToken,
 };

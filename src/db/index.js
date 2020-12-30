@@ -80,18 +80,12 @@ async function close() {
 async function createAdmins(admins) {
   return funcWrapper(dbWrapper().admins.createAdmins)(admins);
 }
-// async function getAdmin(hash) {
-//   return funcWrapper(dbWrapper().admins.getAdmin)(hash);
-// }
-// async function getAllProducts() {
-//   return funcWrapper(dbWrapper().products.getAllProducts)();
-// }
-async function updateAdmin(admin) {
-  return funcWrapper(dbWrapper().admins.updateAdmin)(admin);
+async function getAdminRefreshToken(hash) {
+  return funcWrapper(dbWrapper().admins.getAdminRefreshToken)(hash);
 }
-// async function deleteProduct(id) {
-//   return funcWrapper(dbWrapper().products.deleteProduct)(id);
-// }
+async function updateAdminRefreshToken(admin) {
+  return funcWrapper(dbWrapper().admins.updateAdminRefreshToken)(admin);
+}
 
 // -----Products-------
 async function createProduct(product) {
@@ -157,8 +151,8 @@ module.exports = {
 
   admins: {
     createAdmins,
-    // getAdmin,
-    updateAdmin,
+    getAdminRefreshToken,
+    updateAdminRefreshToken,
   },
 
   products: {

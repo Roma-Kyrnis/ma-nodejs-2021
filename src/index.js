@@ -11,7 +11,7 @@ const {
 
 async function start() {
   gracefulShutdown(err => {
-    if (err) console.log(err);
+    if (err) console.log(`Server stopped because of ${err}`);
 
     stopScheduler();
 

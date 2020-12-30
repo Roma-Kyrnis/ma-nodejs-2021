@@ -14,9 +14,9 @@ async function login(req, res) {
   const [username, password] = credentials.split(':');
 
   if (username && password) {
-    const userTokens = await authorization.login(username, password);
+    const tokens = await authorization.login(username, password);
 
-    return res.json(userTokens);
+    return res.status(200).json(tokens);
   }
 
   return res
@@ -24,8 +24,32 @@ async function login(req, res) {
     .json({ message: 'Invalid Authentication Credentials' });
 }
 
-async function refreshTokens(req, res) {}
+async function refreshTokens(req, res) {
+  const token = req.headers.authorization.split(' ')[1];
+  if (token === null) return res.status(401).json({ message: 'Unauthorized' });
 
-async function logout(req, res) {}
+  try {
+    const tokens = await authorization.refreshTokens(token);
 
-module.exports = { login };
+    return res.status(200).json(tokens);
+  } catch (err) {
+    console.log(err.message || err);
+    return res.status(403).json({ message: 'Forbidden' });
+  }
+}
+
+async function logout(req, res) {
+  const token = req.headers.authorization.split(' ')[1];
+  if (token === null) return res.status(401).json({ message: 'Unauthorized' });
+
+  try {
+    await authorization.logout(token);
+
+    return res.status(200).json({ message: 'logout' });
+  } catch (err) {
+    console.log(err.message || err);
+    return res.status(403).json({ message: 'Forbidden' });
+  }
+}
+
+module.exports = { login, refreshTokens, logout };

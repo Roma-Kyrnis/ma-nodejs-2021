@@ -5,7 +5,6 @@ exports.up = async knex => {
     table.string('name').notNullable();
     table.string('refresh-token').nullable().defaultTo(null);
     table.unique('name');
-    table.timestamp('deleted_at').nullable().defaultTo(null);
     table.timestamps();
   });
 };

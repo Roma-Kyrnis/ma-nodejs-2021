@@ -17,21 +17,19 @@ function errorHandler(error, req, res, next) {
   res.json(errMessage);
 }
 
-// eslint-disable-next-line consistent-return
 async function authenticateToken(req, res, next) {
-  const authHeader = req.headers.authorization;
-  const token = authHeader.split(' ')[1];
-  if (token == null) return res.sendStatus(401);
+  const token = req.headers.authorization.split(' ')[1];
+  if (token === null) return res.status(401).json({ message: 'Unauthorized' });
 
   try {
     const data = await verifyAccessToken(token);
 
     req.authData = data;
 
-    next();
+    return next();
   } catch (err) {
     console.log(err);
-    res.sendStatus(403);
+    return res.status(403).json({ message: 'Forbidden' });
   }
 }
 

@@ -20,51 +20,28 @@ async function createAdmins(admins) {
     .returning('*');
 }
 
-// async function getAdmin(hash) {
-//   return await knex(ADMINS)
-//     .where({ hash, deleted_at: null })
-//     .select('*')
-//     .first();
-// }
-
-// async function getAllTypes() {
-//   try {
-//     const res = await knex(TYPES).where({ deleted_at: null }).select('*');
-
-//     return res;
-//   } catch (err) {
-//     console.error(err.message || err);
-//     throw err;
-//   }
-// }
-
-async function updateAdmin({ hash, refreshToken }) {
-  const [res] = await knex(ADMINS)
-    .where({ hash })
-    .update({ 'refresh-token': refreshToken, updated_at: new Date() })
-    .returning('*');
-  return res;
+async function getAdminRefreshToken({ name }) {
+  return await knex(ADMINS).where({ name }).select('refresh-token').first();
 }
 
-// async function deleteType(id) {
-//   try {
-//     await knex(TYPES).where({ id }).update({ deleted_at: new Date() });
+async function updateAdminRefreshToken({ hash, name, refreshToken }) {
+  await knex(ADMINS)
+    .where(builder => {
+      if (hash) return builder.where({ hash });
 
-//     return true;
-//   } catch (err) {
-//     console.error(err.message || err);
-//     throw err;
-//   }
-// }
+      return builder.where({ name });
+    })
+    .update({ 'refresh-token': refreshToken, updated_at: new Date() });
+
+  return true;
+}
 
 module.exports = client => {
   knex = client;
 
   return {
     createAdmins,
-    // getAdmin,
-    // getAllTypes,
-    updateAdmin,
-    // deleteType,
+    getAdminRefreshToken,
+    updateAdminRefreshToken,
   };
 };
