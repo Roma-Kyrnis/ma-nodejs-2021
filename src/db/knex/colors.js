@@ -19,7 +19,7 @@ async function createColor(color) {
       .returning('id')
       .onConflict('color')
       .merge()
-      .returning('id');
+      .returning('*');
 
     return res;
   } catch (err) {
