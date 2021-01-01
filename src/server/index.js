@@ -10,7 +10,7 @@ const { errorHandler } = require('./middleware');
 
 const app = express();
 
-app.use(bodyParser.json({ strict: false, type: '*/*' }));
+app.use(bodyParser.json({ strict: false, type: '*/json' }));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(router);
