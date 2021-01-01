@@ -4,7 +4,7 @@ const {
   dirStoreNames: { MAIN, OPTIMIZATION },
 } = require('../../config');
 
-async function getNameFilesInFolder() {
+async function getListFilesInFolder() {
   const filenamesWithTimeAndSize = { uploads: [], optimized: [] };
 
   try {
@@ -44,4 +44,4 @@ async function getNameFilesInFolder() {
   return filenamesWithTimeAndSize;
 }
 
-module.exports = getNameFilesInFolder;
+module.exports = getListFilesInFolder;

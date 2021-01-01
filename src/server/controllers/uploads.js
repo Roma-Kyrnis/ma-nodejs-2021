@@ -24,7 +24,7 @@ async function writeAsyncInDB(req, res) {
 
 async function filenames(req, res) {
   try {
-    const result = await uploads.getNameFilesInUploads();
+    const result = await uploads.getListFilesInFolder();
 
     res.status(200).json({ files: result });
   } catch (err) {
