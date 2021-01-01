@@ -5,7 +5,7 @@ const store = require('./store');
 const createCSVToDB = require('./csvToDB');
 const throwIfInvalid = require('./throwIfInvalid');
 const createAdminHash = require('./createAdminHash')
-const accessToken = require('./accessToken');
+const authorizationTokens = require('./authorizationTokens');
 
 module.exports = {
   createCsvToJson,
@@ -15,5 +15,5 @@ module.exports = {
   createCSVToDB,
   throwIfInvalid,
   createAdminHash,
-  accessToken,
+  authorizationTokens,
 };

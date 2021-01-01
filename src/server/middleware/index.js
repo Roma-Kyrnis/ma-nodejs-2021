@@ -1,5 +1,5 @@
 const {
-  accessToken: { verifyAccessToken },
+  authorizationTokens: { verifyAccessToken },
 } = require('../../utils');
 
 // eslint-disable-next-line no-unused-vars

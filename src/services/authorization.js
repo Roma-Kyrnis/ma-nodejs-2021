@@ -1,6 +1,6 @@
 const { admins } = require('../db');
 const {
-  accessToken: {
+  authorizationTokens: {
     generateAccessToken,
     generateRefreshToken,
     verifyRefreshToken,
