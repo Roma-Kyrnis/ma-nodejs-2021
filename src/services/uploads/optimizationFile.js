@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 const {
-  dirStoreNames: { MAIN, OPTIMIZATION },
+  fileStorage: { MAIN, OPTIMIZATION },
 } = require('../../config');
 
 if (!fs.existsSync(OPTIMIZATION)) fs.mkdirSync(OPTIMIZATION);
@@ -33,7 +33,6 @@ function sortArray(inputArray, defaultArray) {
 async function optimizationFile(req) {
   const { filename } = req.params;
   const pathToOriginalFile = `${MAIN}/${filename}`;
-  const pathToOptimizedFile = `${OPTIMIZATION}/${filename}`;
 
   if (!fs.existsSync(pathToOriginalFile)) throw new Error('No such file');
   const inputStream = fs.createReadStream(pathToOriginalFile);
@@ -62,24 +61,18 @@ async function optimizationFile(req) {
   });
 
   inputStream.on('end', () => {
-    console.log('Successfully optimized array products');
-
     const totalQuantity = sortedProductsArray.reduce(
-      (accumulator, currentValue) => {
-        return accumulator + currentValue.quantity;
-      },
+      (accumulator, currentValue) => accumulator + currentValue.quantity,
       0,
     );
-    console.log('Total quantity products: ', totalQuantity);
+
+    console.log('Total quantity optimized products: ', totalQuantity);
 
     fs.writeFile(
-      pathToOptimizedFile,
+      `${OPTIMIZATION}/${filename}`,
       JSON.stringify(sortedProductsArray, 0, '  '),
       () => {
-        console.log(`File ${filename} has been overwritten`);
-        fs.unlink(pathToOriginalFile, () => {
-          console.log(`Previous version of file ${filename} has been deleted`);
-        });
+        fs.unlink(pathToOriginalFile, () => {});
       },
     );
   });

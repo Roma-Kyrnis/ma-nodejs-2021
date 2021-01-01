@@ -3,13 +3,12 @@ const { pipeline } = require('stream');
 const { promisify } = require('util');
 const byline = require('byline');
 
-const promisifiedPipeline = promisify(pipeline);
-
 const {
   products: { createProduct },
 } = require('../../db');
-
 const { createCSVToDB } = require('../../utils');
+
+const promisifiedPipeline = promisify(pipeline);
 
 async function writeCSVFile(inputStream) {
   const gunzip = createGunzip();

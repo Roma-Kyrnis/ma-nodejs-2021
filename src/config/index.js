@@ -77,9 +77,10 @@ const config = {
     TIME_GENERATE_SALE: 50,
   },
 
-  dirStoreNames: {
+  fileStorage: {
     MAIN: `${process.cwd()}/uploads`,
     OPTIMIZATION: `${process.cwd()}/uploads/optimized`,
+    NAME_OPTIMIZED_FOLDER: 'optimized',
   },
 
   defaultAdmins: defaultAdmins || fatalError('Admins are not defined'),
