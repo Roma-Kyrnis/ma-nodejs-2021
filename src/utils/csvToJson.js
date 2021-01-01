@@ -9,9 +9,7 @@ function createCsvToJson() {
     let result = '';
 
     const stringProduct = chunk.toString('utf8');
-    if (columnHeaders.toString() === stringProduct) return callback(null, '');
-
-    const arrayProductItems = stringProduct.split(',');
+    if (columnHeaders.toString() === stringProduct) return callback();
 
     const getFullProduct = items => {
       const fullProduct = {
@@ -31,12 +29,12 @@ function createCsvToJson() {
       if (insertLineSeparator) result += ',\n';
       else insertLineSeparator = true;
 
-      const product = getFullProduct(arrayProductItems);
+      const product = getFullProduct(stringProduct.split(','));
       result += `${JSON.stringify(product)}`;
     } else {
       result += '[';
       isNotFirst = true;
-      columnHeaders = arrayProductItems;
+      columnHeaders = stringProduct.split(',');
     }
 
     return callback(null, result);
