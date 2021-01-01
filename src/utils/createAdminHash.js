@@ -5,13 +5,11 @@ const {
 } = require('../config');
 
 function createHash(login, password) {
-  const hash = crypto
+  return crypto
     .createHmac('sha256', HASH_SECRET)
     .update(login)
     .update(password)
     .digest('hex');
-
-  return hash;
 }
 
 module.exports = createHash;

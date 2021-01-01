@@ -3,54 +3,46 @@ const { Transform } = require('stream');
 function createCsvToJson() {
   let isNotFirst = false;
   let insertLineSeparator = false;
-  let columnsHeaders = [];
-  let rowCount = 0;
+  let columnHeaders = [];
 
   const transform = (chunk, encoding, callback) => {
     let result = '';
 
     const stringProduct = chunk.toString('utf8');
-    if (columnsHeaders.toString() === stringProduct) return callback(null, '');
+    if (columnHeaders.toString() === stringProduct) return callback(null, '');
 
-    const arrayProduct = stringProduct.split(',');
+    const arrayProductItems = stringProduct.split(',');
 
-    const addAllColumnsInProduct = arrayValuesProduct => {
-      const product = {};
-      arrayValuesProduct.forEach((valueProduct, index) => {
-        product[columnsHeaders[index]] = valueProduct;
-      });
-
+    const getFullProduct = items => {
       const fullProduct = {
-        type: product.type,
-        color: product.color,
-        quantity: product.quantity,
+        type: items[columnHeaders.indexOf('type')],
+        color: items[columnHeaders.indexOf('color')],
+        quantity: items[columnHeaders.indexOf('quantity')],
       };
 
-      if (product.isPair === 'true') fullProduct.priceForPair = product.price;
-      else fullProduct.price = product.price;
+      if (items[columnHeaders.indexOf('isPair')] === 'true') {
+        fullProduct.priceForPair = items[columnHeaders.indexOf('price')];
+      } else fullProduct.price = items[columnHeaders.indexOf('price')];
 
       return fullProduct;
     };
 
     if (isNotFirst) {
-      rowCount += 1;
-
       if (insertLineSeparator) result += ',\n';
       else insertLineSeparator = true;
 
-      const product = addAllColumnsInProduct(arrayProduct);
+      const product = getFullProduct(arrayProductItems);
       result += `${JSON.stringify(product)}`;
     } else {
       result += '[';
       isNotFirst = true;
-      columnsHeaders = arrayProduct;
+      columnHeaders = arrayProductItems;
     }
 
     return callback(null, result);
   };
 
   const flush = callback => {
-    console.log(`Parsed ${rowCount} rows at all!`);
     callback(null, ']');
   };
 
