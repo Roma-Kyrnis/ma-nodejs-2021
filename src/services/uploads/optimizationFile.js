@@ -30,7 +30,7 @@ function sortArray(inputArray, defaultArray) {
   return sortedArray;
 }
 
-async function optimizationFile(req) {
+function optimizationFile(req) {
   const { filename } = req.params;
   const pathToOriginalFile = `${MAIN}/${filename}`;
 
