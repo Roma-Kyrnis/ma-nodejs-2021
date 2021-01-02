@@ -1,54 +1,53 @@
-const createError = require('http-errors');
+const { types } = require('../../../db');
+const { throwIfInvalid } = require('../../../utils');
 
-const {
-  products: { types },
-} = require('../../../services');
+async function createType(req, res) {
+  throwIfInvalid(req.body !== null, 400, 'No body');
+  throwIfInvalid(req.body.type, 400, 'No type defined');
 
-async function createType(req, res, next) {
-  try {
-    const result = await types.createType(req);
-    res.status(200).json({ message: `Type id: ${result.id} created` });
-  } catch (err) {
-    next(createError(err.status || 500, err.message || ''));
-  }
+  const result = await types.createType(req.body.type);
+
+  res.status(200).json({ message: `Type id: ${result.id} created` });
 }
 
-async function getType(req, res, next) {
-  try {
-    const result = await types.getType(req);
+async function getType(req, res) {
+  const id = parseInt(req.params.id, 10);
 
-    res.status(200).json({ message: 'ok', product: result });
-  } catch (err) {
-    next(createError(err.status || 500, err.message || ''));
-  }
+  throwIfInvalid(id, 400, 'No type id defined');
+  throwIfInvalid(!Number.isNaN(id), 400, 'Incorrect id');
+
+  const result = await types.getType(id);
+
+  res.status(200).json({ message: 'ok', product: result });
 }
 
-async function getAllTypes(req, res, next) {
-  try {
-    const result = await types.getAllTypes();
+async function getAllTypes(req, res) {
+  const result = await types.getAllTypes();
 
-    res.status(200).json({ message: 'ok', products: result });
-  } catch (err) {
-    next(createError(err.status || 500, err.message || ''));
-  }
+  res.status(200).json({ message: 'ok', products: result });
 }
 
-async function updateType(req, res, next) {
-  try {
-    await types.updateType(req);
-    res.status(200).json({ message: 'Type updated' });
-  } catch (err) {
-    next(createError(err.status || 500, err.message || ''));
-  }
+async function updateType(req, res) {
+  const id = parseInt(req.params.id, 10);
+
+  throwIfInvalid(id, 400, 'No type id defined');
+  throwIfInvalid(!Number.isNaN(id), 400, 'Incorrect id');
+  throwIfInvalid(req.body.type, 400, 'No type defined');
+
+  await types.updateType({ id, type: req.body.type });
+
+  res.status(200).json({ message: 'Type updated' });
 }
 
-async function deleteType(req, res, next) {
-  try {
-    await types.deleteType(req);
-    res.status(200).json({ message: 'Type deleted' });
-  } catch (err) {
-    next(createError(err.status || 500, err.message || ''));
-  }
+async function deleteType(req, res) {
+  const id = parseInt(req.params.id, 10);
+
+  throwIfInvalid(id, 400, 'No type id defined');
+  throwIfInvalid(!Number.isNaN(id), 400, 'Incorrect id');
+
+  await types.deleteType(id);
+
+  res.status(200).json({ message: 'Type deleted' });
 }
 
 module.exports = {
