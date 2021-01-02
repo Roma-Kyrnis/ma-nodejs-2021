@@ -2,6 +2,7 @@ const { Pool } = require('pg');
 
 const { throwIfInvalid } = require('../../utils');
 
+const dbAdmins = require('./admins');
 const dbProducts = require('./products');
 const dbTypes = require('./types');
 const dbColors = require('./colors');
@@ -45,6 +46,7 @@ module.exports = config => {
   client = new Pool(config);
 
   const products = dbProducts(client);
+  const admins = dbAdmins(client);
   const types = dbTypes(client);
   const colors = dbColors(client);
 
@@ -55,6 +57,7 @@ module.exports = config => {
 
     // --------------
 
+    admins,
     products,
     types,
     colors,
