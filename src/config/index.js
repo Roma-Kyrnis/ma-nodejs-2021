@@ -68,6 +68,7 @@ const config = {
     TYPES: 'types',
     COLORS: 'colors',
     ADMINS: 'admins',
+    ORDERS: 'orders',
   },
 
   sale: {
@@ -84,6 +85,44 @@ const config = {
   },
 
   defaultAdmins: defaultAdmins || fatalError('Admins are not defined'),
+
+  orders: {
+    STATUSES: {
+      OPEN: 'відкрито',
+      DONE: 'опрацьовано',
+      CANCEL: 'відмінено',
+    },
+  },
+
+  products: {
+    WEIGHTS: {
+      DEFAULT: 0.1, // kilogram, min for nova poshta
+      SOCKS: 0.06,
+      HAT: 0.3,
+      JEANS: 0.7,
+      GLOVES: 0.3,
+    },
+  },
+
+  nova_poshta: {
+    BASE_URL: 'https://api.novaposhta.ua/v2.0/json/',
+    API_KEY:
+      process.env.NOVA_POSHTA_API_KEY || fatalError('No NOVA_POSHTA_API_KEY'),
+    DELIVERY_PRICE: {
+      MODEL_NAME: 'InternetDocument',
+      CALLED_METHOD: 'getDocumentPrice',
+      OFFICE_LOCATION: 'Київ',
+      CARGO_TYPE: 'Parcel',
+      SERVICE_TYPE: 'WarehouseWarehouse',
+    },
+    WAREHOUSES: {
+      MODEL_NAME: 'AddressGeneral',
+      CALLED_METHOD: 'getWarehouses',
+      LIMIT: 5,
+      PAGE: 1,
+      LANGUAGE: 'ru',
+    },
+  },
 };
 
 module.exports = config;
