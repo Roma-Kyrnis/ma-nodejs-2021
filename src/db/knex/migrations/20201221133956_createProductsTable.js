@@ -1,6 +1,6 @@
 exports.up = async knex => {
   await knex.schema.createTable('products', table => {
-    table.specificType('id', 'INT GENERATED ALWAYS AS IDENTITY');
+    table.specificType('id', 'INT GENERATED ALWAYS AS IDENTITY').primary();
     table.integer('typeId').references('id').inTable('types').notNullable();
     table.integer('colorId').references('id').inTable('colors').notNullable();
     table.decimal('price').nullable().defaultTo(0.0);
