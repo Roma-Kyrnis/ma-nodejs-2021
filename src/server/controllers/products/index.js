@@ -3,6 +3,7 @@ const { throwIfInvalid } = require('../../../utils');
 
 const types = require('./types');
 const colors = require('./colors');
+const orders = require('./orders');
 
 async function createProduct(req, res) {
   throwIfInvalid(req.body !== null, 400, 'No body');
@@ -75,4 +76,7 @@ module.exports = {
 
   // Colors
   colors,
+
+  // Orders
+  orders,
 };

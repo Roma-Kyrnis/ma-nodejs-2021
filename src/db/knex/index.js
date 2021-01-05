@@ -7,6 +7,7 @@ const dbAdmins = require('./admins');
 const dbProducts = require('./products');
 const dbTypes = require('./types');
 const dbColors = require('./colors');
+const dbOrders = require('./orders');
 
 let database;
 let knex;
@@ -50,6 +51,7 @@ module.exports = config => {
   const admins = dbAdmins(knex);
   const types = dbTypes(knex);
   const colors = dbColors(knex);
+  const orders = dbOrders(knex);
 
   return {
     createDBIfNotExists,
@@ -62,5 +64,6 @@ module.exports = config => {
     products,
     types,
     colors,
+    orders,
   };
 };

@@ -97,6 +97,9 @@ async function getProduct(id) {
 async function getAllProducts() {
   return funcWrapper(dbWrapper().products.getAllProducts)();
 }
+function getProductIdAndQuantity(product) {
+  return funcWrapper(dbWrapper().products.getProductIdAndQuantity)(product);
+}
 async function updateProduct(product) {
   return funcWrapper(dbWrapper().products.updateProduct)(product);
 }
@@ -138,6 +141,20 @@ async function deleteColor(id) {
   return funcWrapper(dbWrapper().colors.deleteColor)(id);
 }
 
+// -----Orders-------
+function createOrder(product) {
+  return funcWrapper(dbWrapper().orders.createOrder)(product);
+}
+function getOrder(orderNumber) {
+  return funcWrapper(dbWrapper().orders.getOrder)(orderNumber);
+}
+function getAllOrders() {
+  return funcWrapper(dbWrapper().orders.getAllOrders)();
+}
+function updateOrderStatus(order) {
+  return funcWrapper(dbWrapper().orders.updateOrderStatus)(order);
+}
+
 module.exports = {
   init,
   end,
@@ -159,6 +176,7 @@ module.exports = {
     createProduct,
     getProduct,
     getAllProducts,
+    getProductIdAndQuantity,
     updateProduct,
     deleteProduct,
   },
@@ -177,5 +195,12 @@ module.exports = {
     getAllColors,
     updateColor,
     deleteColor,
+  },
+
+  orders: {
+    createOrder,
+    getOrder,
+    getAllOrders,
+    updateOrderStatus,
   },
 };
