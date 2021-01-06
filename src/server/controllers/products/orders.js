@@ -3,6 +3,9 @@ const { validate: uuidValidate, version: uuidVersion } = require('uuid');
 const { products, orders } = require('../../../db');
 const { countDeliveryPrice } = require('../../../services');
 const { throwIfInvalid } = require('../../../utils');
+const {
+  orders: { STATUSES },
+} = require('../../../config');
 
 const uuidValidateV4 = uuid => uuidValidate(uuid) && uuidVersion(uuid) === 4;
 
@@ -57,14 +60,14 @@ async function calculateOrder(req, res) {
     'Incorrect orderNumber',
   );
 
-  const product = await orders.getOrder(req.params.orderNumber);
-  throwIfInvalid(product, 400, 'No such order');
+  const currOrder = await orders.getOrder(req.params.orderNumber);
+  throwIfInvalid(currOrder, 400, 'No such order');
 
   const order = {
     recipient: req.body.recipientCity,
-    typ: product.type,
-    price: parseInt(product.price, 10),
-    quantity: parseInt(product.quantity, 10),
+    typ: currOrder.type,
+    price: parseInt(currOrder.price, 10),
+    quantity: parseInt(currOrder.quantity, 10),
   };
 
   const price = await countDeliveryPrice(order);
@@ -72,11 +75,29 @@ async function calculateOrder(req, res) {
   res.status(200).json({ message: 'Price calculated', price });
 }
 
-async function changeOrderStatus(req, res) {
-  
+async function updateOrderStatus(req, res) {
+  throwIfInvalid(req.body.status, 400, 'No status defined');
+  throwIfInvalid(
+    uuidValidateV4(req.params.orderNumber),
+    400,
+    'Incorrect orderNumber',
+  );
+
+  const status = Object.values(STATUSES).find(
+    value => value === req.body.status,
+  );
+  throwIfInvalid(status && status !== STATUSES.OPEN, 400, 'Incorrect status');
+
+  const currOrder = await orders.getOrder(req.params.orderNumber);
+  throwIfInvalid(currOrder, 400, 'No such order');
+  throwIfInvalid(currOrder.status === STATUSES.OPEN, 400, 'Order is not open');
+
+  await orders.updateOrderStatus({
+    orderNumber: req.params.orderNumber,
+    status,
+  });
 
   res.status(200).json({ message: 'Order status changed' });
-
 }
 
-module.exports = { createOrder, calculateOrder };
+module.exports = { createOrder, calculateOrder, updateOrderStatus };
