@@ -32,6 +32,7 @@ async function getOrder(orderNumber) {
     .select(
       `${ORDERS}.id`,
       `${ORDERS}.status`,
+      `${ORDERS}.productId`,
       `${ORDERS}.quantity`,
       `${TYPES}.type`,
       `${COLORS}.color`,

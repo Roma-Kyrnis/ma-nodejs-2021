@@ -92,6 +92,15 @@ async function updateOrderStatus(req, res) {
   throwIfInvalid(currOrder, 400, 'No such order');
   throwIfInvalid(currOrder.status === STATUSES.OPEN, 400, 'Order is not open');
 
+  if (status === STATUSES.CANCEL) {
+    const product = await products.getProduct(currOrder.productId);
+
+    await products.updateProduct({
+      id: currOrder.productId,
+      quantity: product.quantity + currOrder.quantity,
+    });
+  }
+
   await orders.updateOrderStatus({
     orderNumber: req.params.orderNumber,
     status,
