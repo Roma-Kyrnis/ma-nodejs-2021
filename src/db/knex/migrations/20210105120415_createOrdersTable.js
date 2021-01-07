@@ -15,6 +15,6 @@ exports.up = async knex => {
 };
 
 exports.down = async knex => {
-  await knex.raw('DROP EXTENSION IF EXISTS "uuid-ossp"');
   await knex.schema.dropTable('orders');
+  await knex.raw('DROP EXTENSION IF EXISTS "uuid-ossp"');
 };
