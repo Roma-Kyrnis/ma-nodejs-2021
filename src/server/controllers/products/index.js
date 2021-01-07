@@ -5,8 +5,6 @@ const types = require('./types');
 const colors = require('./colors');
 
 async function createProduct(req, res) {
-  throwIfInvalid(req.body !== null, 400, 'No body');
-
   const product = {
     type: req.body.type,
     color: req.body.color,

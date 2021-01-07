@@ -2,7 +2,6 @@ const { types } = require('../../../db');
 const { throwIfInvalid } = require('../../../utils');
 
 async function createType(req, res) {
-  throwIfInvalid(req.body !== null, 400, 'No body');
   throwIfInvalid(req.body.type, 400, 'No type defined');
 
   const result = await types.createType(req.body.type);

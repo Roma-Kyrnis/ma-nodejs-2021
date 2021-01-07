@@ -7,11 +7,10 @@ const { throwIfInvalid } = require('../../utils');
 let pgClient;
 
 async function createType(type) {
-  try {
-    const timestamp = new Date();
+  const timestamp = new Date();
 
-    const res = await pgClient.query(
-      `
+  const res = await pgClient.query(
+    `
       INSERT INTO ${TYPES}(type, created_at, updated_at, deleted_at)
         VALUES($1, $2, $3, $4)
       ON CONFLICT (type)
@@ -19,46 +18,30 @@ async function createType(type) {
           SET updated_at = excluded.updated_at
       RETURNING *
     `,
-      [type, timestamp, timestamp, null],
-    );
+    [type, timestamp, timestamp, null],
+  );
 
-    return res.rows[0];
-  } catch (err) {
-    console.error(err.message || err);
-    throw err;
-  }
+  return res.rows[0];
 }
 
 async function getType(id) {
-  try {
-    console.log({ id });
-
-    const res = await pgClient.query(
-      `SELECT *
+  const res = await pgClient.query(
+    `SELECT *
         FROM ${TYPES}
       WHERE id = $1 AND deleted_at IS NULL
     `,
-      [id],
-    );
+    [id],
+  );
 
-    return res.rows[0];
-  } catch (err) {
-    console.error(err.message || err);
-    throw err;
-  }
+  return res.rows[0];
 }
 
 async function getAllTypes() {
-  try {
-    const res = await pgClient.query(
-      `SELECT * FROM ${TYPES} WHERE deleted_at IS NULL`,
-    );
+  const res = await pgClient.query(
+    `SELECT * FROM ${TYPES} WHERE deleted_at IS NULL`,
+  );
 
-    return res.rows;
-  } catch (err) {
-    console.error(err.message || err);
-    throw err;
-  }
+  return res.rows;
 }
 
 async function updateType({ id, type }) {
@@ -74,27 +57,18 @@ async function updateType({ id, type }) {
     return res.rows[0];
   } catch (err) {
     console.error(err.message || err);
-    return throwIfInvalid(
-      !err,
-      400,
-      'Cannot update, table already has this type',
-    );
+    return throwIfInvalid(!err, 400, 'Table already has this type');
   }
 }
 
 async function deleteType(id) {
-  try {
-    await pgClient.query(
-      `UPDATE ${TYPES}
+  await pgClient.query(
+    `UPDATE ${TYPES}
         SET deleted_at = $1
         WHERE id = $2`,
-      [new Date(), id],
-    );
-    return true;
-  } catch (err) {
-    console.error(err.message || err);
-    throw err;
-  }
+    [new Date(), id],
+  );
+  return true;
 }
 
 module.exports = client => {
