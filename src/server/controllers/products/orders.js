@@ -9,14 +9,12 @@ const {
 
 const uuidValidateV4 = uuid => uuidValidate(uuid) && uuidVersion(uuid) === 4;
 
-async function createOrder(req, res) {
-  throwIfInvalid(req.body !== null, 400, 'No body');
-
+const getOrderProduct = body => {
   const orderProduct = {
-    type: req.body.type,
-    color: req.body.color,
-    price: parseInt(req.body.price || 0, 10),
-    quantity: parseInt(req.body.quantity || 1, 10),
+    type: body.type,
+    color: body.color,
+    price: parseInt(body.price || 0, 10),
+    quantity: parseInt(body.quantity || 1, 10),
   };
 
   throwIfInvalid(orderProduct.type, 400, 'No product type defined');
@@ -24,6 +22,11 @@ async function createOrder(req, res) {
   throwIfInvalid(!Number.isNaN(orderProduct.price), 400, 'Invalid price');
   throwIfInvalid(!Number.isNaN(orderProduct.quantity), 400, 'Invalid quantity');
 
+  return orderProduct;
+};
+
+async function createOrder(req, res) {
+  const orderProduct = getOrderProduct(req.body);
   const availableProduct = await products.getProductIdAndQuantity(orderProduct);
 
   throwIfInvalid(availableProduct, 400, 'No such product');
@@ -65,7 +68,7 @@ async function calculateOrder(req, res) {
 
   const order = {
     recipient: req.body.recipientCity,
-    typ: currOrder.type,
+    type: currOrder.type,
     price: parseInt(currOrder.price, 10),
     quantity: parseInt(currOrder.quantity, 10),
   };
