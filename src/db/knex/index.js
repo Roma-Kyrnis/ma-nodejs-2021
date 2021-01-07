@@ -11,25 +11,16 @@ let database;
 let knex;
 
 async function createDBIfNotExists() {
-  try {
-    await knex.raw(`SELECT 'CREATE DATABASE ${database}'
+  await knex.raw(`SELECT 'CREATE DATABASE ${database}'
       WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '${database}')`);
 
-    return true;
-  } catch (err) {
-    console.error(err.message || err);
-    throw err;
-  }
+  return true;
 }
 
 async function testConnection() {
-  try {
-    console.log('Hello from pg testConnection');
-    await knex.raw('SELECT NOW()');
-  } catch (err) {
-    console.error(err.message || err);
-    throw err;
-  }
+  console.log('Hello from pg testConnection');
+
+  await knex.raw('SELECT NOW()');
 }
 
 async function close() {

@@ -1,6 +1,6 @@
 function throwIfInvalid(isValid, status = 500, message = '') {
   if (!isValid) {
-    const err = new Error(`ERROR: ${message}`);
+    const err = new Error(message);
     err.status = status;
     throw err;
   }

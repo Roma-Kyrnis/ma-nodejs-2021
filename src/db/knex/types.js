@@ -7,80 +7,48 @@ const { throwIfInvalid } = require('../../utils');
 let knex;
 
 async function createType(type) {
-  try {
-    const timestamp = new Date();
+  const timestamp = new Date();
 
-    const [res] = await knex(TYPES)
-      .insert({
-        type,
-        created_at: timestamp,
-        updated_at: timestamp,
-      })
-      .returning('*')
-      .onConflict('type')
-      .merge()
-      .returning('*');
+  const [res] = await knex(TYPES)
+    .insert({
+      type,
+      created_at: timestamp,
+      updated_at: timestamp,
+    })
+    .returning('*')
+    .onConflict('type')
+    .merge()
+    .returning('*');
 
-    return res;
-  } catch (err) {
-    console.error(err.message || err);
-    throw err;
-  }
+  return res;
 }
 
 async function getType(id) {
-  try {
-    console.log({ id });
-
-    const [res] = await knex(TYPES).where({ id, deleted_at: null }).select('*');
-
-    return res;
-  } catch (err) {
-    console.error(err.message || err);
-    throw err;
-  }
+  return await knex(TYPES).where({ id, deleted_at: null }).first();
 }
 
 async function getAllTypes() {
-  try {
-    const res = await knex(TYPES).where({ deleted_at: null }).select('*');
-
-    return res;
-  } catch (err) {
-    console.error(err.message || err);
-    throw err;
-  }
+  return await knex(TYPES).where({ deleted_at: null });
 }
 
 async function updateType({ id, type }) {
-  const timestamp = new Date();
-
   try {
     const [res] = await knex(TYPES)
       .where({ id })
-      .update({ type, updated_at: timestamp })
+      .update({ type, updated_at: new Date() })
       .returning('*');
 
     return res;
   } catch (err) {
     console.error(err.message || err);
-    return throwIfInvalid(
-      !err,
-      400,
-      'Cannot update, table already has this type',
-    );
+    return throwIfInvalid(!err, 400, 'Table already has this type');
   }
 }
 
 async function deleteType(id) {
-  try {
-    await knex(TYPES).where({ id }).update({ deleted_at: new Date() });
+  await knex(TYPES).where({ id }).update({ deleted_at: new Date() });
 
-    return true;
-  } catch (err) {
-    console.error(err.message || err);
-    throw err;
-  }
+  return true;
 }
 
 module.exports = client => {
