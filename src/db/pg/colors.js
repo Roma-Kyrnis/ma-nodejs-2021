@@ -7,11 +7,10 @@ const { throwIfInvalid } = require('../../utils');
 let pgClient;
 
 async function createColor(color) {
-  try {
-    const timestamp = new Date();
+  const timestamp = new Date();
 
-    const res = await pgClient.query(
-      `
+  const res = await pgClient.query(
+    `
       INSERT INTO ${COLORS}(color, created_at, updated_at, deleted_at)
         VALUES($1, $2, $3, $4)
       ON CONFLICT (color)
@@ -19,46 +18,30 @@ async function createColor(color) {
           SET updated_at = excluded.updated_at
       RETURNING *
     `,
-      [color, timestamp, timestamp, null],
-    );
+    [color, timestamp, timestamp, null],
+  );
 
-    return res.rows[0];
-  } catch (err) {
-    console.error(err.message || err);
-    throw err;
-  }
+  return res.rows[0];
 }
 
 async function getColor(id) {
-  try {
-    console.log({ id });
-
-    const res = await pgClient.query(
-      `SELECT *
+  const res = await pgClient.query(
+    `SELECT *
         FROM ${COLORS}
       WHERE id = $1 AND deleted_at IS NULL
     `,
-      [id],
-    );
+    [id],
+  );
 
-    return res.rows[0];
-  } catch (err) {
-    console.error(err.message || err);
-    throw err;
-  }
+  return res.rows[0];
 }
 
 async function getAllColors() {
-  try {
-    const res = await pgClient.query(
-      `SELECT * FROM ${COLORS} WHERE deleted_at IS NULL`,
-    );
+  const res = await pgClient.query(
+    `SELECT * FROM ${COLORS} WHERE deleted_at IS NULL`,
+  );
 
-    return res.rows;
-  } catch (err) {
-    console.error(err.message || err);
-    throw err;
-  }
+  return res.rows;
 }
 
 async function updateColor({ id, color }) {
@@ -74,27 +57,18 @@ async function updateColor({ id, color }) {
     return res.rows[0];
   } catch (err) {
     console.error(err.message || err);
-    return throwIfInvalid(
-      !err,
-      400,
-      'Cannot update, table already has this color',
-    );
+    return throwIfInvalid(!err, 400, 'Table already has this color');
   }
 }
 
 async function deleteColor(id) {
-  try {
-    await pgClient.query(
-      `UPDATE ${COLORS}
+  await pgClient.query(
+    `UPDATE ${COLORS}
         SET deleted_at = $1
         WHERE id = $2`,
-      [new Date(), id],
-    );
-    return true;
-  } catch (err) {
-    console.error(err.message || err);
-    throw err;
-  }
+    [new Date(), id],
+  );
+  return true;
 }
 
 module.exports = client => {

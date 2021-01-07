@@ -7,82 +7,48 @@ const { throwIfInvalid } = require('../../utils');
 let knex;
 
 async function createColor(color) {
-  try {
-    const timestamp = new Date();
+  const timestamp = new Date();
 
-    const [res] = await knex(COLORS)
-      .insert({
-        color,
-        created_at: timestamp,
-        updated_at: timestamp,
-      })
-      .returning('id')
-      .onConflict('color')
-      .merge()
-      .returning('id');
+  const [res] = await knex(COLORS)
+    .insert({
+      color,
+      created_at: timestamp,
+      updated_at: timestamp,
+    })
+    .returning('id')
+    .onConflict('color')
+    .merge()
+    .returning('id');
 
-    return res;
-  } catch (err) {
-    console.error(err.message || err);
-    throw err;
-  }
+  return res;
 }
 
 async function getColor(id) {
-  try {
-    console.log({ id });
-
-    const [res] = await knex(COLORS)
-      .where({ id, deleted_at: null })
-      .select('*');
-
-    return res;
-  } catch (err) {
-    console.error(err.message || err);
-    throw err;
-  }
+  return await knex(COLORS).where({ id, deleted_at: null }).first();
 }
 
 async function getAllColors() {
-  try {
-    const res = await knex(COLORS).where({ deleted_at: null }).select('*');
-
-    return res;
-  } catch (err) {
-    console.error(err.message || err);
-    throw err;
-  }
+  return await knex(COLORS).where({ deleted_at: null });
 }
 
 async function updateColor({ id, color }) {
-  const timestamp = new Date();
-
   try {
     const [res] = await knex(COLORS)
       .where({ id })
-      .update({ color, updated_at: timestamp })
+      .update({ color, updated_at: new Date() })
       .returning('*');
 
     return res;
   } catch (err) {
     console.error(err.message || err);
-    return throwIfInvalid(
-      !err,
-      400,
-      'Cannot update, table already has this color',
-    );
+    return throwIfInvalid(!err, 400, 'Table already has this color');
   }
 }
 
 async function deleteColor(id) {
-  try {
-    await knex(COLORS).where({ id }).update({ deleted_at: new Date() });
+  await knex(COLORS).where({ id }).update({ deleted_at: new Date() });
 
-    return true;
-  } catch (err) {
-    console.error(err.message || err);
-    throw err;
-  }
+  return true;
 }
 
 module.exports = client => {
