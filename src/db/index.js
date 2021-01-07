@@ -77,13 +77,13 @@ function close() {
 }
 
 // -----Admins-------
-async function createAdmins(admins) {
+function createAdmins(admins) {
   return funcWrapper(dbWrapper().admins.createAdmins)(admins);
 }
-async function getAdminRefreshToken(hash) {
+function getAdminRefreshToken(hash) {
   return funcWrapper(dbWrapper().admins.getAdminRefreshToken)(hash);
 }
-async function updateAdminRefreshToken(admin) {
+function updateAdminRefreshToken(admin) {
   return funcWrapper(dbWrapper().admins.updateAdminRefreshToken)(admin);
 }
 
