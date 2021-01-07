@@ -66,9 +66,6 @@ async function createProduct({ type, color, price, quantity }) {
 
 async function getProduct(id) {
   try {
-    // const res = await client.query(
-    //   `IF EXISTS (SELECT lastval(id) FROM ${PRODUCTS} WHERE deleted_at IS NULL) THEN (SELECT NOW()) ELSE (SELECT lastval(id) FROM ${PRODUCTS})`,
-    // );
     const res = await client.query(
       `SELECT * FROM ${PRODUCTS} WHERE id = $1 AND deleted_at IS NULL`,
       [id],
