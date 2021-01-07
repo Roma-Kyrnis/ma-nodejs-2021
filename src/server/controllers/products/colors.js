@@ -2,7 +2,6 @@ const { colors } = require('../../../db');
 const { throwIfInvalid } = require('../../../utils');
 
 async function createColor(req, res) {
-  throwIfInvalid(req.body !== null, 400, 'No body');
   throwIfInvalid(req.body.color, 400, 'No color defined');
 
   const result = await colors.createColor(req.body.color);
