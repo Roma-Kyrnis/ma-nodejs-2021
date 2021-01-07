@@ -69,75 +69,75 @@ function dbWrapper(t) {
   return db[t] || db[clientType];
 }
 
-async function testConnection() {
+function testConnection() {
   return funcWrapper(dbWrapper().testConnection)();
 }
-async function close() {
+function close() {
   return funcWrapper(dbWrapper().close)();
 }
 
 // -----Admins-------
-async function createAdmins(admins) {
+function createAdmins(admins) {
   return funcWrapper(dbWrapper().admins.createAdmins)(admins);
 }
-async function getAdminRefreshToken(hash) {
+function getAdminRefreshToken(hash) {
   return funcWrapper(dbWrapper().admins.getAdminRefreshToken)(hash);
 }
-async function updateAdminRefreshToken(admin) {
+function updateAdminRefreshToken(admin) {
   return funcWrapper(dbWrapper().admins.updateAdminRefreshToken)(admin);
 }
 
 // -----Products-------
-async function createProduct(product) {
+function createProduct(product) {
   return funcWrapper(dbWrapper().products.createProduct)(product);
 }
-async function getProduct(id) {
+function getProduct(id) {
   return funcWrapper(dbWrapper().products.getProduct)(id);
 }
-async function getAllProducts() {
+function getAllProducts() {
   return funcWrapper(dbWrapper().products.getAllProducts)();
 }
 function getProductIdAndQuantity(product) {
   return funcWrapper(dbWrapper().products.getProductIdAndQuantity)(product);
 }
-async function updateProduct(product) {
+function updateProduct(product) {
   return funcWrapper(dbWrapper().products.updateProduct)(product);
 }
-async function deleteProduct(id) {
+function deleteProduct(id) {
   return funcWrapper(dbWrapper().products.deleteProduct)(id);
 }
 
 // -----Types-------
-async function createType(type) {
+function createType(type) {
   return funcWrapper(dbWrapper().types.createType)(type);
 }
-async function getType(id) {
+function getType(id) {
   return funcWrapper(dbWrapper().types.getType)(id);
 }
-async function getAllTypes() {
+function getAllTypes() {
   return funcWrapper(dbWrapper().types.getAllTypes)();
 }
-async function updateType(type) {
+function updateType(type) {
   return funcWrapper(dbWrapper().types.updateType)(type);
 }
-async function deleteType(id) {
+function deleteType(id) {
   return funcWrapper(dbWrapper().types.deleteType)(id);
 }
 
 // -----Colors-------
-async function createColor(color) {
+function createColor(color) {
   return funcWrapper(dbWrapper().colors.createColor)(color);
 }
-async function getColor(id) {
+function getColor(id) {
   return funcWrapper(dbWrapper().colors.getColor)(id);
 }
-async function getAllColors() {
+function getAllColors() {
   return funcWrapper(dbWrapper().colors.getAllColors)();
 }
-async function updateColor(color) {
+function updateColor(color) {
   return funcWrapper(dbWrapper().colors.updateColor)(color);
 }
-async function deleteColor(id) {
+function deleteColor(id) {
   return funcWrapper(dbWrapper().colors.deleteColor)(id);
 }
 

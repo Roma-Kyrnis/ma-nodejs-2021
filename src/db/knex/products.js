@@ -7,64 +7,44 @@ const { throwIfInvalid } = require('../../utils');
 let knex;
 
 async function createProduct({ type, color, price = 0, quantity = 1 }) {
-  try {
-    const timestamp = new Date();
+  const timestamp = new Date();
 
-    const [typeId] = await knex(TYPES).where({ type }).select('id');
-    throwIfInvalid(
-      typeId,
-      400,
-      'Cannot add this product, no such type defined in the table types',
-    );
+  const [typeId] = await knex(TYPES).where({ type }).select('id');
+  throwIfInvalid(typeId, 400, `No such type defined in the table ${TYPES}`);
 
-    const [colorId] = await knex(COLORS).where({ color }).select('id');
-    throwIfInvalid(
-      colorId,
-      400,
-      'Cannot add this product, no such color defined in the table colors',
-    );
+  const [colorId] = await knex(COLORS).where({ color }).select('id');
+  throwIfInvalid(colorId, 400, `No such color defined in the table ${COLORS}`);
 
-    const [product] = await knex(PRODUCTS)
-      .insert({
-        typeId: typeId.id,
-        colorId: colorId.id,
-        price,
-        quantity,
-        created_at: timestamp,
-        updated_at: timestamp,
-      })
-      .returning('*')
-      .onConflict(['typeId', 'colorId', 'price'])
-      .merge({ quantity: knex.raw(`products.quantity + ${quantity}`) })
-      .returning('*');
+  const [product] = await knex(PRODUCTS)
+    .insert({
+      typeId: typeId.id,
+      colorId: colorId.id,
+      price,
+      quantity,
+      created_at: timestamp,
+      updated_at: timestamp,
+    })
+    .returning('*')
+    .onConflict(['typeId', 'colorId', 'price'])
+    .merge({ quantity: knex.raw(`${PRODUCTS}.quantity + ${quantity}`) })
+    .returning('*');
 
-    return product;
-  } catch (err) {
-    console.error(err.message || err);
-    throw err;
-  }
+  return product;
 }
 
 async function getProduct(id) {
-  try {
-    console.log(id);
-    const [res] = await knex(PRODUCTS)
-      .where(`${PRODUCTS}.id`, id)
-      .andWhere(`${PRODUCTS}.deleted_at`, null)
-      .join(TYPES, `${PRODUCTS}.typeId`, '=', `${TYPES}.id`)
-      .join(COLORS, `${PRODUCTS}.colorId`, '=', `${COLORS}.id`)
-      .select(
-        `${TYPES}.type`,
-        `${COLORS}.color`,
-        `${PRODUCTS}.price`,
-        `${PRODUCTS}.quantity`,
-      );
-
-    return res;
-  } catch (err) {
-    console.error(err.message || err);
-    throw err;
-  }
+  return await knex(PRODUCTS)
+    .where(`${PRODUCTS}.id`, id)
+    .andWhere(`${PRODUCTS}.deleted_at`, null)
+    .join(TYPES, `${PRODUCTS}.typeId`, '=', `${TYPES}.id`)
+    .join(COLORS, `${PRODUCTS}.colorId`, '=', `${COLORS}.id`)
+    .select(
+      `${TYPES}.type`,
+      `${COLORS}.color`,
+      `${PRODUCTS}.price`,
+      `${PRODUCTS}.quantity`,
+    )
+    .first();
 }
 
 async function getProductIdAndQuantity(product) {
@@ -81,23 +61,16 @@ async function getProductIdAndQuantity(product) {
 }
 
 async function getAllProducts() {
-  try {
-    const res = await knex(PRODUCTS)
-      .where(`${PRODUCTS}.deleted_at`, null)
-      .join(TYPES, `${PRODUCTS}.typeId`, '=', `${TYPES}.id`)
-      .join(COLORS, `${PRODUCTS}.colorId`, '=', `${COLORS}.id`)
-      .select(
-        `${TYPES}.type`,
-        `${COLORS}.color`,
-        `${PRODUCTS}.price`,
-        `${PRODUCTS}.quantity`,
-      );
-
-    return res;
-  } catch (err) {
-    console.error(err.message || err);
-    throw err;
-  }
+  return await knex(PRODUCTS)
+    .where(`${PRODUCTS}.deleted_at`, null)
+    .join(TYPES, `${PRODUCTS}.typeId`, '=', `${TYPES}.id`)
+    .join(COLORS, `${PRODUCTS}.colorId`, '=', `${COLORS}.id`)
+    .select(
+      `${TYPES}.type`,
+      `${COLORS}.color`,
+      `${PRODUCTS}.price`,
+      `${PRODUCTS}.quantity`,
+    );
 }
 
 async function updateProduct({ id, ...product }) {
@@ -161,23 +134,14 @@ async function updateProduct({ id, ...product }) {
     return res;
   } catch (err) {
     console.error(err.message || err);
-    return throwIfInvalid(
-      !err,
-      400,
-      'Cannot update, table already has this product',
-    );
+    return throwIfInvalid(!err, 400, 'Table already has this product');
   }
 }
 
 async function deleteProduct(id) {
-  try {
-    await knex(PRODUCTS).where({ id }).update({ deleted_at: new Date() });
+  await knex(PRODUCTS).where({ id }).update({ deleted_at: new Date() });
 
-    return true;
-  } catch (err) {
-    console.error(err.message || err);
-    throw err;
-  }
+  return true;
 }
 
 module.exports = client => {
