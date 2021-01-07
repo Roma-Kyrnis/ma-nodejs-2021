@@ -35,7 +35,7 @@ async function createProduct({ type, color, price = 0, quantity = 1 }) {
       })
       .returning('*')
       .onConflict(['typeId', 'colorId', 'price'])
-      .merge({ quantity: knex.raw(`products.quantity + ${quantity}`) })
+      .merge({ quantity: knex.raw(`${PRODUCTS}.quantity + ${quantity}`) })
       .returning('*');
 
     return product;
