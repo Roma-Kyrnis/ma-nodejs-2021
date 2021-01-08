@@ -60,15 +60,6 @@ async function getProduct(id) {
 }
 
 async function getProductIdAndQuantity(product) {
-  // const [res] = await knex(PRODUCTS)
-  //   .join(TYPES, `${PRODUCTS}.typeId`, '=', `${TYPES}.id`)
-  //   .join(COLORS, `${PRODUCTS}.colorId`, '=', `${COLORS}.id`)
-  //   .where(`${TYPES}.type`, product.type)
-  //   .andWhere(`${COLORS}.color`, product.color)
-  //   .andWhere(`${PRODUCTS}.price`, product.price)
-  //   .andWhere(`${PRODUCTS}.deleted_at`, null)
-  //   .select(`${PRODUCTS}.id`, `${PRODUCTS}.quantity`);`
-
   const result = await pgClient.query(
     `SELECT ${PRODUCTS}.id,
             ${PRODUCTS}.quantity
@@ -84,7 +75,7 @@ async function getProductIdAndQuantity(product) {
     [product.type, product.color, product.price],
   );
 
-  return result;
+  return result.rows[0];
 }
 
 async function getAllProducts() {
@@ -151,7 +142,7 @@ async function updateProduct({ id, ...product }) {
     values.push(updatedValue);
   }
 
-  query.push(`updated_at = $${query.length}`);
+  query.push(`updated_at = $${query.length + 1}`);
   values.push(timestamp);
 
   throwIfInvalid(values.length, 400, 'Nothing to update');
