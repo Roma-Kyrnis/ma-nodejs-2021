@@ -1,4 +1,6 @@
+/* eslint-disable consistent-return */
 const { authorization } = require('../../services');
+const { getAuthToken, throwIfInvalid } = require('../../utils');
 
 async function login(req, res) {
   const authHeader = req.headers.authorization;
@@ -24,31 +26,35 @@ async function login(req, res) {
     .json({ message: 'Invalid Authentication Credentials' });
 }
 
-async function refreshTokens(req, res) {
-  const token = req.headers.authorization.split(' ')[1];
-  if (token === null) return res.status(401).json({ message: 'Unauthorized' });
-
+async function refreshTokens(req, res, next) {
   try {
-    const tokens = await authorization.refreshTokens(token);
+    const token = getAuthToken(req.headers);
 
-    return res.status(200).json(tokens);
+    try {
+      const tokens = await authorization.refreshTokens(token);
+
+      return res.status(200).json(tokens);
+    } catch (err) {
+      throwIfInvalid(!err, 403, 'Forbidden');
+    }
   } catch (err) {
-    console.log(err.message || err);
-    return res.status(403).json({ message: 'Forbidden' });
+    return next(err);
   }
 }
 
-async function logout(req, res) {
-  const token = req.headers.authorization.split(' ')[1];
-  if (token === null) return res.status(401).json({ message: 'Unauthorized' });
-
+async function logout(req, res, next) {
   try {
-    await authorization.logout(token);
+    const token = getAuthToken(req.headers);
 
-    return res.status(200).json({ message: 'logout' });
+    try {
+      await authorization.logout(token);
+
+      return res.status(200).json({ message: 'logout' });
+    } catch (err) {
+      throwIfInvalid(!err, 403, 'Forbidden');
+    }
   } catch (err) {
-    console.log(err.message || err);
-    return res.status(403).json({ message: 'Forbidden' });
+    return next(err);
   }
 }
 

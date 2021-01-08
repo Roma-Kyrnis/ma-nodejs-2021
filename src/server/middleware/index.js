@@ -1,5 +1,7 @@
 const {
   authorizationTokens: { verifyAccessToken },
+  getAuthToken,
+  throwIfInvalid,
 } = require('../../utils');
 
 // eslint-disable-next-line no-unused-vars
@@ -18,18 +20,20 @@ function errorHandler(error, req, res, next) {
 }
 
 async function authenticateToken(req, res, next) {
-  const token = req.headers.authorization.split(' ')[1];
-  if (token === null) return res.status(401).json({ message: 'Unauthorized' });
-
   try {
-    const data = await verifyAccessToken(token);
+    const token = getAuthToken(req.headers);
 
-    req.authData = data;
+    try {
+      const data = await verifyAccessToken(token);
+
+      req.authData = data;
+    } catch (err) {
+      throwIfInvalid(!err, 403, 'Forbidden');
+    }
 
     return next();
   } catch (err) {
-    console.log(err);
-    return res.status(403).json({ message: 'Forbidden' });
+    return next(err);
   }
 }
 
