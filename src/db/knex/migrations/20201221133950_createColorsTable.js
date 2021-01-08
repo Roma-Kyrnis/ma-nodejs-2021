@@ -4,6 +4,7 @@ exports.up = async knex => {
     table.string('color').notNullable();
     table.unique('color');
     table.timestamps();
+    table.timestamp('deleted_at').nullable().defaultTo(null);
   });
 };
 
