@@ -66,7 +66,7 @@ async function getOrder(req, res) {
   res.status(200).json({ message: 'Ok', order });
 }
 
-async function getAllOrder(req, res) {
+async function getAllOrders(req, res) {
   const allOrders = await orders.getAllOrders();
 
   res.status(200).json({ message: 'Ok', orders: allOrders });
@@ -124,7 +124,7 @@ async function updateOrderStatus(req, res) {
 module.exports = {
   createOrder,
   getOrder,
-  getAllOrder,
+  getAllOrders,
   calculateOrder,
   updateOrderStatus,
 };
