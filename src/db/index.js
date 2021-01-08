@@ -97,6 +97,9 @@ function getProduct(id) {
 function getAllProducts() {
   return funcWrapper(dbWrapper().products.getAllProducts)();
 }
+function getAllDeletedProducts() {
+  return funcWrapper(dbWrapper().products.getAllDeletedProducts)();
+}
 function updateProduct(product) {
   return funcWrapper(dbWrapper().products.updateProduct)(product);
 }
@@ -159,6 +162,7 @@ module.exports = {
     createProduct,
     getProduct,
     getAllProducts,
+    getAllDeletedProducts,
     updateProduct,
     deleteProduct,
   },
