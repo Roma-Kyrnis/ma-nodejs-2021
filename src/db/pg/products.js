@@ -59,6 +59,34 @@ async function getProduct(id) {
   return res.rows[0];
 }
 
+async function getProductIdAndQuantity(product) {
+  // const [res] = await knex(PRODUCTS)
+  //   .join(TYPES, `${PRODUCTS}.typeId`, '=', `${TYPES}.id`)
+  //   .join(COLORS, `${PRODUCTS}.colorId`, '=', `${COLORS}.id`)
+  //   .where(`${TYPES}.type`, product.type)
+  //   .andWhere(`${COLORS}.color`, product.color)
+  //   .andWhere(`${PRODUCTS}.price`, product.price)
+  //   .andWhere(`${PRODUCTS}.deleted_at`, null)
+  //   .select(`${PRODUCTS}.id`, `${PRODUCTS}.quantity`);`
+
+  const result = await pgClient.query(
+    `SELECT ${PRODUCTS}.id,
+            ${PRODUCTS}.quantity
+        FROM ${PRODUCTS}
+        INNER JOIN ${TYPES}
+          ON ${PRODUCTS}."typeId" = ${TYPES}.id
+        INNER JOIN ${COLORS}
+          ON ${PRODUCTS}."colorId" = ${COLORS}.id
+        WHERE ${TYPES}.type = $1
+          AND ${COLORS}.color = $2
+          AND ${PRODUCTS}.price = $3
+          AND ${PRODUCTS}.deleted_at IS NULL`,
+    [product.type, product.color, product.price],
+  );
+
+  return result;
+}
+
 async function getAllProducts() {
   const res = await pgClient.query(
     `SELECT *
@@ -160,6 +188,7 @@ module.exports = client => {
   return {
     createProduct,
     getProduct,
+    getProductIdAndQuantity,
     getAllProducts,
     updateProduct,
     deleteProduct,

@@ -48,16 +48,15 @@ async function getProduct(id) {
 }
 
 async function getProductIdAndQuantity(product) {
-  const [res] = await knex(PRODUCTS)
+  return await knex(PRODUCTS)
     .join(TYPES, `${PRODUCTS}.typeId`, '=', `${TYPES}.id`)
     .join(COLORS, `${PRODUCTS}.colorId`, '=', `${COLORS}.id`)
     .where(`${TYPES}.type`, product.type)
     .andWhere(`${COLORS}.color`, product.color)
     .andWhere(`${PRODUCTS}.price`, product.price)
     .andWhere(`${PRODUCTS}.deleted_at`, null)
-    .select(`${PRODUCTS}.id`, `${PRODUCTS}.quantity`);
-
-  return res;
+    .select(`${PRODUCTS}.id`, `${PRODUCTS}.quantity`)
+    .first();
 }
 
 async function getAllProducts() {

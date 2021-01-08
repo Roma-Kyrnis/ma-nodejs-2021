@@ -6,6 +6,7 @@ const dbAdmins = require('./admins');
 const dbProducts = require('./products');
 const dbTypes = require('./types');
 const dbColors = require('./colors');
+const dbOrders = require('./orders');
 
 let database;
 let client;
@@ -49,6 +50,7 @@ module.exports = config => {
   const admins = dbAdmins(client);
   const types = dbTypes(client);
   const colors = dbColors(client);
+  const orders = dbOrders(client);
 
   return {
     createDBIfNotExists,
@@ -61,5 +63,6 @@ module.exports = config => {
     products,
     types,
     colors,
+    orders,
   };
 };
