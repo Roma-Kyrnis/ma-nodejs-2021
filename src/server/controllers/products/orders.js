@@ -13,7 +13,7 @@ const getOrderProduct = body => {
   const orderProduct = {
     type: body.type,
     color: body.color,
-    price: parseInt(body.price || 0, 10),
+    price: parseFloat(body.price || 0, 10),
     quantity: parseInt(body.quantity || 1, 10),
   };
 
@@ -69,7 +69,7 @@ async function calculateOrder(req, res) {
   const order = {
     recipient: req.body.recipientCity,
     type: currOrder.type,
-    price: parseInt(currOrder.price, 10),
+    price: parseFloat(currOrder.price, 10),
     quantity: parseInt(currOrder.quantity, 10),
   };
 
