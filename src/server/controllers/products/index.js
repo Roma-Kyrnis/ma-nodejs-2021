@@ -1,5 +1,6 @@
 const { products } = require('../../../db');
 const { throwIfInvalid } = require('../../../utils');
+const getAndCheckId = require('../../../utils/getAndCheckId');
 
 const types = require('./types');
 const colors = require('./colors');
@@ -24,14 +25,12 @@ async function createProduct(req, res) {
 }
 
 async function getProduct(req, res) {
-  const id = parseInt(req.params.id, 10);
-
-  throwIfInvalid(id, 400, 'No product id defined');
-  throwIfInvalid(!Number.isNaN(id), 400, 'Incorrect id');
+  const id = getAndCheckId(req.params.id);
 
   const result = await products.getProduct(id);
 
-  res.status(200).json({ message: 'ok', product: result });
+  const message = result ? 'ok' : 'No such product';
+  res.status(200).json({ message, product: result || {} });
 }
 
 async function getAllProducts(req, res) {
@@ -40,11 +39,15 @@ async function getAllProducts(req, res) {
   res.status(200).json({ message: 'ok', products: result });
 }
 
-async function updateProduct(req, res) {
-  const product = { ...req.body, id: parseInt(req.params.id, 10) };
+async function getAllDeletedProducts(req, res) {
+  const result = await products.getAllDeletedProducts();
 
-  throwIfInvalid(product.id, 400, 'No product id defined');
-  throwIfInvalid(!Number.isNaN(product.id), 400, 'Incorrect id');
+  res.status(200).json({ message: 'ok', deleted_products: result });
+}
+
+async function updateProduct(req, res) {
+  const product = { ...req.body };
+  product.id = getAndCheckId(req.params.id);
 
   await products.updateProduct(product);
 
@@ -52,10 +55,7 @@ async function updateProduct(req, res) {
 }
 
 async function deleteProduct(req, res) {
-  const id = parseInt(req.params.id, 10);
-
-  throwIfInvalid(id, 400, 'No product id defined');
-  throwIfInvalid(!Number.isNaN(id), 400, 'Incorrect id');
+  const id = getAndCheckId(req.params.id);
 
   await products.deleteProduct(id);
 
@@ -66,6 +66,7 @@ module.exports = {
   createProduct,
   getProduct,
   getAllProducts,
+  getAllDeletedProducts,
   updateProduct,
   deleteProduct,
 

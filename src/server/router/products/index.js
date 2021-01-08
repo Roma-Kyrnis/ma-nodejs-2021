@@ -15,6 +15,7 @@ router.use('/orders', orders);
 
 router.postAsync('/', products.createProduct);
 router.getAsync('/', products.getAllProducts);
+router.getAsync('/deleted', products.getAllDeletedProducts);
 router.getAsync('/:id', products.getProduct);
 router.patchAsync('/:id', products.updateProduct);
 router.deleteAsync('/:id', products.deleteProduct);

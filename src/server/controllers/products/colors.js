@@ -1,5 +1,6 @@
 const { colors } = require('../../../db');
 const { throwIfInvalid } = require('../../../utils');
+const getAndCheckId = require('../../../utils/getAndCheckId');
 
 async function createColor(req, res) {
   throwIfInvalid(req.body.color, 400, 'No color defined');
@@ -10,27 +11,23 @@ async function createColor(req, res) {
 }
 
 async function getColor(req, res) {
-  const id = parseInt(req.params.id, 10);
-
-  throwIfInvalid(id, 400, 'No color id defined');
-  throwIfInvalid(!Number.isNaN(id), 400, 'Incorrect id');
+  const id = getAndCheckId(req.params.id);
 
   const result = await colors.getColor(id);
 
-  res.status(200).json({ message: 'ok', product: result });
+  const message = result ? 'ok' : 'No such color';
+  res.status(200).json({ message, color: result || {} });
 }
 
 async function getAllColors(req, res) {
   const result = await colors.getAllColors();
 
-  res.status(200).json({ message: 'ok', products: result });
+  res.status(200).json({ message: 'ok', colors: result });
 }
 
 async function updateColor(req, res) {
-  const id = parseInt(req.params.id, 10);
+  const id = getAndCheckId(req.params.id);
 
-  throwIfInvalid(id, 400, 'No color id defined');
-  throwIfInvalid(!Number.isNaN(id), 400, 'Incorrect id');
   throwIfInvalid(req.body.color, 400, 'No color defined');
 
   await colors.updateColor({ id, color: req.body.color });
@@ -39,10 +36,7 @@ async function updateColor(req, res) {
 }
 
 async function deleteColor(req, res) {
-  const id = parseInt(req.params.id, 10);
-
-  throwIfInvalid(id, 400, 'No color id defined');
-  throwIfInvalid(!Number.isNaN(id), 400, 'Incorrect id');
+  const id = getAndCheckId(req.params.id);
 
   await colors.deleteColor(id);
 

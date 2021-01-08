@@ -80,13 +80,36 @@ async function getProductIdAndQuantity(product) {
 
 async function getAllProducts() {
   const res = await pgClient.query(
-    `SELECT *
+    `SELECT ${PRODUCTS}.id,
+            ${TYPES}.type,
+            ${COLORS}.color,
+            ${PRODUCTS}.price,
+            ${PRODUCTS}.quantity
         FROM ${PRODUCTS}
         INNER JOIN ${TYPES}
           ON ${TYPES}.id = ${PRODUCTS}."typeId"
         INNER JOIN ${COLORS}
           ON ${COLORS}.id = ${PRODUCTS}."colorId"
         WHERE ${PRODUCTS}.deleted_at IS NULL`,
+  );
+
+  return res.rows;
+}
+
+async function getAllDeletedProducts() {
+  const res = await pgClient.query(
+    `SELECT ${PRODUCTS}.id,
+            ${TYPES}.type,
+            ${COLORS}.color,
+            ${PRODUCTS}.price,
+            ${PRODUCTS}.quantity,
+            ${PRODUCTS}.deleted_at
+        FROM ${PRODUCTS}
+        INNER JOIN ${TYPES}
+          ON ${TYPES}.id = ${PRODUCTS}."typeId"
+        INNER JOIN ${COLORS}
+          ON ${COLORS}.id = ${PRODUCTS}."colorId"
+        WHERE ${PRODUCTS}.deleted_at IS NOT NULL`,
   );
 
   return res.rows;
@@ -181,6 +204,7 @@ module.exports = client => {
     getProduct,
     getProductIdAndQuantity,
     getAllProducts,
+    getAllDeletedProducts,
     updateProduct,
     deleteProduct,
   };

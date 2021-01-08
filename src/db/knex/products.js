@@ -65,10 +65,26 @@ async function getAllProducts() {
     .join(TYPES, `${PRODUCTS}.typeId`, '=', `${TYPES}.id`)
     .join(COLORS, `${PRODUCTS}.colorId`, '=', `${COLORS}.id`)
     .select(
+      `${PRODUCTS}.id`,
       `${TYPES}.type`,
       `${COLORS}.color`,
       `${PRODUCTS}.price`,
       `${PRODUCTS}.quantity`,
+    );
+}
+
+async function getAllDeletedProducts() {
+  return await knex(PRODUCTS)
+    .whereNot(`${PRODUCTS}.deleted_at`, null)
+    .join(TYPES, `${PRODUCTS}.typeId`, '=', `${TYPES}.id`)
+    .join(COLORS, `${PRODUCTS}.colorId`, '=', `${COLORS}.id`)
+    .select(
+      `${PRODUCTS}.id`,
+      `${TYPES}.type`,
+      `${COLORS}.color`,
+      `${PRODUCTS}.price`,
+      `${PRODUCTS}.quantity`,
+      `${PRODUCTS}.deleted_at`,
     );
 }
 
@@ -151,6 +167,7 @@ module.exports = client => {
     getProduct,
     getAllProducts,
     getProductIdAndQuantity,
+    getAllDeletedProducts,
     updateProduct,
     deleteProduct,
   };
