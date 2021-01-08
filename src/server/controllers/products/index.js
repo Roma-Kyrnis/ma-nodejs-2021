@@ -39,6 +39,12 @@ async function getAllProducts(req, res) {
   res.status(200).json({ message: 'ok', products: result });
 }
 
+async function getAllDeletedProducts(req, res) {
+  const result = await products.getAllDeletedProducts();
+
+  res.status(200).json({ message: 'ok', deleted_products: result });
+}
+
 async function updateProduct(req, res) {
   const product = { ...req.body, id: parseInt(req.params.id, 10) };
 
@@ -65,6 +71,7 @@ module.exports = {
   createProduct,
   getProduct,
   getAllProducts,
+  getAllDeletedProducts,
   updateProduct,
   deleteProduct,
 
