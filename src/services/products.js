@@ -13,7 +13,7 @@ async function createProduct({ body }) {
   const product = {
     type,
     color,
-    price: parseInt(price, 10),
+    price: parseFloat(price, 10),
     quantity: parseInt(quantity, 10),
   };
 
