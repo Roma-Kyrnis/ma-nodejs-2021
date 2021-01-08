@@ -8,6 +8,9 @@ const {
 } = require('../../../config');
 
 const uuidValidateV4 = uuid => uuidValidate(uuid) && uuidVersion(uuid) === 4;
+const checkOrderNumber = order => {
+  throwIfInvalid(uuidValidateV4(order), 400, 'Incorrect orderNumber');
+};
 
 const getOrderProduct = body => {
   const orderProduct = {
@@ -55,13 +58,23 @@ async function createOrder(req, res) {
     .json({ message: 'Product ordered', orderNumber: result.orderNumber });
 }
 
+async function getOrder(req, res) {
+  checkOrderNumber(req.params.orderNumber);
+
+  const order = await orders.getOrder(req.params.orderNumber);
+
+  res.status(200).json({ message: 'Ok', order });
+}
+
+async function getAllOrder(req, res) {
+  const allOrders = await orders.getAllOrders();
+
+  res.status(200).json({ message: 'Ok', orders: allOrders });
+}
+
 async function calculateOrder(req, res) {
   throwIfInvalid(req.body.recipientCity, 400, 'No recipientCity defined');
-  throwIfInvalid(
-    uuidValidateV4(req.params.orderNumber),
-    400,
-    'Incorrect orderNumber',
-  );
+  checkOrderNumber(req.params.orderNumber);
 
   const currOrder = await orders.getOrder(req.params.orderNumber);
   throwIfInvalid(currOrder, 400, 'No such order');
@@ -80,11 +93,7 @@ async function calculateOrder(req, res) {
 
 async function updateOrderStatus(req, res) {
   throwIfInvalid(req.body.status, 400, 'No status defined');
-  throwIfInvalid(
-    uuidValidateV4(req.params.orderNumber),
-    400,
-    'Incorrect orderNumber',
-  );
+  checkOrderNumber(req.params.orderNumber);
 
   const status = Object.values(STATUSES).find(
     value => value === req.body.status,
@@ -112,4 +121,10 @@ async function updateOrderStatus(req, res) {
   res.status(200).json({ message: 'Order status changed' });
 }
 
-module.exports = { createOrder, calculateOrder, updateOrderStatus };
+module.exports = {
+  createOrder,
+  getOrder,
+  getAllOrder,
+  calculateOrder,
+  updateOrderStatus,
+};
