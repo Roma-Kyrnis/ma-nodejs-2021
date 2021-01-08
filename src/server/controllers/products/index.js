@@ -9,7 +9,7 @@ async function createProduct(req, res) {
   const product = {
     type: req.body.type,
     color: req.body.color,
-    price: parseInt(req.body.price || 0, 10),
+    price: parseFloat(req.body.price || 0, 10),
     quantity: parseInt(req.body.quantity || 1, 10),
   };
 
