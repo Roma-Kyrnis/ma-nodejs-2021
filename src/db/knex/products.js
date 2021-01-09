@@ -77,64 +77,51 @@ async function getAllDeletedProducts() {
 }
 
 async function updateProduct({ id, ...product }) {
-  const query = {};
-  let queryLength = 0;
+  const getObjectId = async (timestamp, { name, value }) => {
+    const tableName = name === 'type' ? TYPES : COLORS;
+    const [objectId] = await knex(tableName)
+      .insert({
+        [name]: value,
+        created_at: timestamp,
+        updated_at: timestamp,
+      })
+      .returning('id')
+      .onConflict(name)
+      .merge()
+      .returning('id');
+    return objectId;
+  };
 
+  const query = {};
   const timestamp = new Date();
 
   for await (const [key, value] of Object.entries(product)) {
     switch (key) {
       case 'type':
-        [query.typeId] = await knex(TYPES)
-          .insert({
-            type: product.type,
-            created_at: timestamp,
-            updated_at: timestamp,
-          })
-          .returning('id')
-          .onConflict('type')
-          .merge()
-          .returning('id');
-
-        queryLength += 1;
-
+        query.typeId = await getObjectId(timestamp, { name: key, value });
         break;
 
       case 'color':
-        [query.colorId] = await knex(COLORS)
-          .insert({
-            color: product.color,
-            created_at: timestamp,
-            updated_at: timestamp,
-          })
-          .returning('id')
-          .onConflict('color')
-          .merge()
-          .returning('id');
-
-        queryLength += 1;
-
+        query.colorId = await getObjectId(timestamp, { name: key, value });
         break;
 
       default:
         query[key] = value;
-        queryLength += 1;
-
         break;
     }
   }
 
-  throwIfInvalid(queryLength, 400, 'Nothing to update');
+  throwIfInvalid(Object.keys(query).length, 400, 'Nothing to update');
 
   query.updated_at = timestamp;
 
   try {
-    const [res] = await knex(PRODUCTS)
+    const [result] = await knex(PRODUCTS)
       .where({ id })
       .update(query)
       .returning('*');
 
-    return res;
+    return result;
   } catch (err) {
     console.error(err.message || err);
     return throwIfInvalid(!err, 400, 'Table already has this product');
