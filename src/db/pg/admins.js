@@ -14,32 +14,29 @@ async function createAdmins(admins) {
   for (const [index, admin] of Object.entries(admins)) {
     const queryValues = [];
 
-    const addColumn = (key, value) => {
+    const setValues = (key, value) => {
       if (index === '0') columnNames.push(key);
       queryValues.push(`$${values.length + 1}`);
       values.push(value);
     };
 
-    for (const [key, value] of Object.entries(admin)) {
-      addColumn(key, value);
-    }
-    addColumn('created_at', timestamp);
-    addColumn('updated_at', timestamp);
+    for (const [key, value] of Object.entries(admin)) setValues(key, value);
+    setValues('created_at', timestamp);
+    setValues('updated_at', timestamp);
 
     query.push(`(${queryValues.join(',')})`);
   }
 
   await pgClient.query(
-    `
-      INSERT INTO ${ADMINS}(${columnNames})
+    `INSERT INTO ${ADMINS}(${columnNames})
         VALUES ${query.join(',')}
       ON CONFLICT (name)
         DO UPDATE
           SET updated_at = excluded.updated_at
-      RETURNING *
-    `,
+      RETURNING *`,
     values,
   );
+  return true;
 }
 
 async function getAdminRefreshToken({ name }) {
