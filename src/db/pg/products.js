@@ -7,27 +7,25 @@ const { throwIfInvalid } = require('../../utils');
 let pgClient;
 
 async function createProduct({ type, color, price = 0, quantity = 1 }) {
+  const getTypeOrColorIdIfExist = async ({ name, value }) => {
+    const tableName = name === 'type' ? TYPES : COLORS;
+    const result = await pgClient.query(
+      `SELECT id
+          FROM ${tableName}
+          WHERE ${name} = $1`,
+      [value],
+    );
+    throwIfInvalid(result.rows[0], 400, `No such ${name} defined`);
+    return result.rows[0].id;
+  };
+
+  const typeId = await getTypeOrColorIdIfExist({ name: 'type', value: type });
+  const colorId = await getTypeOrColorIdIfExist({
+    name: 'color',
+    value: color,
+  });
+
   const timestamp = new Date();
-
-  const {
-    rows: [typeId],
-  } = await pgClient.query(
-    `SELECT id
-        FROM ${TYPES}
-        WHERE type = $1`,
-    [type],
-  );
-  throwIfInvalid(typeId, 400, `No such type defined in the table ${TYPES}`);
-
-  const {
-    rows: [colorId],
-  } = await pgClient.query(
-    `SELECT id
-        FROM ${COLORS}
-        WHERE color = $1`,
-    [color],
-  );
-  throwIfInvalid(colorId, 400, `No such color defined in the table ${COLORS}`);
 
   const res = await pgClient.query(
     `INSERT INTO ${PRODUCTS}("typeId", "colorId", price, quantity, created_at, updated_at, deleted_at)
@@ -35,7 +33,7 @@ async function createProduct({ type, color, price = 0, quantity = 1 }) {
       ON CONFLICT ("typeId", "colorId", price) DO UPDATE
         SET quantity = ${PRODUCTS}.quantity + $4
       RETURNING *`,
-    [typeId.id, colorId.id, price, quantity, timestamp, timestamp, null],
+    [typeId, colorId, price, quantity, timestamp, timestamp, null],
   );
 
   return res.rows[0];
@@ -116,71 +114,60 @@ async function getAllDeletedProducts() {
 }
 
 async function updateProduct({ id, ...product }) {
+  const getId = async (timestamp, { name, value }) => {
+    const tableName = name === 'type' ? TYPES : COLORS;
+    const result = await pgClient.query(
+      `INSERT INTO ${tableName}(${name}, created_at, updated_at, deleted_at)
+          VALUES($1, $2, $3, $4)
+        ON CONFLICT (${name})
+          DO UPDATE
+            SET updated_at = excluded.updated_at
+        RETURNING *`,
+      [value, timestamp, timestamp, null],
+    );
+    return result.rows[0].id;
+  };
+
   const query = [];
   const values = [];
 
   const timestamp = new Date();
 
   for await (const [index, [key, value]] of Object.entries(product).entries()) {
-    let updatedValue;
+    switch (key) {
+      case 'type':
+        values.push(await getId(timestamp, { name: key, value }));
+        query.push(`"typeId" = $${index + 1}`);
+        break;
 
-    if (key === 'type') {
-      const typeData = await pgClient.query(
-        `
-          INSERT INTO ${TYPES}(type, created_at, updated_at, deleted_at)
-            VALUES($1, $2, $3, $4)
-          ON CONFLICT (type)
-            DO UPDATE
-              SET updated_at = excluded.updated_at
-          RETURNING *
-        `,
-        [value, timestamp, timestamp, null],
-      );
+      case 'color':
+        values.push(await getId(timestamp, { name: key, value }));
+        query.push(`"colorId" = $${index + 1}`);
+        break;
 
-      updatedValue = typeData.rows[0].id;
-
-      query.push(`"typeId" = $${index + 1}`);
-    } else if (key === 'color') {
-      const colorData = await pgClient.query(
-        `
-            INSERT INTO ${COLORS}(color, created_at, updated_at, deleted_at)
-              VALUES($1, $2, $3, $4)
-            ON CONFLICT (color)
-              DO UPDATE
-              SET updated_at = excluded.updated_at
-            RETURNING *
-          `,
-        [value, timestamp, timestamp, null],
-      );
-
-      updatedValue = colorData.rows[0].id;
-
-      query.push(`"colorId" = $${index + 1}`);
-    } else {
-      updatedValue = value;
-
-      query.push(`${key} = $${index + 1}`);
+      default:
+        values.push(value);
+        query.push(`${key} = $${index + 1}`);
+        break;
     }
-
-    values.push(updatedValue);
   }
 
-  query.push(`updated_at = $${query.length + 1}`);
-  values.push(timestamp);
-
   throwIfInvalid(values.length, 400, 'Nothing to update');
+
+  query.push(`updated_at = $${query.length}`);
+  values.push(timestamp);
 
   values.push(parseInt(id, 10));
 
   try {
-    const res = await pgClient.query(
+    const result = await pgClient.query(
       `UPDATE ${PRODUCTS} SET ${query.join(',')} WHERE id = $${
         values.length
       } RETURNING *`,
       values,
     );
 
-    return res.rows[0];
+    return result.rows[0];
   } catch (err) {
     console.error(err.message || err);
     return throwIfInvalid(!err, 400, 'Table already has this product');
