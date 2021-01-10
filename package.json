@@ -4,7 +4,8 @@
   "description": "Homework-01",
   "main": "src",
   "scripts": {
-    "start": "node src"
+    "start": "node src",
+    "seeds:create": "node ./src/db/seeds"
   },
   "dependencies": {
     "@awaitjs/express": "^0.6.3",

@@ -54,6 +54,11 @@ const config = {
     COLORS: 'colors',
   },
 
+  seeds: {
+    TYPES: ['socks', 'gloves', 'hat', 'jeans'],
+    COLORS: ['red', 'black', 'lime', 'navy', 'purple'],
+  },
+
   user: {
     NAME: process.env.USER_NAME || fatalError('No user name'),
     PASSWORD: process.env.USER_PASSWORD || fatalError('No user password'),
