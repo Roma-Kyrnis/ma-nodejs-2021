@@ -13,7 +13,10 @@ npm i
 docker-compose up -d
 
 # 5 start migrations
-knex:migrate:latest || pg:migrate:up
+npm run [knex:migrate:latest || pg:migrate:up]
 
-# 6 run
+# 6 create seeds
+npm run seeds:create
+
+# 7 run
 npm start

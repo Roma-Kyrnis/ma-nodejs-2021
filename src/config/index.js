@@ -70,6 +70,11 @@ const config = {
     ADMINS: 'admins',
   },
 
+  seeds: {
+    TYPES: ['socks', 'gloves', 'hat', 'jeans'],
+    COLORS: ['red', 'black', 'lime', 'navy', 'purple'],
+  },
+
   sale: {
     MIN: 1,
     MAX: 99,
