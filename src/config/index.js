@@ -10,7 +10,13 @@ const config = {
   },
 
   db: {
-    defaultType: process.env.DB_WRAPPER_TYPE || 'knex',
+    defaultType: process.env.DB_WRAPPER_TYPE || 'sequelize',
+
+    names: {
+      PG: 'pg',
+      KNEX: 'knex',
+      SEQUELIZE: 'sequelize',
+    },
 
     config: {
       knex: {
@@ -44,6 +50,29 @@ const config = {
           process.env.DB_NAME || fatalError('FATAL: DB_NAME is not defined'),
         password:
           process.env.DB_PASS || fatalError('FATAL: DB_PASS is not defined'),
+      },
+      sequelize: {
+        dialect: 'postgres',
+
+        username:
+          process.env.DB_USER || fatalError('FATAL: DB_USER is not defined'),
+        host:
+          process.env.DB_HOST || fatalError('FATAL: DB_HOST is not defined'),
+        port:
+          process.env.DB_PORT || fatalError('FATAL: DB_PORT is not defined'),
+        database:
+          process.env.DB_NAME || fatalError('FATAL: DB_NAME is not defined'),
+        password:
+          process.env.DB_PASS || fatalError('FATAL: DB_PASS is not defined'),
+
+        logging: true,
+        pool: {
+          min: 2,
+          max: 10,
+          idle: 5000,
+          acquires: 5000,
+          evict: 5000,
+        },
       },
     },
   },
