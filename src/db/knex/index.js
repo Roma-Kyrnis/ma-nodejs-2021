@@ -1,8 +1,10 @@
-/* eslint-disable no-restricted-syntax */
 const Knex = require('knex');
 
 const {
   tables: { PRODUCTS, TYPES, COLORS },
+  db: {
+    names: { KNEX },
+  },
 } = require('../../config');
 const { throwIfInvalid } = require('../../utils');
 
@@ -55,13 +57,13 @@ async function createDBWithTables() {
 }
 
 async function testConnection() {
-  console.log('Hello from pg testConnection');
+  console.log(`Hello from ${KNEX} testConnection`);
 
   await knex.raw('SELECT NOW()');
 }
 
 async function close() {
-  console.log('INFO: Closing pg DB wrapper');
+  console.log(`INFO: Closing ${KNEX} DB wrapper`);
   // no close fot knex
 }
 

@@ -2,6 +2,9 @@ const { Pool } = require('pg');
 
 const {
   tables: { PRODUCTS, TYPES, COLORS },
+  db: {
+    names: { PG },
+  },
 } = require('../../config');
 const { throwIfInvalid } = require('../../utils');
 
@@ -13,12 +16,11 @@ let database;
 let client;
 
 async function createDBWithTables() {
-  try {
-    await client.query(`SELECT 'CREATE DATABASE ${database}'
+  await client.query(`SELECT 'CREATE DATABASE ${database}'
     WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '${database}')`);
 
-    await client.query(
-      `CREATE TABLE IF NOT EXISTS ${TYPES}(
+  await client.query(
+    `CREATE TABLE IF NOT EXISTS ${TYPES}(
         id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
         type VARCHAR(255) NOT NULL,
         UNIQUE(type),
@@ -26,10 +28,10 @@ async function createDBWithTables() {
         updated_at TIMESTAMP NOT NULL,
         deleted_at TIMESTAMP DEFAULT NULL
       )`,
-    );
+  );
 
-    await client.query(
-      `CREATE TABLE IF NOT EXISTS ${COLORS}(
+  await client.query(
+    `CREATE TABLE IF NOT EXISTS ${COLORS}(
         id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
         color VARCHAR(255) NOT NULL,
         UNIQUE(color),
@@ -37,10 +39,10 @@ async function createDBWithTables() {
         updated_at TIMESTAMP NOT NULL,
         deleted_at TIMESTAMP DEFAULT NULL
       )`,
-    );
+  );
 
-    await client.query(
-      `CREATE TABLE IF NOT EXISTS ${PRODUCTS}(
+  await client.query(
+    `CREATE TABLE IF NOT EXISTS ${PRODUCTS}(
           id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
           "typeId" INT NOT NULL REFERENCES ${TYPES},
           "colorId" INT NOT NULL REFERENCES ${COLORS},
@@ -51,25 +53,16 @@ async function createDBWithTables() {
           updated_at TIMESTAMP NOT NULL,
           deleted_at TIMESTAMP DEFAULT NULL
             )`,
-    );
-  } catch (err) {
-    console.error(err.message || err);
-    throw err;
-  }
+  );
 }
 
 async function testConnection() {
-  try {
-    console.log('Hello from pg testConnection');
-    await client.query('SELECT NOW()');
-  } catch (err) {
-    console.error(err.message || err);
-    throw err;
-  }
+  console.log(`Hello from ${PG} testConnection`);
+  await client.query('SELECT NOW()');
 }
 
 async function close() {
-  console.log('INFO: Closing pg DB wrapper');
+  console.log(`INFO: Closing ${PG} DB wrapper`);
   client.end();
 }
 
