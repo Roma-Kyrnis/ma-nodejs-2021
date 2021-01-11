@@ -10,7 +10,7 @@ const config = {
   },
 
   db: {
-    defaultType: process.env.DB_WRAPPER_TYPE || 'sequelize',
+    defaultType: process.env.DB_WRAPPER_TYPE || 'knex',
 
     names: {
       PG: 'pg',

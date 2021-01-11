@@ -45,7 +45,12 @@ async function updateType({ id, ...type }) {
 }
 
 async function deleteType(id) {
-  await sequelize[TYPES].update({ deletedAt: Date.now() }, { where: { id } });
+  const res = await sequelize[TYPES].update(
+    { deletedAt: Date.now() },
+    { where: { id, deletedAt: { [Sequelize.Op.is]: null } } },
+  );
+
+  throwIfInvalid(res[0], 400, 'Already deleted');
 
   return true;
 }

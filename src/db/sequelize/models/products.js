@@ -13,18 +13,16 @@ function up(sequelize, DataTypes) {
         primaryKey: true,
       },
       typeId: {
-        type: DataTypes.BIGINT,
+        type: DataTypes.INTEGER,
         allowNull: false,
-        unique: true,
         references: {
           model: TYPES,
           key: 'id',
         },
       },
       colorId: {
-        type: DataTypes.BIGINT,
+        type: DataTypes.INTEGER,
         allowNull: false,
-        unique: true,
         references: {
           model: COLORS,
           key: 'id',
@@ -33,7 +31,6 @@ function up(sequelize, DataTypes) {
       price: {
         type: DataTypes.DECIMAL,
         allowNull: true,
-        unique: true,
         defaultValue: 0.0,
       },
       quantity: {
@@ -47,7 +44,14 @@ function up(sequelize, DataTypes) {
         defaultValue: null,
       },
     },
-    {},
+    {
+      indexes: [
+        {
+          unique: true,
+          fields: ['typeId', 'colorId', 'price'],
+        },
+      ],
+    },
   );
 }
 

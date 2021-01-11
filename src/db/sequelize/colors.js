@@ -45,8 +45,12 @@ async function updateColor({ id, ...color }) {
 }
 
 async function deleteColor(id) {
-  await sequelize[COLORS].update({ deletedAt: Date.now() }, { where: { id } });
+  const res = await sequelize[COLORS].update(
+    { deletedAt: Date.now() },
+    { where: { id, deletedAt: { [Sequelize.Op.is]: null } } },
+  );
 
+  throwIfInvalid(res[0], 400, 'Already deleted');
   return true;
 }
 
