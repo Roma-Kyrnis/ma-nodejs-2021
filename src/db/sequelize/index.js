@@ -12,6 +12,7 @@ const {
 } = require('../../config');
 const { throwIfInvalid } = require('../../utils');
 
+const dbAdmins = require('./admins');
 const dbProducts = require('./products');
 const dbTypes = require('./types');
 const dbColors = require('./colors');
@@ -64,6 +65,7 @@ module.exports = config => {
     }
   });
 
+  const admins = dbAdmins(db);
   const products = dbProducts(db);
   const types = dbTypes(db);
   const colors = dbColors(db);
@@ -75,6 +77,7 @@ module.exports = config => {
 
     // --------------
 
+    admins,
     products,
     types,
     colors,
