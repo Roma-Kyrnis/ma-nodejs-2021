@@ -31,11 +31,11 @@ async function getAllTypes() {
   return await knex(TYPES).where({ deleted_at: null });
 }
 
-async function updateType({ id, type }) {
+async function updateType({ id, ...type }) {
   try {
     const [res] = await knex(TYPES)
       .where({ id })
-      .update({ type, updated_at: new Date() })
+      .update({ ...type, updated_at: new Date() })
       .returning('*');
 
     return res;

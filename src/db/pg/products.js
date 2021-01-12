@@ -12,7 +12,8 @@ async function createProduct({ type, color, price = 0, quantity = 1 }) {
     const result = await pgClient.query(
       `SELECT id
           FROM ${tableName}
-          WHERE ${name} = $1`,
+          WHERE ${name} = $1 AND
+                deleted_at IS NULL`,
       [value],
     );
     throwIfInvalid(result.rows[0], 400, `No such ${name} defined`);
