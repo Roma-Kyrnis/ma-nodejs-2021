@@ -16,6 +16,7 @@ const dbAdmins = require('./admins');
 const dbProducts = require('./products');
 const dbTypes = require('./types');
 const dbColors = require('./colors');
+const dbOrders = require('./orders');
 
 let database;
 let sequelize;
@@ -69,6 +70,7 @@ module.exports = config => {
   const products = dbProducts(db);
   const types = dbTypes(db);
   const colors = dbColors(db);
+  const orders = dbOrders(db);
 
   return {
     createDBIfNotExists,
@@ -81,5 +83,6 @@ module.exports = config => {
     products,
     types,
     colors,
+    orders,
   };
 };

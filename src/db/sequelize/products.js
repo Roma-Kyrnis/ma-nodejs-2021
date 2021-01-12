@@ -64,6 +64,33 @@ async function getProduct(id) {
   });
 }
 
+async function getProductIdAndQuantity(product) {
+  await sequelize[PRODUCTS].belongsTo(sequelize[TYPES]);
+  await sequelize[PRODUCTS].belongsTo(sequelize[COLORS]);
+
+  const res = await sequelize[PRODUCTS].findOne({
+    where: {
+      price: product.price,
+      deletedAt: { [Sequelize.Op.is]: null },
+    },
+    attributes: ['id', 'quantity'],
+    include: [
+      {
+        model: sequelize[TYPES],
+        where: { type: product.type },
+        required: true,
+      },
+      {
+        model: sequelize[COLORS],
+        where: { color: product.color },
+        required: true,
+      },
+    ],
+  });
+
+  return { id: res.id, quantity: res.quantity };
+}
+
 async function getAllProducts() {
   await sequelize[PRODUCTS].belongsTo(sequelize[TYPES]);
   await sequelize[PRODUCTS].belongsTo(sequelize[COLORS]);
@@ -161,6 +188,7 @@ module.exports = client => {
   return {
     createProduct,
     getProduct,
+    getProductIdAndQuantity,
     getAllProducts,
     getAllDeletedProducts,
     updateProduct,
