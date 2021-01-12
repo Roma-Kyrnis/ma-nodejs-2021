@@ -1,5 +1,10 @@
 const { Pool } = require('pg');
 
+const {
+  db: {
+    names: { PG },
+  },
+} = require('../../config');
 const { throwIfInvalid } = require('../../utils');
 
 const dbAdmins = require('./admins');
@@ -12,29 +17,21 @@ let database;
 let client;
 
 async function createDBIfNotExists() {
-  try {
-    await client.query(`SELECT 'CREATE DATABASE ${database}'
+  await client.query(`SELECT 'CREATE DATABASE ${database}'
       WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '${database}')`);
 
-    return true;
-  } catch (err) {
-    console.error(err.message || err);
-    throw err;
-  }
+  return true;
 }
 
 async function testConnection() {
-  try {
-    console.log('Hello from pg testConnection');
-    await client.query('SELECT NOW()');
-  } catch (err) {
-    console.error(err.message || err);
-    throw err;
-  }
+  console.log(`Hello from ${PG} testConnection`);
+
+  await client.query('SELECT NOW()');
 }
 
 async function close() {
-  console.log('INFO: Closing pg DB wrapper');
+  console.log(`INFO: Closing ${PG} DB wrapper`);
+
   client.end();
 }
 

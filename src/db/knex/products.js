@@ -9,11 +9,15 @@ let knex;
 async function createProduct({ type, color, price = 0, quantity = 1 }) {
   const timestamp = new Date();
 
-  const [typeId] = await knex(TYPES).where({ type }).select('id');
-  throwIfInvalid(typeId, 400, `No such type defined in the table ${TYPES}`);
+  const [typeId] = await knex(TYPES)
+    .where({ type, deleted_at: null })
+    .select('id');
+  throwIfInvalid(typeId, 400, `No such type in the table ${TYPES}`);
 
-  const [colorId] = await knex(COLORS).where({ color }).select('id');
-  throwIfInvalid(colorId, 400, `No such color defined in the table ${COLORS}`);
+  const [colorId] = await knex(COLORS)
+    .where({ color, deleted_at: null })
+    .select('id');
+  throwIfInvalid(colorId, 400, `No such color in the table ${COLORS}`);
 
   const [product] = await knex(PRODUCTS)
     .insert({
