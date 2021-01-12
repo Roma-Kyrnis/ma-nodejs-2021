@@ -20,11 +20,9 @@ let database;
 let sequelize;
 const db = {};
 
-async function createDBWithTables() {
+async function createDBIfNotExists() {
   await sequelize.query(`SELECT 'CREATE DATABASE ${database}'
     WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '${database}')`);
-
-  await sequelize.sync();
 }
 
 async function testConnection() {
@@ -71,7 +69,7 @@ module.exports = config => {
   const colors = dbColors(db);
 
   return {
-    createDBWithTables,
+    createDBIfNotExists,
     testConnection,
     close,
 

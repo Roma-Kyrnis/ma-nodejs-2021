@@ -14,8 +14,11 @@
     "pg:migrate:create": "./node_modules/.bin/node-pg-migrate --config-file=./src/db/pg/config-file.js --migrations-dir=./src/db/pg/migrations create",
     "pg:migrate:up": "./node_modules/.bin/node-pg-migrate --config-file=./src/db/pg/config-file.js --migrations-dir=./src/db/pg/migrations up",
     "pg:migrate:down": "./node_modules/.bin/node-pg-migrate --config-file=./src/db/pg/config-file.js --migrations-dir=./src/db/pg/migrations down",
-    "pg:migrate:redo": "./node_modules/.bin/node-pg-migrate --config-file=./src/db/pg/config-file.js --migrations-dir=./src/db/pg/migrations redo"
-  },
+    "pg:migrate:redo": "./node_modules/.bin/node-pg-migrate --config-file=./src/db/pg/config-file.js --migrations-dir=./src/db/pg/migrations redo",
+    "sequelize:migrate:make": "./node_modules/.bin/sequelize --migrations-path=./src/db/sequelize/migrations/ migration:generate --name",
+    "sequelize:migrate:latest": "./node_modules/.bin/sequelize --migrations-path=./src/db/sequelize/migrations/ --config=./src/db/sequelize/config/config.js db:migrate",
+    "sequelize:migrate:undo": "./node_modules/.bin/sequelize --migrations-path=./src/db/sequelize/migrations/ --config=./src/db/sequelize/config/config.js db:migrate:undo"
+    },
   "dependencies": {
     "@awaitjs/express": "^0.6.3",
     "body-parser": "^1.19.0",
