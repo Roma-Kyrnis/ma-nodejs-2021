@@ -31,11 +31,11 @@ async function getAllColors() {
   return await knex(COLORS).where({ deleted_at: null });
 }
 
-async function updateColor({ id, color }) {
+async function updateColor({ id, ...color }) {
   try {
     const [res] = await knex(COLORS)
       .where({ id })
-      .update({ color, updated_at: new Date() })
+      .update({ ...color, updated_at: new Date() })
       .returning('*');
 
     return res;
