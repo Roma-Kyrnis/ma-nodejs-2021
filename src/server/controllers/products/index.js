@@ -4,6 +4,7 @@ const getAndCheckId = require('../../../utils/getAndCheckId');
 
 const types = require('./types');
 const colors = require('./colors');
+const orders = require('./orders');
 
 async function createProduct(req, res) {
   const product = {
@@ -74,4 +75,7 @@ module.exports = {
 
   // Colors
   colors,
+
+  // Orders
+  orders,
 };

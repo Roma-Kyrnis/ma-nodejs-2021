@@ -1,62 +1,42 @@
 const { Transform, Writable } = require('stream');
 
-const { products } = require('../db');
-
 function createTransformStreamToDB() {
   let isNotFirst = false;
-  let columnsHeaders = [];
-  let rowCount = 0;
+  let columnHeaders = [];
 
   const transform = (chunk, encoding, callback) => {
     let result = '';
 
     const stringProduct = chunk.toString('utf8');
-    if (columnsHeaders.toString() === stringProduct) return callback();
+    if (columnHeaders.toString() === stringProduct) return callback();
 
-    const arrayProduct = stringProduct.split(',');
-
-    const addAllColumnsInProduct = arrayValuesProduct => {
-      const product = {};
-      arrayValuesProduct.forEach((valueProduct, index) => {
-        product[columnsHeaders[index]] = valueProduct;
-      });
-
-      const fullProduct = {
-        type: product.type,
-        color: product.color,
-        price: product.price,
-        quantity: product.quantity,
-      };
-
-      return fullProduct;
-    };
+    const getFullProduct = items => ({
+      type: items[columnHeaders.indexOf('type')],
+      color: items[columnHeaders.indexOf('color')],
+      quantity: items[columnHeaders.indexOf('quantity')],
+      price: items[columnHeaders.indexOf('price')],
+    });
 
     if (isNotFirst) {
-      rowCount += 1;
-
-      const product = addAllColumnsInProduct(arrayProduct);
+      const product = getFullProduct(stringProduct.split(','));
       result += `${JSON.stringify(product)}`;
     } else {
       isNotFirst = true;
-      columnsHeaders = arrayProduct;
+      columnHeaders = stringProduct.split(',');
     }
 
     return callback(null, result);
   };
 
-  const flush = callback => {
-    console.log(`Parsed ${rowCount} rows at all!`);
-    callback();
-  };
-
-  return new Transform({ transform, flush });
+  return new Transform({ transform });
 }
 
-function createWriteStreamToDB() {
-  const write = async (chunk, encoding, callback) => {
+function createWriteStreamToDB(writeToDB) {
+  const write = (chunk, encoding, callback) => {
     const product = JSON.parse(chunk.toString());
 
-    products.createProduct(product);
+    writeToDB(product).catch(err => console.error(err));
+
     callback();
   };
 

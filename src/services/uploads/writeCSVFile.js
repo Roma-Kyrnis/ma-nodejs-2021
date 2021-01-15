@@ -5,13 +5,14 @@ const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 const byline = require('byline');
 
-const { MAIN } = require('../../config').dirStoreNames;
+const {
+  fileStorage: { MAIN },
+} = require('../../config');
+const { createCsvToJson } = require('../../utils');
 
 if (!fs.existsSync(MAIN)) fs.mkdirSync(MAIN);
 
 const promisifiedPipeline = promisify(pipeline);
-
-const { createCsvToJson } = require('../../utils');
 
 async function writeCSVFile(inputStream) {
   const gunzip = createGunzip();

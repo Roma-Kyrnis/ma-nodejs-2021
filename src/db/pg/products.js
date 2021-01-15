@@ -58,6 +58,25 @@ async function getProduct(id) {
   return res.rows[0];
 }
 
+async function getProductIdAndQuantity(product) {
+  const result = await pgClient.query(
+    `SELECT ${PRODUCTS}.id,
+            ${PRODUCTS}.quantity
+        FROM ${PRODUCTS}
+        INNER JOIN ${TYPES}
+          ON ${PRODUCTS}."typeId" = ${TYPES}.id
+        INNER JOIN ${COLORS}
+          ON ${PRODUCTS}."colorId" = ${COLORS}.id
+        WHERE ${TYPES}.type = $1
+          AND ${COLORS}.color = $2
+          AND ${PRODUCTS}.price = $3
+          AND ${PRODUCTS}.deleted_at IS NULL`,
+    [product.type, product.color, product.price],
+  );
+
+  return result.rows[0];
+}
+
 async function getAllProducts() {
   const res = await pgClient.query(
     `SELECT ${PRODUCTS}.id,
@@ -171,6 +190,7 @@ module.exports = client => {
   return {
     createProduct,
     getProduct,
+    getProductIdAndQuantity,
     getAllProducts,
     getAllDeletedProducts,
     updateProduct,

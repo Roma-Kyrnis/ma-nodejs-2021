@@ -12,19 +12,19 @@ const {
 } = require('../../config');
 const { throwIfInvalid } = require('../../utils');
 
+const dbAdmins = require('./admins');
 const dbProducts = require('./products');
 const dbTypes = require('./types');
 const dbColors = require('./colors');
+const dbOrders = require('./orders');
 
 let database;
 let sequelize;
 const db = {};
 
-async function createDBWithTables() {
+async function createDBIfNotExists() {
   await sequelize.query(`SELECT 'CREATE DATABASE ${database}'
     WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '${database}')`);
-
-  await sequelize.sync();
 }
 
 async function testConnection() {
@@ -66,19 +66,23 @@ module.exports = config => {
     }
   });
 
+  const admins = dbAdmins(db);
   const products = dbProducts(db);
   const types = dbTypes(db);
   const colors = dbColors(db);
+  const orders = dbOrders(db);
 
   return {
-    createDBWithTables,
+    createDBIfNotExists,
     testConnection,
     close,
 
     // --------------
 
+    admins,
     products,
     types,
     colors,
+    orders,
   };
 };

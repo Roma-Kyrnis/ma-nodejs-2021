@@ -1,15 +1,24 @@
-const router = require('express').Router();
+const router = require('@awaitjs/express').Router();
 
-const controller = require('../controllers');
+const { authorization, configureStore } = require('../controllers');
+const { authenticateToken } = require('../middleware');
 
 const products = require('./products');
 const upload = require('./upload');
 
-router.post('/setDataGlobal', controller.configureStore.setDataGlobal);
-router.post('/writeDataInFile', controller.configureStore.writeDataInFile);
+router.getAsync('/login', authorization.login);
+router.getAsync('/refresh-tokens', authorization.refreshTokens);
+router.getAsync('/logout', authorization.logout);
 
-router.use('/products', products);
+router.post('/setDataGlobal', authenticateToken, configureStore.setDataGlobal);
+router.post(
+  '/writeDataInFile',
+  authenticateToken,
+  configureStore.writeDataInFile,
+);
 
-router.use('/upload', upload);
+router.use('/products', authenticateToken, products);
+
+router.use('/upload', authenticateToken, upload);
 
 module.exports = router;

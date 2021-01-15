@@ -1,47 +1,43 @@
 const fsp = require('fs').promises;
 
 const {
-  dirStoreNames: { MAIN, OPTIMIZATION },
+  fileStorage: { MAIN, OPTIMIZATION, NAME_OPTIMIZED_FOLDER },
 } = require('../../config');
 
-async function getNameFilesInFolder() {
+async function getListFilesInFolder() {
   const filenamesWithTimeAndSize = { uploads: [], optimized: [] };
 
-  try {
-    const filenames = await fsp.readdir(MAIN);
+  const filenames = await fsp.readdir(MAIN);
 
-    let optimizationFilenames = [];
+  let optimizationFilenames = [];
 
-    for await (const filename of filenames) {
-      const absolutePathToFile = `${MAIN}/${filename}`;
-      const fileStats = await fsp.stat(absolutePathToFile);
+  for await (const filename of filenames) {
+    const absolutePathToFile = `${MAIN}/${filename}`;
+    const fileStats = await fsp.stat(absolutePathToFile);
 
-      if (fileStats.nlink === 1) {
-        filenamesWithTimeAndSize.uploads.push({
-          filename,
-          time: fileStats.birthtime,
-          size: fileStats.size, // bytes
-        });
-      } else if (fileStats.nlink === 2 && filename === 'optimized') {
-        optimizationFilenames = await fsp.readdir(absolutePathToFile);
-      }
-    }
-
-    for await (const filename of optimizationFilenames) {
-      const fileStats = await fsp.stat(`${OPTIMIZATION}/${filename}`);
-      const file = {
+    if (fileStats.nlink === 1) {
+      filenamesWithTimeAndSize.uploads.push({
         filename,
         time: fileStats.birthtime,
         size: fileStats.size, // bytes
-      };
-
-      if (fileStats.nlink === 1) filenamesWithTimeAndSize.optimized.push(file);
+      });
+    } else if (fileStats.nlink === 2 && filename === NAME_OPTIMIZED_FOLDER) {
+      optimizationFilenames = await fsp.readdir(absolutePathToFile);
     }
-  } catch (err) {
-    throw new Error(err);
+  }
+
+  for await (const filename of optimizationFilenames) {
+    const fileStats = await fsp.stat(`${OPTIMIZATION}/${filename}`);
+    const file = {
+      filename,
+      time: fileStats.birthtime,
+      size: fileStats.size, // bytes
+    };
+
+    if (fileStats.nlink === 1) filenamesWithTimeAndSize.optimized.push(file);
   }
 
   return filenamesWithTimeAndSize;
 }
 
-module.exports = getNameFilesInFolder;
+module.exports = getListFilesInFolder;

@@ -1,6 +1,8 @@
 const {
   db: { config, defaultType },
+  defaultAdmins,
 } = require('../config');
+const { createAdminHash } = require('../utils');
 const fatalError = require('../utils/fatalError');
 
 const db = {};
@@ -27,7 +29,14 @@ async function init() {
       db[k] = wrapper;
     }
 
-    await db[clientType].createDBWithTables();
+    await db[clientType].createDBIfNotExists();
+
+    const admins = defaultAdmins.map(admin => ({
+      hash: createAdminHash(admin.username, admin.password),
+      name: admin.username,
+    }));
+
+    await db[clientType].admins.createAdmins(admins);
   } catch (err) {
     fatalError(`FATAL: ${err.message || err}`);
   }
@@ -67,6 +76,17 @@ function close() {
   return funcWrapper(dbWrapper().close)();
 }
 
+// -----Admins-------
+function createAdmins(admins) {
+  return funcWrapper(dbWrapper().admins.createAdmins)(admins);
+}
+function getAdminRefreshToken(hash) {
+  return funcWrapper(dbWrapper().admins.getAdminRefreshToken)(hash);
+}
+function updateAdminRefreshToken(admin) {
+  return funcWrapper(dbWrapper().admins.updateAdminRefreshToken)(admin);
+}
+
 // -----Products-------
 function createProduct(product) {
   return funcWrapper(dbWrapper().products.createProduct)(product);
@@ -76,6 +96,9 @@ function getProduct(id) {
 }
 function getAllProducts() {
   return funcWrapper(dbWrapper().products.getAllProducts)();
+}
+function getProductIdAndQuantity(product) {
+  return funcWrapper(dbWrapper().products.getProductIdAndQuantity)(product);
 }
 function getAllDeletedProducts() {
   return funcWrapper(dbWrapper().products.getAllDeletedProducts)();
@@ -121,6 +144,20 @@ function deleteColor(id) {
   return funcWrapper(dbWrapper().colors.deleteColor)(id);
 }
 
+// -----Orders-------
+function createOrder(product) {
+  return funcWrapper(dbWrapper().orders.createOrder)(product);
+}
+function getOrder(orderNumber) {
+  return funcWrapper(dbWrapper().orders.getOrder)(orderNumber);
+}
+function getAllOrders() {
+  return funcWrapper(dbWrapper().orders.getAllOrders)();
+}
+function updateOrderStatus(order) {
+  return funcWrapper(dbWrapper().orders.updateOrderStatus)(order);
+}
+
 module.exports = {
   init,
   end,
@@ -132,10 +169,17 @@ module.exports = {
   testConnection,
   close,
 
+  admins: {
+    createAdmins,
+    getAdminRefreshToken,
+    updateAdminRefreshToken,
+  },
+
   products: {
     createProduct,
     getProduct,
     getAllProducts,
+    getProductIdAndQuantity,
     getAllDeletedProducts,
     updateProduct,
     deleteProduct,
@@ -155,5 +199,12 @@ module.exports = {
     getAllColors,
     updateColor,
     deleteColor,
+  },
+
+  orders: {
+    createOrder,
+    getOrder,
+    getAllOrders,
+    updateOrderStatus,
   },
 };

@@ -1,59 +1,26 @@
 const Knex = require('knex');
 
 const {
-  tables: { PRODUCTS, TYPES, COLORS },
   db: {
     names: { KNEX },
   },
 } = require('../../config');
 const { throwIfInvalid } = require('../../utils');
 
+const dbAdmins = require('./admins');
 const dbProducts = require('./products');
 const dbTypes = require('./types');
 const dbColors = require('./colors');
+const dbOrders = require('./orders');
 
 let database;
 let knex;
 
-async function createDBWithTables() {
+async function createDBIfNotExists() {
   await knex.raw(`SELECT 'CREATE DATABASE ${database}'
       WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '${database}')`);
 
-  const hasTableTypes = await knex.schema.hasTable(TYPES);
-  if (!hasTableTypes) {
-    await knex.schema.createTable(TYPES, table => {
-      table.specificType('id', 'INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY');
-      table.string('type').notNullable();
-      table.unique('type');
-      table.timestamps();
-      table.timestamp('deleted_at').defaultTo(null);
-    });
-  }
-
-  const hasTableColors = await knex.schema.hasTable(COLORS);
-  if (!hasTableColors) {
-    await knex.schema.createTable(COLORS, table => {
-      table.specificType('id', 'INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY');
-      table.string('color').notNullable();
-      table.unique('color');
-      table.timestamps();
-      table.timestamp('deleted_at').defaultTo(null);
-    });
-  }
-
-  const hasTableProducts = await knex.schema.hasTable(PRODUCTS);
-  if (!hasTableProducts) {
-    await knex.schema.createTable(PRODUCTS, table => {
-      table.specificType('id', 'INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY');
-      table.integer('typeId').references('id').inTable('types').notNullable();
-      table.integer('colorId').references('id').inTable('colors').notNullable();
-      table.decimal('price').nullable().defaultTo(0.0);
-      table.unique(['typeId', 'colorId', 'price']);
-      table.integer('quantity').notNullable().defaultTo(1);
-      table.timestamp('deleted_at').nullable().defaultTo(null);
-      table.timestamps();
-    });
-  }
+  return true;
 }
 
 async function testConnection() {
@@ -76,18 +43,22 @@ module.exports = config => {
   knex = new Knex(config);
 
   const products = dbProducts(knex);
+  const admins = dbAdmins(knex);
   const types = dbTypes(knex);
   const colors = dbColors(knex);
+  const orders = dbOrders(knex);
 
   return {
-    createDBWithTables,
+    createDBIfNotExists,
     testConnection,
     close,
 
     // --------------
 
+    admins,
     products,
     types,
     colors,
+    orders,
   };
 };

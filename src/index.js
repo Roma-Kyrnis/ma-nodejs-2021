@@ -9,9 +9,9 @@ const {
   server: { ORIGIN, OPTIMIZATION_TIME },
 } = require('./config');
 
-async function start() {
+async function boot() {
   gracefulShutdown(err => {
-    if (err) console.log(err);
+    if (err) console.log(`Server stopped because of ${err}`);
 
     stopScheduler();
 
@@ -31,7 +31,8 @@ async function start() {
       uploads.optimizationFile({ url: new URL(`/${file.filename}`, ORIGIN) });
     }
   }, OPTIMIZATION_TIME);
+
   server.startServer();
 }
 
-start();
+boot();

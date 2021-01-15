@@ -51,6 +51,18 @@ async function getProduct(id) {
     .first();
 }
 
+async function getProductIdAndQuantity(product) {
+  return await knex(PRODUCTS)
+    .join(TYPES, `${PRODUCTS}.typeId`, '=', `${TYPES}.id`)
+    .join(COLORS, `${PRODUCTS}.colorId`, '=', `${COLORS}.id`)
+    .where(`${TYPES}.type`, product.type)
+    .andWhere(`${COLORS}.color`, product.color)
+    .andWhere(`${PRODUCTS}.price`, product.price)
+    .andWhere(`${PRODUCTS}.deleted_at`, null)
+    .select(`${PRODUCTS}.id`, `${PRODUCTS}.quantity`)
+    .first();
+}
+
 async function getAllProducts() {
   return await knex(PRODUCTS)
     .where(`${PRODUCTS}.deleted_at`, null)
@@ -145,6 +157,7 @@ module.exports = client => {
     createProduct,
     getProduct,
     getAllProducts,
+    getProductIdAndQuantity,
     getAllDeletedProducts,
     updateProduct,
     deleteProduct,
