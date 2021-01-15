@@ -7,7 +7,7 @@ async function createColor(req, res) {
 
   const result = await colors.createColor(req.body.color);
 
-  res.status(200).json({ message: `Color id: ${result.id} created` });
+  res.status(200).json({ message: 'Color created', id: result.id });
 }
 
 async function getColor(req, res) {

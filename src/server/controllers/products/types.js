@@ -7,7 +7,7 @@ async function createType(req, res) {
 
   const result = await types.createType(req.body.type);
 
-  res.status(200).json({ message: `Type id: ${result.id} created` });
+  res.status(200).json({ message: 'Type created', id: result.id });
 }
 
 async function getType(req, res) {
