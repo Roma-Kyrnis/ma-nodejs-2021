@@ -41,5 +41,11 @@
   "bugs": {
     "url": "https://github.com/Roman-Kirnos/ma-nodejs-2021/issues"
   },
-  "homepage": "https://github.com/Roman-Kirnos/ma-nodejs-2021#readme"
+  "homepage": "https://github.com/Roman-Kirnos/ma-nodejs-2021#readme",
+  "jest": {
+    "verbose": true,
+    "collectCoverage": true,
+    "testEnvironment": "node",
+    "rootDir": "test"
+  }
 }
