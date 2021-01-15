@@ -11,24 +11,12 @@ const {
   },
 } = require('../config');
 
-function generateToken(payload, secretKey, tokenLife) {
-  return new Promise((resolve, reject) => {
-    jwt.sign(payload, secretKey, { expiresIn: tokenLife }, (err, token) => {
-      if (err) return reject(err);
-
-      return resolve(token);
-    });
-  });
+async function generateToken(payload, secretKey, tokenLife) {
+  return await jwt.sign(payload, secretKey, { expiresIn: tokenLife });
 }
 
-function verifyToken(token, secretKey) {
-  return new Promise((resolve, reject) => {
-    jwt.verify(token, secretKey, (err, data) => {
-      if (err) return reject(err);
-
-      return resolve(data);
-    });
-  });
+async function verifyToken(token, secretKey) {
+  return await jwt.verify(token, secretKey);
 }
 
 function generateAccessToken(payload) {
