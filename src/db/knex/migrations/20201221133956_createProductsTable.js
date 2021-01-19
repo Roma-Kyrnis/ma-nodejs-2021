@@ -5,7 +5,7 @@ exports.up = async knex => {
     table.integer('colorId').references('id').inTable('colors').notNullable();
     table.decimal('price').nullable().defaultTo(0.0);
     table.unique(['typeId', 'colorId', 'price']);
-    table.integer('quantity').notNullable().defaultTo(1);
+    table.integer('quantity').nullable().defaultTo(1);
     table.timestamp('deleted_at').nullable().defaultTo(null);
     table.timestamps();
   });
