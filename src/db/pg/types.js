@@ -28,7 +28,7 @@ async function getType(id) {
   const res = await pgClient.query(
     `SELECT *
         FROM ${TYPES}
-      WHERE id = $1 AND deleted_at IS NULL
+      WHERE id = $1 AND deleted_at IS NOT NULL
     `,
     [id],
   );
@@ -37,6 +37,14 @@ async function getType(id) {
 }
 
 async function getAllTypes() {
+  const res = await pgClient.query(
+    `SELECT * FROM ${TYPES} WHERE deleted_at IS NOT NULL`,
+  );
+
+  return res.rows;
+}
+
+async function getAllDeletedTypes() {
   const res = await pgClient.query(
     `SELECT * FROM ${TYPES} WHERE deleted_at IS NULL`,
   );
@@ -78,6 +86,7 @@ module.exports = client => {
     createType,
     getType,
     getAllTypes,
+    getAllDeletedTypes,
     updateType,
     deleteType,
   };
