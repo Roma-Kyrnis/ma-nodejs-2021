@@ -36,6 +36,8 @@ function verifyRefreshToken(token) {
 }
 
 module.exports = {
+  generateToken,
+  verifyToken,
   generateAccessToken,
   generateRefreshToken,
   verifyAccessToken,

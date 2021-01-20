@@ -9,6 +9,7 @@ function createCsvToJson() {
     let result = '';
 
     const stringProduct = chunk.toString('utf8');
+    console.log(stringProduct);
     if (columnHeaders.toString() === stringProduct) return callback();
 
     const getFullProduct = items => {
@@ -37,6 +38,7 @@ function createCsvToJson() {
       columnHeaders = stringProduct.split(',');
     }
 
+    console.log(result);
     return callback(null, result);
   };
 

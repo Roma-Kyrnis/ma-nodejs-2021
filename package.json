@@ -60,7 +60,6 @@
   "jest": {
     "verbose": true,
     "collectCoverage": true,
-    "testEnvironment": "node",
-    "rootDir": "src/test"
+    "testEnvironment": "node"
   }
 }
