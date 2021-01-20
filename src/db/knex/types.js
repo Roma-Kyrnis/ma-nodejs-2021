@@ -31,6 +31,10 @@ async function getAllTypes() {
   return await knex(TYPES).where({ deleted_at: null });
 }
 
+async function getAllDeletedTypes() {
+  return await knex(TYPES).whereNot({ deleted_at: null });
+}
+
 async function updateType({ id, ...type }) {
   try {
     const [res] = await knex(TYPES)
@@ -58,6 +62,7 @@ module.exports = client => {
     createType,
     getType,
     getAllTypes,
+    getAllDeletedTypes,
     updateType,
     deleteType,
   };

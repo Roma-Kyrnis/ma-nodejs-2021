@@ -28,7 +28,7 @@ async function getColor(id) {
   const res = await pgClient.query(
     `SELECT *
         FROM ${COLORS}
-      WHERE id = $1 AND deleted_at IS NULL
+      WHERE id = $1 AND deleted_at IS NOT NULL
     `,
     [id],
   );
@@ -37,6 +37,14 @@ async function getColor(id) {
 }
 
 async function getAllColors() {
+  const res = await pgClient.query(
+    `SELECT * FROM ${COLORS} WHERE deleted_at IS NOT NULL`,
+  );
+
+  return res.rows;
+}
+
+async function getAllDeletedColors() {
   const res = await pgClient.query(
     `SELECT * FROM ${COLORS} WHERE deleted_at IS NULL`,
   );
@@ -78,6 +86,7 @@ module.exports = client => {
     createColor,
     getColor,
     getAllColors,
+    getAllDeletedColors,
     updateColor,
     deleteColor,
   };

@@ -1,4 +1,6 @@
-const { Sequelize } = require('sequelize');
+const {
+  Sequelize: { Op },
+} = require('sequelize');
 
 const {
   tables: { COLORS },
@@ -19,14 +21,20 @@ async function getColor(id) {
   return await sequelize[COLORS].findOne({
     where: {
       id,
-      deletedAt: { [Sequelize.Op.is]: null },
+      deletedAt: { [Op.is]: null },
     },
   });
 }
 
 async function getAllColors() {
   return await sequelize[COLORS].findAll({
-    where: { deletedAt: { [Sequelize.Op.is]: null } },
+    where: { deletedAt: { [Op.is]: null } },
+  });
+
+}
+async function getAllDeletedColors() {
+  return await sequelize[COLORS].findAll({
+    where: { deletedAt: { [Op.ne]: null } },
   });
 }
 
@@ -47,7 +55,7 @@ async function updateColor({ id, ...color }) {
 async function deleteColor(id) {
   const res = await sequelize[COLORS].update(
     { deletedAt: Date.now() },
-    { where: { id, deletedAt: { [Sequelize.Op.is]: null } } },
+    { where: { id, deletedAt: { [Op.is]: null } } },
   );
 
   throwIfInvalid(res[0], 400, 'Already deleted');
@@ -61,6 +69,7 @@ module.exports = client => {
     createColor,
     getColor,
     getAllColors,
+    getAllDeletedColors,
     updateColor,
     deleteColor,
   };

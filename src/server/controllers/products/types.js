@@ -25,6 +25,12 @@ async function getAllTypes(req, res) {
   res.status(200).json({ message: 'ok', types: result });
 }
 
+async function getAllDeletedTypes(req, res) {
+  const result = await types.getAllDeletedTypes();
+
+  res.status(200).json({ message: 'ok', types: result });
+}
+
 async function updateType(req, res) {
   const id = getAndCheckId(req.params.id);
 
@@ -47,6 +53,7 @@ module.exports = {
   createType,
   getType,
   getAllTypes,
+  getAllDeletedTypes,
   updateType,
   deleteType,
 };
