@@ -25,6 +25,12 @@ async function getAllColors(req, res) {
   res.status(200).json({ message: 'ok', colors: result });
 }
 
+async function getAllDeletedColors(req, res) {
+  const result = await colors.getAllDeletedColors();
+
+  res.status(200).json({ message: 'ok', colors: result });
+}
+
 async function updateColor(req, res) {
   const id = getAndCheckId(req.params.id);
 
@@ -47,6 +53,7 @@ module.exports = {
   createColor,
   getColor,
   getAllColors,
+  getAllDeletedColors,
   updateColor,
   deleteColor,
 };

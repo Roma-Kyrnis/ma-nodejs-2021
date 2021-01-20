@@ -31,6 +31,10 @@ async function getAllColors() {
   return await knex(COLORS).where({ deleted_at: null });
 }
 
+async function getAllDeletedColors() {
+  return await knex(COLORS).whereNot({ deleted_at: null });
+}
+
 async function updateColor({ id, ...color }) {
   try {
     const [res] = await knex(COLORS)
@@ -58,6 +62,7 @@ module.exports = client => {
     createColor,
     getColor,
     getAllColors,
+    getAllDeletedColors,
     updateColor,
     deleteColor,
   };

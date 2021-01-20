@@ -117,6 +117,9 @@ function getType(id) {
 function getAllTypes() {
   return funcWrapper(dbWrapper().types.getAllTypes)();
 }
+function getAllDeletedTypes() {
+  return funcWrapper(dbWrapper().types.getAllDeletedTypes)();
+}
 function updateType(type) {
   return funcWrapper(dbWrapper().types.updateType)(type);
 }
@@ -133,6 +136,9 @@ function getColor(id) {
 }
 function getAllColors() {
   return funcWrapper(dbWrapper().colors.getAllColors)();
+}
+function getAllDeletedColors() {
+  return funcWrapper(dbWrapper().colors.getAllDeletedColors)();
 }
 function updateColor(color) {
   return funcWrapper(dbWrapper().colors.updateColor)(color);
@@ -171,6 +177,7 @@ module.exports = {
     createType,
     getType,
     getAllTypes,
+    getAllDeletedTypes,
     updateType,
     deleteType,
   },
@@ -179,6 +186,7 @@ module.exports = {
     createColor,
     getColor,
     getAllColors,
+    getAllDeletedColors,
     updateColor,
     deleteColor,
   },

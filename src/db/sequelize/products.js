@@ -1,4 +1,6 @@
-const { Sequelize } = require('sequelize');
+const {
+  Sequelize: { Op },
+} = require('sequelize');
 
 const {
   tables: { PRODUCTS, TYPES, COLORS },
@@ -50,7 +52,7 @@ async function getProduct(id) {
   await sequelize[PRODUCTS].belongsTo(sequelize[COLORS]);
 
   return await sequelize[PRODUCTS].findOne({
-    where: { id, deletedAt: { [Sequelize.Op.is]: null } },
+    where: { id, deletedAt: { [Op.is]: null } },
     include: [
       {
         model: sequelize[TYPES],
@@ -69,7 +71,7 @@ async function getAllProducts() {
   await sequelize[PRODUCTS].belongsTo(sequelize[COLORS]);
 
   return await sequelize[PRODUCTS].findAll({
-    where: { deletedAt: { [Sequelize.Op.is]: null } },
+    where: { deletedAt: { [Op.is]: null } },
     include: [
       {
         model: sequelize[TYPES],
@@ -88,7 +90,7 @@ async function getAllDeletedProducts() {
   await sequelize[PRODUCTS].belongsTo(sequelize[COLORS]);
 
   return await sequelize[PRODUCTS].findAll({
-    where: { deletedAt: { [Sequelize.Op.ne]: null } },
+    where: { deletedAt: { [Op.ne]: null } },
     include: [
       {
         model: sequelize[TYPES],
@@ -147,7 +149,7 @@ async function updateProduct({ id, ...product }) {
 async function deleteProduct(id) {
   const res = await sequelize[PRODUCTS].update(
     { deletedAt: Date.now() },
-    { where: { id, deletedAt: { [Sequelize.Op.is]: null } } },
+    { where: { id, deletedAt: { [Op.is]: null } } },
   );
 
   throwIfInvalid(res[0], 400, 'Already deleted');

@@ -1,4 +1,6 @@
-const { Sequelize } = require('sequelize');
+const {
+  Sequelize: { Op },
+} = require('sequelize');
 
 const {
   tables: { TYPES },
@@ -19,14 +21,20 @@ async function getType(id) {
   return await sequelize[TYPES].findOne({
     where: {
       id,
-      deletedAt: { [Sequelize.Op.is]: null },
+      deletedAt: { [Op.is]: null },
     },
   });
 }
 
 async function getAllTypes() {
   return await sequelize[TYPES].findAll({
-    where: { deletedAt: { [Sequelize.Op.is]: null } },
+    where: { deletedAt: { [Op.is]: null } },
+  });
+}
+
+async function getAllDeletedTypes() {
+  return await sequelize[TYPES].findAll({
+    where: { deletedAt: { [Op.ne]: null } },
   });
 }
 
@@ -47,7 +55,7 @@ async function updateType({ id, ...type }) {
 async function deleteType(id) {
   const res = await sequelize[TYPES].update(
     { deletedAt: Date.now() },
-    { where: { id, deletedAt: { [Sequelize.Op.is]: null } } },
+    { where: { id, deletedAt: { [Op.is]: null } } },
   );
 
   throwIfInvalid(res[0], 400, 'Already deleted');
@@ -62,6 +70,7 @@ module.exports = client => {
     createType,
     getType,
     getAllTypes,
+    getAllDeletedTypes,
     updateType,
     deleteType,
   };
