@@ -1,25 +1,20 @@
 {
-  "extends": [
-      "airbnb-base",
-      "prettier",
-      "plugin:prettier/recommended"
-  ],
+  "extends": ["airbnb-base", "prettier", "plugin:prettier/recommended"],
   "env": {
     "commonjs": true,
     "es6": true,
     "node": true
   },
-  "plugins": [
-      "prettier"
-  ],
+  "plugins": ["prettier"],
   "parserOptions": {
     "ecmaVersion": 2020
   },
   "rules": {
-      "prettier/prettier": "error",
-      "no-console": "warn",
-      "no-plusplus": [2, { "allowForLoopAfterthoughts": true }],
-      "no-restricted-syntax":"off",
-      "no-useless-catch": "off"
+    "prettier/prettier": "error",
+    "no-console": "warn",
+    "no-plusplus": [2, { "allowForLoopAfterthoughts": true }],
+    "no-restricted-syntax": "off",
+    "no-useless-catch": "off",
+    "no-return-await": "off"
   }
 }
