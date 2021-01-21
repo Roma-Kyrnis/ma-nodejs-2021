@@ -1,7 +1,7 @@
 {
-  "name": "homework-01",
+  "name": "homework",
   "version": "1.0.0",
-  "description": "Homework-01",
+  "description": "Homework",
   "main": "src",
   "scripts": {
     "start": "node src",
