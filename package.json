@@ -1,7 +1,7 @@
 {
-  "name": "homework-01",
+  "name": "homework",
   "version": "1.0.0",
-  "description": "Homework-01",
+  "description": "Homework",
   "main": "src",
   "scripts": {
     "start": "node src",
@@ -18,7 +18,7 @@
     "sequelize:migrate:make": "./node_modules/.bin/sequelize --migrations-path=./src/db/sequelize/migrations/ migration:generate --name",
     "sequelize:migrate:latest": "./node_modules/.bin/sequelize --migrations-path=./src/db/sequelize/migrations/ --config=./src/db/sequelize/config/config.js db:migrate",
     "sequelize:migrate:undo": "./node_modules/.bin/sequelize --migrations-path=./src/db/sequelize/migrations/ --config=./src/db/sequelize/config/config.js db:migrate:undo"
-    },
+  },
   "dependencies": {
     "@awaitjs/express": "^0.6.3",
     "body-parser": "^1.19.0",

@@ -23,13 +23,11 @@ async function createDBIfNotExists() {
 
 async function testConnection() {
   console.log(`Hello from ${PG} testConnection`);
-
   await client.query('SELECT NOW()');
 }
 
 async function close() {
   console.log(`INFO: Closing ${PG} DB wrapper`);
-
   client.end();
 }
 
