@@ -1,5 +1,5 @@
 const fatalError = message => {
-  console.error(message);
+  console.error(`FATAL: ${message}`);
   process.exit(1);
 };
 
