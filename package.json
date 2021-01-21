@@ -1,10 +1,11 @@
 {
-  "name": "homework-01",
+  "name": "homework",
   "version": "1.0.0",
-  "description": "Homework-01",
+  "description": "Homework",
   "main": "src",
   "scripts": {
-    "start": "node src"
+    "start": "node src",
+    "seeds:create": "node ./src/db/seeds"
   },
   "dependencies": {
     "@awaitjs/express": "^0.6.3",
@@ -14,7 +15,10 @@
     "express": "^4.17.1",
     "express-basic-auth": "^1.2.0",
     "http-errors": "^1.8.0",
+    "knex": "^0.21.13",
     "pg": "^8.5.1",
+    "sequelize": "^6.3.5",
+    "sequelize-cli": "^6.2.0",
     "uuid": "^8.3.1"
   },
   "devDependencies": {

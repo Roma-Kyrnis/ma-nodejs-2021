@@ -28,7 +28,7 @@ app.use((error, req, res, next) => {
   console.error({ error }, 'Global catch errors');
 
   let errMessage = { message: 'Internal server error!' };
-  if (!(parseInt(error.status, 10) === 500) && error.message) {
+  if (error.status && parseInt(error.status, 10) !== 500 && error.message) {
     res.status(error.status);
     errMessage = { message: error.message };
   } else {
