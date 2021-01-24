@@ -1,4 +1,8 @@
 const {
+  Sequelize: { Op },
+} = require('sequelize');
+
+const {
   tables: { ADMINS },
 } = require('../../config');
 
@@ -16,11 +20,14 @@ async function getAdminRefreshToken({ name }) {
 }
 
 async function updateAdminRefreshToken({ hash, name, refreshToken }) {
-  const where = hash ? { hash } : { name };
-
   await sequelize[ADMINS].update(
     { 'refresh-token': refreshToken },
-    { where, returning: true },
+    {
+      where: {
+        [Op.or]: [{ hash: hash || null }, { name: name || null }],
+      },
+      returning: true,
+    },
   );
 
   return true;
