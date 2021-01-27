@@ -8,8 +8,6 @@ function gracefulShutdown(exitHandler) {
 
   process.on('uncaughtExceptionMonitor', exitHandler);
 
-  process.on('unhandledRejection', exitHandler);
-
   process.on('SIGINT', exitHandler);
   process.on('SIGTERM', exitHandler);
 
