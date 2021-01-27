@@ -30,7 +30,7 @@ describe('check transform and write functions', () => {
     );
   });
 
-  test('should either write input chunk to function or catch error', () => {
+  test('should either write input chunk to function or catch error', async () => {
     const inputStringProduct =
       '{"type":"socks","color":"red","quantity":"8","price":"10"}';
     const inputStreamProduct = Buffer.from(inputStringProduct, 'utf8');
@@ -41,7 +41,7 @@ describe('check transform and write functions', () => {
     const writeDBCallback = jest.fn();
     writeDBCallback
       .mockResolvedValueOnce(product => product)
-      .mockReturnValueOnce(Promise.reject(errorIncorrectProduct));
+      .mockReturnValue(Promise.reject(errorIncorrectProduct));
 
     const writeFunction = csvToDB.createWriteStreamToDB(writeDBCallback);
 
@@ -58,8 +58,13 @@ describe('check transform and write functions', () => {
     expect(writeDBCallback.mock.results[1].value).rejects.toEqual(
       errorIncorrectProduct,
     );
-    expect(writeDBCallback.mock.results[1].value.catch).toHaveBeenCalledWith(
-      errorIncorrectProduct,
-    );
+
+    writeFunction('{}', 'buffer', callback);
+
+    try {
+      await writeDBCallback.mock.results[1].value;
+    } catch (err) {
+      expect(console.error).toHaveBeenLastCalledWith(errorIncorrectProduct);
+    }
   });
 });
