@@ -93,14 +93,16 @@ async function calculateOrder(req, res) {
 
 async function updateOrderStatus(req, res) {
   throwIfInvalid(req.body.status, 400, 'No status defined');
-  checkOrderNumber(req.params.orderNumber);
+
+  const { orderNumber } = req.params;
+  checkOrderNumber(orderNumber);
 
   const status = Object.values(STATUSES).find(
     value => value === req.body.status,
   );
   throwIfInvalid(status && status !== STATUSES.OPEN, 400, 'Incorrect status');
 
-  const currOrder = await orders.getOrder(req.params.orderNumber);
+  const currOrder = await orders.getOrder(orderNumber);
   throwIfInvalid(currOrder, 400, 'No such order');
   throwIfInvalid(currOrder.status === STATUSES.OPEN, 400, 'Order is not open');
 
@@ -113,10 +115,7 @@ async function updateOrderStatus(req, res) {
     });
   }
 
-  await orders.updateOrderStatus({
-    orderNumber: req.params.orderNumber,
-    status,
-  });
+  await orders.updateOrderStatus({ orderNumber, status });
 
   res.status(200).json({ message: 'Order status changed' });
 }
