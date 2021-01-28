@@ -1,3 +1,4 @@
 const novaPoshta = require('./novaPoshta');
+const validations = require('./validations');
 
-module.exports = { novaPoshta };
+module.exports = { novaPoshta, validations };
