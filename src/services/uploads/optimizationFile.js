@@ -3,6 +3,7 @@ const fs = require('fs');
 const {
   fileStorage: { MAIN, OPTIMIZATION },
 } = require('../../config');
+const { throwIfInvalid } = require('../../utils');
 
 if (!fs.existsSync(OPTIMIZATION)) fs.mkdirSync(OPTIMIZATION);
 
@@ -34,7 +35,7 @@ function optimizationFile(req) {
   const { filename } = req.params;
   const pathToOriginalFile = `${MAIN}/${filename}`;
 
-  if (!fs.existsSync(pathToOriginalFile)) throw new Error('No such file');
+  throwIfInvalid(fs.existsSync(pathToOriginalFile), 400, 'No such file');
   const inputStream = fs.createReadStream(pathToOriginalFile);
 
   let sortedProductsArray = [];
