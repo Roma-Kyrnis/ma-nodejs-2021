@@ -2,14 +2,13 @@
 const { authorization } = require('../../services');
 const { getAuthToken, throwIfInvalid } = require('../../utils');
 
-async function login(req, res) {
-  const authHeader = req.headers.authorization;
-
-  if (!authHeader || authHeader.indexOf('Basic ') === -1) {
-    return res.status(401).json({ message: 'Missing Authorization Header' });
+async function login(req, res, next) {
+  let base64Credentials;
+  try {
+    base64Credentials = getAuthToken(req.headers);
+  } catch (err) {
+    return next(err);
   }
-
-  const base64Credentials = authHeader.split(' ')[1];
   const credentials = Buffer.from(base64Credentials, 'base64').toString(
     'ascii',
   );
