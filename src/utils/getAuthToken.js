@@ -7,7 +7,7 @@ function getAuthToken(headers) {
 
   const token = headers.authorization.split(' ')[1];
 
-  if (token === null) {
+  if (!token) {
     const err = new Error('Unauthorized');
     err.status = 401;
     throw err;

@@ -5,6 +5,7 @@
   "main": "src",
   "scripts": {
     "start": "node src",
+    "test": "jest",
     "seeds:create": "node ./src/db/seeds",
     "knex:migrate:make": "./node_modules/.bin/knex --knexfile=./src/db/knex/knexfile.js migrate:make",
     "knex:migrate:latest": "./node_modules/.bin/knex --knexfile=./src/db/knex/knexfile.js migrate:latest",
@@ -44,6 +45,7 @@
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-prettier": "^3.3.0",
     "husky": "^4.3.6",
+    "jest": "^26.6.3",
     "prettier": "^2.2.1"
   },
   "repository": {
@@ -55,5 +57,10 @@
   "bugs": {
     "url": "https://github.com/Roman-Kirnos/ma-nodejs-2021/issues"
   },
-  "homepage": "https://github.com/Roman-Kirnos/ma-nodejs-2021#readme"
+  "homepage": "https://github.com/Roman-Kirnos/ma-nodejs-2021#readme",
+  "jest": {
+    "verbose": true,
+    "collectCoverage": true,
+    "testEnvironment": "node"
+  }
 }
