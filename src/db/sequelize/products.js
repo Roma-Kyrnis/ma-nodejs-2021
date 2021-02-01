@@ -73,7 +73,7 @@ async function getProductIdAndQuantity(product) {
   const res = await sequelize[PRODUCTS].findOne({
     where: {
       price: product.price,
-      deletedAt: { [Sequelize.Op.is]: null },
+      deletedAt: { [Op.is]: null },
     },
     attributes: ['id', 'quantity'],
     include: [
