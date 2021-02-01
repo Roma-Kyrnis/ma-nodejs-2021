@@ -1,6 +1,8 @@
 const router = require('@awaitjs/express').Router();
 
-const { validations } = require('../../lib/api_v1');
+const {
+  validations: { middleware },
+} = require('../../lib/api_v1');
 const { authorization, configureStore } = require('../controllers');
 const { authenticateToken } = require('../middleware');
 
@@ -14,13 +16,13 @@ router.getAsync('/logout', authorization.logout);
 router.post(
   '/setDataGlobal',
   authenticateToken,
-  validations.arrayProducts,
+  middleware.arrayProducts,
   configureStore.setDataGlobal,
 );
 router.post(
   '/writeDataInFile',
   authenticateToken,
-  validations.arrayProducts,
+  middleware.arrayProducts,
   configureStore.writeDataInFile,
 );
 

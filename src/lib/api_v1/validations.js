@@ -11,4 +11,31 @@ const arrayProducts = celebrate({
   ),
 });
 
-module.exports = { arrayProducts };
+const cityRefInWarehouse = Joi.object({
+  data: Joi.object({
+    data: Joi.array()
+      .min(1)
+      .items(
+        Joi.object({
+          CityRef: Joi.string().min(10).max(256),
+        }).unknown(),
+      ),
+  }).unknown(),
+}).unknown();
+
+const costInDeliveryPrice = Joi.object({
+  data: Joi.object({
+    data: Joi.array()
+      .min(1)
+      .items(
+        Joi.object({
+          Cost: Joi.number().min(0),
+        }).unknown(),
+      ),
+  }).unknown(),
+}).unknown();
+
+module.exports = {
+  middleware: { arrayProducts },
+  joiFunctions: { cityRefInWarehouse, costInDeliveryPrice },
+};

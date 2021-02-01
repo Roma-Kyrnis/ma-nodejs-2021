@@ -1,5 +1,8 @@
 const {
   novaPoshta: { deliveryPrice, getWarehouses },
+  validations: {
+    joiFunctions: { cityRefInWarehouse, costInDeliveryPrice },
+  },
 } = require('../lib/api_v1/index');
 const {
   products: { WEIGHTS },
@@ -10,12 +13,13 @@ const {
 const { throwIfInvalid } = require('../utils');
 
 async function getCityRef(cityName) {
-  try {
-    const warehouse = await getWarehouses({ CityName: cityName });
-    return warehouse.data.data[0].CityRef;
-  } catch (err) {
-    throw throwIfInvalid(!err, 400, 'Please fill correct recipientCity');
-  }
+  const warehouse = await getWarehouses({ CityName: cityName });
+
+  const validation = cityRefInWarehouse.validate(warehouse);
+
+  throwIfInvalid(!validation.error, 400, 'Please fill correct recipientCity');
+
+  return validation.value.data.data[0].CityRef;
 }
 
 function getWeight({ type, quantity }) {
@@ -33,7 +37,11 @@ async function countDeliveryPrice({ recipient, ...product }) {
 
   const result = await deliveryPrice(priceProperties);
 
-  return result.data.data[0].Cost;
+  const validation = costInDeliveryPrice.validate(result);
+
+  throwIfInvalid(!validation.error, 500, 'Cannot get valid deliveryPrice');
+
+  return validation.value.data.data[0].Cost;
 }
 
 module.exports = countDeliveryPrice;
