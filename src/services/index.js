@@ -1,9 +1,11 @@
 const createDiscount = require('./discount');
 const uploads = require('./uploads');
-const products = require('./products');
+const authorization = require('./authorization');
+const countDeliveryPrice = require('./countDeliveryPrice');
 
 module.exports = {
   createDiscount,
   uploads,
-  products,
+  authorization,
+  countDeliveryPrice,
 };

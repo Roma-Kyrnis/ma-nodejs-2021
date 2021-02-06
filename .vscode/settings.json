@@ -1,7 +1,5 @@
 {
-    "git.ignoreLimitWarning": true,
-    "cSpell.words": [
-        "pgtools",
-        "uuidv"
-    ]
+  "git.ignoreLimitWarning": true,
+  "cSpell.words": ["pgtools", "uuidv"],
+  "cSpell.language": "en, ru, uk"
 }
